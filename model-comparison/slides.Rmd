@@ -1,0 +1,606 @@
+---
+title: 'Model comparisons'
+author: "Jens Roeser"
+output: 
+  ioslides_presentation:
+    incremental: false
+    transition: slower
+    widescreen: true
+    css: ../slides.css
+    logo: ../gfx/ntu.png
+bibliography      : ["../references.bib"]
+---
+
+```{=html}
+<style>
+
+slides > slide.backdrop {
+  background: white;
+}
+
+.gdbar img {
+  width: 240px !important;
+  height: 54px !important;
+  margin: 8px 8px;
+  position: absolute;
+}
+
+.gdbar {
+  width: 350px !important;
+  height: 70px !important;
+}
+
+slides > slide:not(.nobackground):before {
+  width: 128px;
+  height: 33px;
+  background-size: 100px 30px;
+}
+
+.smalltable .table{
+  font-size: 18px;
+}
+
+pre {
+  font-size: 15px;
+}
+</style>
+```
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, eval = TRUE, message = FALSE, comment=NA)
+options("kableExtra.html.bsTable" = T, digits = 3)
+options(pillar.print_min = 5, pillar.print_max = 6)
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(patchwork)
+library(broom)
+theme_set(theme_bw(base_size = 18) +
+            theme(legend.position = "top", 
+                  legend.justification = "right",
+                  panel.grid = element_blank()))
+```
+
+
+
+## Normal linear model {.smaller}
+
+<div style="float: left; width: 35%;">
+
+$$
+y_i \sim N(\mu_i, \sigma^2)\\
+\mu_i = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}\\
+\text{for } i \in 1\dots n
+$$
+</div>
+
+<div style="float: left; width: 65%;">
+
+- Outcome variable is normally distributed.
+- Distribution can be characterised with an unknown mean $\mu_i$ and variance $\sigma^2$.
+- The mean $\mu_i$ is composed of the intercept $\beta_0$ and the sum of a vector of slopes $\beta_k$.
+- The values of the unknown parameters can be estimated from the outcome variable $y_i$ and the vector of predictors $x_{ki}$.
+
+
+</div>
+
+
+
+## Normal linear model {.smaller}
+
+<div style="float: left; width: 35%;">
+
+$$
+y_i \sim N(\mu_i, \sigma^2)\\
+\mu_i = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}\\
+\text{for } i \in 1\dots n
+$$
+</div>
+
+<div style="float: right; width: 55%;">
+
+```{r}
+# Load and transform data
+blomkvist <- read_csv("../data/blomkvist.csv") %>% 
+  select(id, sex, age, rt = rt_hand_d) %>% 
+  mutate(log_rt = log(rt)) %>% 
+  drop_na()
+```
+
+```{r}
+# Specify model
+model <- lm(log_rt ~ sex + age, data = blomkvist)
+```
+
+```{r}
+# Model coefficients
+coef(model)
+```
+
+
+</div>
+
+
+<div style="float: left; width: 42%;">
+
+## Maximum likelihood estimates {.smaller}
+
+- The maximum likelihood values of the $K+1$ coefficients, $\hat\beta_0,\hat\beta_1\dots\hat\beta_K$, are those values of the $\beta_0,\beta_1\dots\beta_K$ variables that minimize the *residual sum of squares*
+
+$$
+\text{RSS} = \sum_{i=1}^n \mid y_i - \mu_i\mid^2
+$$
+
+- Once we have $\hat\beta$, then the maximum likelihood estimate of $\sigma$, denoted as $\hat\sigma$ is:
+
+
+$$
+\hat\sigma = \sqrt{\frac{1}{n-K-1}\sum_{i=1}^n\mid y_i-\hat\mu_i\mid^2}
+$$
+
+```{r}
+sigma(model)
+```
+
+
+</div>
+
+<div style="float: right; width: 52%;">
+
+
+</div>
+
+
+## Why do we need model comparions {.smaller}
+
+- How useful is my model?
+- How useful is my model compared to other models?
+- Can my model fit the data accurately?
+- Are my model's predictions useful for new observations?
+- Fitting the observed data is good but even better would be if it can accurately predict unobserved data.
+
+
+## Residuals
+
+<div style="float: left; width: 45%;">
+
+```{r echo = F, out.width="100%"}
+n <- 20
+beta_0 <- 50
+beta_1 <- 6
+sigma <- 5
+sim <- tibble(id = 1:6) %>%
+    mutate(x = 0:5,
+           e = rnorm(n(), mean = 0, sd = sigma)) %>%
+    mutate(y = beta_0 + beta_1 * x + e) %>%
+  select(id, x, y) 
+
+fake_model <- lm(y ~ x, data = sim)
+
+ggplot(data =sim, aes(x = x, y = predict(fake_model))) +
+  geom_point(aes(y = y)) +
+  geom_line(colour = "red") +
+  geom_segment( aes(xend = x, yend = y),
+      size = 0.5, alpha = 0.5, lineend = "round") +
+  labs(subtitle = bquote(beta[0] == .(beta_0)*","~beta[1] == .(beta_1)*","~sigma^2 == .(sigma))) +
+  theme(axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank())
+```
+
+</div>
+
+
+
+<div style="float: right; width: 45%;">
+
+```{r echo = F, out.width="100%"}
+n <- 20
+beta_0 <- 50
+beta_1 <- 6
+sigma <- 15
+sim <- tibble(id = 1:6) %>%
+    mutate(x = 0:5,
+           e = rnorm(n(), mean = 0, sd = sigma)) %>%
+    mutate(y = beta_0 + beta_1 * x + e) %>%
+  select(id, x, y) 
+
+fake_model <- lm(y ~ x, data = sim)
+
+ggplot(data = sim, aes(x = x, y = predict(fake_model))) +
+  geom_point(aes(y = y)) +
+  geom_line(colour = "red") +
+  geom_segment( aes(xend = x, yend = y),
+      size = 0.5, alpha = 0.5, lineend = "round") +
+  labs(subtitle = bquote(beta[0] == .(beta_0)*","~beta[1] == .(beta_1)*","~sigma^2 == .(sigma))) +
+  theme(axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank())
+```
+
+</div>
+
+
+## Residuals
+
+
+<div style="float: left; width: 45%;">
+
+
+
+```{r out.width="100%", fig.height=6.5, echo = F}
+blomkvist$pred <- predict(model)
+blomkvist$resid <- residuals(model)
+
+plot <- ggplot(blomkvist, aes(x = age, y = pred, colour = sex) ) +
+  geom_line(size = 2) +
+  geom_point(aes(x = age, y = log(rt), colour = sex), size = 2);plot
+```
+</div>
+
+
+## Residuals {.smaller}
+
+<div style="float: left; width: 45%;">
+
+```{r out.width="100%", fig.height=6.5, echo = F}
+
+plot <- plot + geom_segment(
+      aes(xend = age, yend = log(rt)),
+      size = 0.5, alpha = 0.5, lineend = "round"
+      );plot
+```
+</div>
+
+<div style="float: right; width: 50%;">
+- Residuals are the unexplained (residual) variance: error in the modelling results.
+- Distance between observed ($y$) and predicted rt ($\hat{y}$): $\epsilon = y - \hat{y}$
+- The closer the residuals are to 0, the lower the prediction error.
+
+</div>
+
+
+## Residuals
+
+<div style="float: left; width: 45%;">
+
+```{r out.width="100%", fig.height=6.5, echo = F}
+plot
+```
+</div>
+
+<div style="float: right; width: 45%;">
+
+```{r}
+mutate(blomkvist, 
+       predicted = predict(model),
+       resid_1 = log_rt - predicted,
+       resid_2 = residuals(model)) %>% 
+  select(log_rt, pred, resid_1, resid_2) %>% 
+  glimpse(width = 50)
+```
+
+
+</div>
+
+
+## $R^2$ {.smaller}
+
+- Coefficient of determination: ability of a model to predict an outcome.
+
+$$
+\underbrace{\sum_{i=1}^n(y_i-\tilde{y})^2}_\text{TSS} = \underbrace{\sum_{i=1}^n(\hat\mu_i-\tilde{y})^2}_\text{ESS} + \underbrace{\sum_{i=1}^n(y_i-\hat\mu_i)^2}_\text{RSS}
+$$
+<div style="float: left; width: 45%;">
+
+- TSS: total sum of squares
+- ESS: explained sum of squares
+- RSS: residual sum of squares
+
+</div>
+<div style="float: left; width: 45%;">
+
+- Proportion of the variability in the outcome variable due to changes in the predictors.
+
+$$
+R^2 = \frac{\text{ESS}}{\text{TSS}}
+$$
+
+- $R^2$ is routinely used as measure of model fit.
+- $R^2$ gives the proportion of total variation due to variation in the predictor variables.
+
+</div>
+
+## Adjusted $R^2$ {.smaller}
+
+<div style="float: left; width: 45%;">
+
+- The value of $R^2$ necessarily increases, or does not decrease, as we add more predictors to the model, even if the true values of the coefficients for these predictors are zero.
+- Overfitting: Complex models explain more variance but may make over optimistic predictions [@gelman2020regression].
+- Example: brain size and body mass for seven primate species [from @mcelreath2016statistical].
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+```{r fig.height=6.5, out.width="100%", echo = F}
+d <- tibble(species = c("afarensis", "africanus", "habilis", "boisei", "rudolfensis", "ergaster", "sapiens"), 
+         brain   = c(438, 452, 612, 521, 752, 871, 1350), 
+         mass    = c(37.0, 35.5, 34.5, 41.5, 55.5, 61.0, 53.5))
+
+fit_lm <- function(model, formula){
+  model <- lm(data = d, formula = formula)
+}
+
+fits <- tibble(model   = str_c("b6.", 1:6),
+         formula = c("brain ~ mass", 
+                     "brain ~ mass + I(mass^2)", 
+                     "brain ~ mass + I(mass^2) + I(mass^3)", 
+                     "brain ~ mass + I(mass^2) + I(mass^3) + I(mass^4)", 
+                     "brain ~ mass + I(mass^2) + I(mass^3) + I(mass^4) + I(mass^5)", 
+                     "brain ~ mass + I(mass^2) + I(mass^3) + I(mass^4) + I(mass^5) + I(mass^6)")) %>% 
+  mutate(fit     = map2(model, formula, fit_lm)) %>% 
+  mutate(tidy    = map(fit, tidy),
+         glance  = map(fit, glance))
+
+fits <- fits %>% 
+  mutate(adjr2      = glance %>% map_dbl("adj.r.squared")) %>% 
+  mutate(r2      = glance %>% map_dbl("r.squared")) %>% 
+  mutate(r2_text = round(r2, digits = 2) %>% as.character() %>% str_replace(., "0.", "."))
+
+ggplot(d, aes(x = mass, y = brain, label = species)) +
+#  geom_point(size = 2.5, shape = 21) +
+  geom_text() +
+  scale_x_continuous(limits = c(33, 62), expand = c(0, 0)) +
+  coord_cartesian(ylim = c(300, 1500)) +
+  stat_smooth(method = "lm", fullrange = TRUE, level = .89,
+              size = 1/2, alpha = 1/3, colour = "darkred",
+              formula = y ~ x) +
+  labs(title = "Linear model", subtitle = expression(paste(italic(R)^2, " = .49")),
+       y  = "Brain volume (cc)", x = "Body mass (kg)")
+```
+
+</div>
+
+
+
+## Adjusted $R^2$ 
+
+```{r echo = F, out.width="90%", fig.width=12}
+d <- tibble(species = c("afarensis", "africanus", "habilis", "boisei", "rudolfensis", "ergaster", "sapiens"), 
+         brain   = c(438, 452, 612, 521, 752, 871, 1350), 
+         mass    = c(37.0, 35.5, 34.5, 41.5, 55.5, 61.0, 53.5))
+
+fit_lm <- function(model, formula){
+  model <- lm(data = d, formula = formula)
+}
+
+fits <- tibble(model   = str_c("b6.", 1:6),
+         formula = c("brain ~ mass", 
+                     "brain ~ mass + I(mass^2)", 
+                     "brain ~ mass + I(mass^2) + I(mass^3)", 
+                     "brain ~ mass + I(mass^2) + I(mass^3) + I(mass^4)", 
+                     "brain ~ mass + I(mass^2) + I(mass^3) + I(mass^4) + I(mass^5)", 
+                     "brain ~ mass + I(mass^2) + I(mass^3) + I(mass^4) + I(mass^5) + I(mass^6)")) %>% 
+  mutate(fit     = map2(model, formula, fit_lm)) %>% 
+  mutate(tidy    = map(fit, tidy),
+         glance  = map(fit, glance))
+
+
+fits <- fits %>% 
+  mutate(r2      = glance %>% map_dbl("r.squared")) %>% 
+  mutate(r2_text = round(r2, digits = 2) %>% as.character() %>% str_replace(., "0.", "."))
+
+p <-  ggplot(d, aes(x = mass, y = brain, label = species)) +
+  geom_point(size = 2.5, shape = 21) +
+  scale_x_continuous(limits = c(33, 62), expand = c(0, 0)) +
+  coord_cartesian(ylim = c(300, 1500)) +
+  theme(axis.title = element_blank(),
+        plot.title = element_text(size = 14),
+        plot.subtitle = element_text(size = 12))
+
+# linear
+p1 <-  p + stat_smooth(method = "lm", fullrange = TRUE, level = .89,
+              size = 1/2, alpha = 1/3, colour = "darkred",
+              formula = y ~ x) +
+  labs(title = "Linear model", subtitle = expression(paste(italic(R)^2, " = .49")))
+  
+# cubic
+p3 <- p + stat_smooth(method = "lm", fullrange = TRUE, level = .89,
+              size = 1/2, alpha = 1/3,  colour = "darkred",
+              formula = y ~ poly(x, 3)) +
+  labs(title = "3rd-order polynomial", subtitle = expression(paste(italic(R)^2, " = .68")))
+
+# sixth-order polynomial
+p6 <-  p + geom_hline(yintercept = 0, linetype = 2) + 
+  stat_smooth(method = "lm", fullrange = TRUE, level = .89,
+              size = 1/2, alpha = 1/3,  colour = "darkred",
+              formula = y ~ poly(x, 6)) +
+  coord_cartesian(ylim = c(-300, 1500)) +
+  labs(title = "6th-order polynomial", subtitle = expression(paste(italic(R)^2, " = 1")))
+
+plot <- p1 + p3 + p6
+
+gt <- patchwork::patchworkGrob(plot)
+gridExtra::grid.arrange(gt, left = "Brain volume (cc)", bottom = "Body mass (kg)")
+```
+
+
+
+## Adjusted $R^2$
+
+- To overcome this spurious increase in $R^2$, the following adjustment is applied.
+
+$$
+R^2_\text{Adj} = 1 - \frac{\text{RSS}}{\text{TSS}} \cdot \frac{n-1}{n-K-1}
+$$
+
+which is equivalent to
+
+$$
+R^2_\text{Adj} = 1 - (1-R^2) \cdot \underbrace{\frac{n-1}{n-K-1}}_{\text{penalty}}
+$$
+
+## Adjusted $R^2$ 
+
+```{r echo = F, out.width="90%", fig.width=12}
+d <- tibble(species = c("afarensis", "africanus", "habilis", "boisei", "rudolfensis", "ergaster", "sapiens"), 
+         brain   = c(438, 452, 612, 521, 752, 871, 1350), 
+         mass    = c(37.0, 35.5, 34.5, 41.5, 55.5, 61.0, 53.5))
+
+fit_lm <- function(model, formula){
+  model <- lm(data = d, formula = formula)
+}
+
+fits <- tibble(model   = str_c("b6.", 1:6),
+         formula = c("brain ~ mass", 
+                     "brain ~ mass + I(mass^2)", 
+                     "brain ~ mass + I(mass^2) + I(mass^3)", 
+                     "brain ~ mass + I(mass^2) + I(mass^3) + I(mass^4)", 
+                     "brain ~ mass + I(mass^2) + I(mass^3) + I(mass^4) + I(mass^5)", 
+                     "brain ~ mass + I(mass^2) + I(mass^3) + I(mass^4) + I(mass^5) + I(mass^6)")) %>% 
+  mutate(fit     = map2(model, formula, fit_lm)) %>% 
+  mutate(tidy    = map(fit, tidy),
+         glance  = map(fit, glance)) %>% 
+  mutate(r2      = glance %>% map_dbl("adj.r.squared"))  
+
+p <-  ggplot(d, aes(x = mass, y = brain, label = species)) +
+  geom_point(size = 2.5, shape = 21) +
+  scale_x_continuous(limits = c(33, 62), expand = c(0, 0)) +
+  coord_cartesian(ylim = c(300, 1500)) +
+  theme(axis.title = element_blank(),
+        plot.title = element_text(size = 14),
+        plot.subtitle = element_text(size = 12))
+
+# linear
+p1 <-  p + stat_smooth(method = "lm", fullrange = TRUE, level = .89,
+              size = 1/2, alpha = 1/3, colour = "darkred",
+              formula = y ~ x) +
+  labs(title = "Linear model", subtitle = expression(paste(italic(R)["Adj"]^2, " = .39")))
+  
+# cubic
+p3 <- p + stat_smooth(method = "lm", fullrange = TRUE, level = .89,
+              size = 1/2, alpha = 1/3,  colour = "darkred",
+              formula = y ~ poly(x, 3)) +
+  labs(title = "3rd-order polynomial", subtitle = expression(paste(italic(R)["Adj"]^2, " = .36")))
+
+# sixth-order polynomial
+p6 <-  p + geom_hline(yintercept = 0, linetype = 2) + 
+  stat_smooth(method = "lm", fullrange = TRUE, level = .89,
+              size = 1/2, alpha = 1/3,  colour = "darkred",
+              formula = y ~ poly(x, 6)) +
+  coord_cartesian(ylim = c(-300, 1500)) +
+  labs(title = "6th-order polynomial", subtitle = expression(paste(italic(R)["Adj"]^2, " = NaN")))
+
+plot <- p1 + p3 + p6
+
+gt <- patchwork::patchworkGrob(plot)
+gridExtra::grid.arrange(gt, left = "Brain volume (cc)", bottom = "Body mass (kg)")
+```
+
+## $R^2$ and Adjusted $R^2$ with `lm` {.smaller}
+
+<div style="float: left; width: 55%;">
+
+```{r}
+# Specify models
+model_1 <- lm(log_rt ~ sex, data = blomkvist)
+model_2 <- lm(log_rt ~ sex + age, data = blomkvist)
+```
+
+
+- From the `lm` objects, $R^2$ and $R_\text{Adj}^2$ can be obtained using `summary`
+
+```{r}
+# Generate model summary
+summary_model_1 <- summary(model_1)
+summary_model_2 <- summary(model_2)
+```
+
+</div>
+
+<div style="float: right; width: 35%;">
+
+```{r}
+summary_model_1$r.squared
+```
+
+```{r}
+summary_model_2$r.squared
+```
+
+```{r}
+summary_model_1$adj.r.squared
+```
+
+```{r}
+summary_model_2$adj.r.squared
+```
+
+</div>
+
+
+## Model comparison {.smaller}
+
+- When all coefficients are simultaneously zero, we are essentially saying that the following two models are identical.
+
+$$
+\mathcal{M}_0: y_i \sim N(\hat\mu, \sigma^2), \hat\mu_i = \beta_0, \text{ for } i \in 1\dots n,\\
+\mathcal{M}_1: y_i \sim N(\hat\mu, \sigma^2), \hat\mu_i = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}, \text{ for } i \in 1\dots n,
+
+
+$$
+
+- The residual sums of squares for these two models can be denoted RSS$_0$ and RSS$_1$.
+- Under the null hypothesis that these two models are identical, and so the coefficients for all predictors are simultaneously zero, we have the following result:
+
+
+$$
+\underbrace{\frac{(\text{RSS}_0-\text{RSS}_1)/K}{\text{RSS}_1/(n - K - 1)}}_\text{F-statistic} \sim F(K, n-K-1)
+$$
+
+- Under the null hypothesis, the *F*-statistic is distributed as an *F*-distribution with $K$ and $N-K-1$ degrees of freedom.
+
+
+## Model comparison {.smaller}
+
+- We can extend the above result to test whether any subset of the $K$ predictors have coefficients that are simultaneously zero.
+- In general, we can compare two models $\mathcal{M}_1$ and $\mathcal{M}_0$ with $K_1$ and $K_0$ predictors, respectively, and where $K_0 < K$ and all the $K_0$ predictors in $\mathcal{M}_0$ are also presented in $\mathcal{M}_1$ 
+- I.e. $\mathcal{M}_0$ is *nested* in $\mathcal{M}_1$.
+- Under the null hypothesis that the $K_1-K_0$ predictors in $\mathcal{M}_1$ and not in $\mathcal{M}_0$ are simultanously zero, we have
+
+
+$$
+\frac{(\text{RSS}_0-\text{RSS}_1)/(K_1-K_0)}{\text{RSS}_1/(n - K_1 - 1)} \sim F(K_1 - K_0, n-K_1-1).
+$$
+
+## Model comparison {.smaller}
+
+- The results of the null hypothesis test that $R^2=0$ can be obtained in numerous ways, bu the easiest is to use the generic `anova` function where we compare `model_1` against `model_0`.  
+
+```{r}
+# Specify models
+model_0 <- lm(log_rt ~ 1, data = blomkvist)
+model_1 <- lm(log_rt ~ sex, data = blomkvist)
+```
+
+```{r}
+# Compare models
+anova(model_0, model_1)
+```
+
+
+
+
+## References
+
+<style>
+slides > slide { overflow: scroll; }
+slides > slide:not(.nobackground):after {
+  content: '';
+}
+</style>
+
+

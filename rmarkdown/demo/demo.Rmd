@@ -1,0 +1,61 @@
+---
+title: "My First RMarkdown Document"
+author: "Jane Bloggs"
+date: "January 9, 2023"
+output: pdf_document
+editor_options: 
+  chunk_output_type: console
+bibliography: refs.bib
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(message = FALSE,
+                      warning = FALSE,
+                      echo = FALSE)
+```
+
+
+```{r}
+library(tidyverse)
+library(knitr)
+```
+
+Hello world!
+```{r, echo = FALSE}
+kable(head(ToothGrowth))
+```
+
+
+# Load up data
+
+```{r scatterplot, out.width="0.75\\textwidth", fig.align='center', fig.cap="This is a scatterplot of trustworthy against attractive."}
+data_df <- read_csv("http://data.ntupsychology.net/faithfulfaces.csv")
+
+ggplot(data_df, aes(attractive, trustworthy)) +
+  geom_point() +
+  theme_classic()
+
+```
+
+As we see in Figure \ref{fig:scatterplot}.
+
+# Analysis
+
+```{r, echo=T}
+M <- lm(trustworthy ~ attractive, data = data_df)
+```
+
+```{r}
+kable(summary(M)$coefficients, digits = 2)
+```
+
+The $R^2$ is `r round(summary(M)$r.squared, 2)`.
+
+$$
+f(x) = \frac{\tau^\prime}{\sqrt{2\pi}} e^{-(\tau^\prime)^2(x-\mu)^2/2}
+$$
+
+As shown in @cartwright1991planning, 
+
+# References
+

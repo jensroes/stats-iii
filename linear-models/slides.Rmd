@@ -1,0 +1,1516 @@
+---
+title: 'Normal linear models'
+author: "Jens Roeser"
+output: 
+  ioslides_presentation:
+    incremental: false
+    transition: slower
+    widescreen: true
+    css: ../slides.css
+    logo: ../gfx/ntu.png
+bibliography      : ["../references.bib"]
+
+---
+
+```{=html}
+<style>
+
+slides > slide.backdrop {
+  background: white;
+}
+
+.gdbar img {
+  width: 240px !important;
+  height: 54px !important;
+  margin: 8px 8px;
+  position: absolute;
+}
+
+.gdbar {
+  width: 350px !important;
+  height: 70px !important;
+}
+
+slides > slide:not(.nobackground):before {
+  width: 128px;
+  height: 33px;
+  background-size: 100px 30px;
+}
+
+.smalltable .table{
+  font-size: 18px;
+}
+
+pre {
+  font-size: 15px;
+}
+</style>
+```
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, eval = TRUE, message = FALSE, comment=NA)
+options("kableExtra.html.bsTable" = T, digits = 3)
+options(pillar.print_min = 5, pillar.print_max = 6)
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(patchwork)
+theme_set(theme_bw(base_size = 18) +
+            theme(legend.position = "top", 
+                  legend.justification = "right",
+                  panel.grid = element_blank()))
+```
+
+
+## Regression models {.smaller}
+
+<div style="float: left; width: 50%;">
+- Often introduced as fitting lines to points.
+- Limited perspective that makes more complex regression models, like generalised linear models, hard to understand.
+- Backbone of statistical modelling 
+- For multiple / simple linear regressions, t-tests, ANOVAs, ANCOVAs, MANCOVAs, time series models
+- Basis for path analysis, structural equation models, factor analysis
+- Extension to generalized linear models: logistic regression for categorical data and count models such as poisson and negative binomial
+- Generalised further to multilevel, aka hierarchical / mixed-effects modes
+- Even nonlinear models: linear combination of nonlinear basis functions
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+```{r echo = F, out.width="100%"}
+n <- 20
+beta_0 <- 50
+beta_1 <- 6
+sigma <- 5
+sim <- tibble(id = 1:n) %>%
+    mutate(x = sample(0:5, size = n, replace = T),
+           e = rnorm(n, mean = 0, sd = sigma)) %>% 
+    mutate(y = beta_0 + beta_1 * x + e) %>%
+  select(id, x, y)
+
+ggplot(data =sim, aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = F, colour = "red") +
+  theme(axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank())
+```
+
+</div>
+
+## Regression models {.smaller}
+
+- Simply put, a regression model is a model of how the probability distribution of one variable, known as the *outcome variable* varies as a function of other variables, known as the *explanatory* or *predictor variables*.
+- The most common or basic type of regression models is the normal linear model.
+- In normal linear models, we assume that the outcome variable is normally distributed and that its mean varies linearly with changes in a set of predictor variables.
+- By understanding the normal linear model thoroughly, we can see how it can be extended to deal with data and problems beyond those that it is designed for.
+
+
+## Normal linear model
+
+Univariate distribution with $n$ independent observations of pairs
+
+$$
+(y_1,  \overrightarrow{x_1}), (y_2,  \overrightarrow{x_2}) \dots (y_i,  \overrightarrow{x_i}) \dots (y_n,  \overrightarrow{x_n}).
+$$
+
+
+$y_i$ is the observed value of a univariate *outcome* variable.
+
+We use probabilistic models to predict / explain / understand the outcome variable. 
+
+
+
+$$
+\overrightarrow{x_1} = [x_{1i}, x_{2i} \dots x_{ki}, \dots x_{Ki}]
+$$
+are a set of $K$ values used to explain $y_i$. $\overrightarrow{x_i}$ are a set of $K$ *predictor* / *explanatory* variables. 
+
+
+## Normal linear model
+
+Introducing $K$ in $x_{Ki}$ allows us to abbreviate the model equation.
+
+$$
+\beta_0 + \beta_1 + \beta_2 \dots \beta_k \dots \beta_K = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}
+$$
+
+## Normal linear model {.smaller}
+
+<div style="float: left; width: 35%;">
+
+$$
+y_i \sim N(\mu_i, \sigma^2)\\
+\mu_i = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}\\
+\text{for } i \in 1\dots n
+$$
+</div>
+
+<div style="float: right; width: 60%;">
+
+- $N$ is a univariate normal distribution with mean $\mu$ and variance $\sigma^2$.
+- Each observation $y_i$ is a sample from a normal distribution with an unknown mean $\mu$ and standard deviation $\sigma$
+- Value of $\mu_i$ is a deterministic (i.e. "$=$") linear function of the values of the $K$ predictor variables.
+- Probabilistic model (i.e. "$\sim$") of $y_1 \dots y_n$ conditional on $\overrightarrow{x_1}\dots\overrightarrow{x_n}$, $\overrightarrow{\beta} = \beta_0, \beta_1\dots\beta_K$, and $\sigma$
+- Which ones do we know and which ones must be inferred using statistical inference?  
+</div>
+
+
+## Normal linear model {.smaller}
+
+<div style="float: left; width: 35%;">
+
+$$
+y_i \sim N(\mu_i, \sigma^2)\\
+\mu_i = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}\\
+\text{for } i \in 1\dots n
+$$
+</div>
+
+<div style="float: right; width: 60%;">
+
+- For every hypothetically possible value of the $K$ predictor variables, i.e. $\overrightarrow{x_{i'}}$,
+there is a corresponding mean $\mu_{i'}$, i.e. $\mu_{i'} = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki'}$
+- If we change $x_{ki'}$ by $\Delta_{k'}$, then $\mu_{i'}$ changes by $\beta_k\Delta_k$.
+
+</div>
+
+## Simulation
+
+<div style="float: left; width: 45%;">
+
+- `rnorm` generates unimodal, symmetrically distributed values.
+- `r` in `rnorm` = random; `norm` = normal
+
+```{r}
+# Generate data
+x <- rnorm(n = 10, mean = 500, sd = 10)
+```
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+```{r echo = F, out.width="100%"}
+ggplot(data = NULL, aes(x = x)) +
+  geom_histogram() +
+  coord_cartesian(xlim = c(450, 550),
+                  ylim = c(0, 100))
+```
+</div>
+
+
+## Simulation
+
+<div style="float: left; width: 45%;">
+
+- `rnorm` generates unimodal, symmetrically distributed values.
+- `r` in `rnorm` = random; `norm` = normal
+
+```{r}
+# Generate data
+x <- rnorm(n = 100, mean = 500, sd = 10)
+```
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+```{r echo = F, out.width="100%"}
+ggplot(data = NULL, aes(x = x)) +
+  geom_histogram() +
+  coord_cartesian(xlim = c(450, 550),
+                  ylim = c(0, 100))
+```
+</div>
+
+
+## Simulation
+
+<div style="float: left; width: 45%;">
+
+- `rnorm` generates unimodal, symmetrically distributed values.
+- `r` in `rnorm` = random; `norm` = normal
+
+```{r}
+# Generate data
+x <- rnorm(n = 1000, mean = 500, sd = 10)
+```
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+```{r echo = F, out.width="100%"}
+ggplot(data = NULL, aes(x = x)) +
+  geom_histogram() +
+  coord_cartesian(xlim = c(450, 550),
+                  ylim = c(0, 100))
+```
+
+
+
+## Simulation
+
+```{r}
+# Set parameter values
+n <- 1000
+beta_0 <- 600 
+beta_1 <- 30
+sigma <- 50
+```
+
+
+```{r}
+# Generate data
+sim_data <- tibble(beta_0 = rnorm(n = n/2, mean = beta_0, sd = sigma),
+                   beta_1 = rnorm(n = n/2, mean = beta_0 + beta_1, sd = sigma)) 
+# Preview data
+glimpse(sim_data)
+```
+
+## Simulation
+
+```{r}
+# Set parameter values
+n <- 1000
+beta_0 <- 600 
+beta_1 <- 30
+sigma <- 50
+```
+
+```{r}
+# Change data format
+sim_data <- pivot_longer(sim_data, cols = c(beta_0, beta_1), names_to = "mu", values_to = "outcome")
+# Preview data
+glimpse(sim_data)
+```
+
+
+## Simulation
+
+```{r}
+# Set parameter values
+n <- 1000
+beta_0 <- 600 
+beta_1 <- 30
+sigma <- 50
+```
+
+```{r}
+# Preview data
+glimpse(sim_data)
+# Normal linear model of simulated data
+model <- lm(outcome ~ mu, data = sim_data)
+```
+
+
+## Simulation
+
+<div style="float: left; width: 35%;">
+
+```{r}
+# Set parameter values
+n <- 1000
+beta_0 <- 600 
+beta_1 <- 30
+sigma <- 50
+```
+
+```{r}
+# Model coefficients
+coef(model)
+```
+
+```{r}
+# Standard deviation
+sigma(model)
+```
+
+
+</div>
+
+<div style="float: right; width: 55%;">
+
+```{r echo = F, out.width="100%"}
+emmeans::emmeans(model, specs = "mu") %>% 
+  as.tibble() %>% 
+  ggplot(aes(x = mu, 
+             y = emmean,
+             ymin = lower.CL,
+             ymax = upper.CL)) +
+  geom_pointrange() +
+  coord_cartesian(ylim = c(570, 660)) +
+  scale_y_continuous(breaks = seq(500, 700, 10)) +
+  labs(y = "Estimated means with 95% CIs")
+```
+
+</div>
+
+## Simulation: equality of variance
+
+<div style="float: left; width: 35%;">
+
+```{r}
+# Set parameter values
+n <- 1000
+beta_0 <- 600 
+beta_1 <- 30
+sigma <- 150
+```
+
+```{r echo = F}
+sim_data <- tibble(beta_0 = rnorm(n = n/2, mean = beta_0, sd = sigma),
+                   beta_1 = rnorm(n = n/2, mean = beta_0 + beta_1, sd = sigma)) %>% 
+  pivot_longer(cols = c(beta_0, beta_1), names_to = "mu", values_to = "outcome")
+```
+
+```{r echo = F}
+# Normal linear model of simulated data
+model <- lm(outcome ~ mu, data = sim_data)
+```
+
+
+```{r}
+# Model coefficients
+coef(model)
+```
+
+
+```{r}
+# Standard deviation
+sigma(model)
+```
+
+</div>
+
+<div style="float: right; width: 55%;">
+
+```{r echo = F, out.width="100%"}
+emmeans::emmeans(model, specs = "mu") %>% 
+  as.tibble() %>% 
+  ggplot(aes(x = mu, 
+             y = emmean,
+             ymin = lower.CL,
+             ymax = upper.CL)) +
+  geom_pointrange() +
+  coord_cartesian(ylim = c(570, 660)) +
+  scale_y_continuous(breaks = seq(500, 700, 10)) +
+  labs(y = "Estimated means with 95% CIs")
+```
+
+</div>
+
+
+
+```{r echo = F}
+# Set parameter values
+n <- 1000
+beta_0 <- 600 
+beta_1 <- 30
+sigma <- 50
+
+sim_data <- tibble(beta_0 = rnorm(n = n/2, mean = beta_0, sd = sigma),
+                   beta_1 = rnorm(n = n/2, mean = beta_0 + beta_1, sd = sigma)) %>% 
+  pivot_longer(cols = c(beta_0, beta_1), names_to = "mu", values_to = "outcome")
+
+plot_sim <- ggplot(data = sim_data, aes(x = outcome, colour = mu, fill = mu)) +
+  geom_histogram(position = "dodge") +
+  scale_colour_viridis_d(end = .6) +
+  scale_fill_viridis_d(end = .6) 
+```
+
+
+## Real data {.smaller}
+
+<div style="float: left; width: 45%;">
+
+- In real life we don't know the true parameter values as we do in simulations.
+- We can use linear models to estimate parameter values from the data.
+- Maximum likelihood estimation: for which set of parameter values are the data most likely.
+- We also don't know what underlying process generates our real data.
+- For the simulated data we know that the process is a normal distribution because `rnorm` samples normally distributed data.
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+```{r echo = F, out.width="100%", fig.height=7}
+plot_sim / plot_spacer()
+```
+
+</div>
+
+
+## Real data {.smaller}
+
+<div style="float: left; width: 50%;">
+
+- Observed data are by-participant means, meaning the central limit theorem applies.
+- Yet, reaction times are notoriously skewed [cause they have lower but no upper bound; see @baa08book] 
+- Sometimes even simulated data don't appear normal distribution because the sample is too small.
+
+```{r eval = F}
+blomkvist <- read_csv("../data/blomkvist.csv") %>% 
+  select(id, sex, rt = rt_hand_d)
+glimpse(blomkvist)
+```
+
+```{r echo = F}
+blomkvist <- read_csv("../data/blomkvist.csv") %>% 
+    select(id, sex, rt = rt_hand_d)
+glimpse(blomkvist, width = 50)
+```
+
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+
+```{r echo = F}
+plot_blomkvist <- ggplot(data = blomkvist, aes(x = rt, colour = sex, fill = sex)) +
+  geom_histogram(position = "dodge") +
+  coord_cartesian(xlim = c(280, 1600),
+                  ylim = c(0, 25)) +
+  scale_x_continuous(breaks = seq(100, 2000, 200)) +
+  scale_colour_viridis_d(end = .6) +
+  scale_fill_viridis_d(end = .6) 
+
+```
+
+```{r echo = F, out.width="100%", fig.height=7}
+plot_sim / plot_blomkvist
+```
+
+</div>
+
+
+
+## Real data {.smaller}
+
+<div style="float: left; width: 50%;">
+
+- Observed data are by-participant means, meaning the central limit theorem applies.
+- Yet, reaction times are notoriously skewed [cause they have lower but no upper bound; see @baa08book] 
+- Sometimes even simulated data don't appear normal distribution because the sample is too small.
+
+
+```{r eval = F}
+blomkvist <- read_csv("../data/blomkvist.csv") %>% 
+  select(id, sex, rt = rt_hand_d) %>% 
+  mutate(log_rt = log(rt))
+glimpse(blomkvist)
+```
+
+```{r echo = F}
+blomkvist <- read_csv("../data/blomkvist.csv") %>% 
+  select(id, sex, rt = rt_hand_d) %>% 
+  mutate(log_rt = log(rt))
+glimpse(blomkvist, width = 50)
+```
+
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+
+
+```{r echo = F}
+log_blomkvist <- ggplot(data = blomkvist, aes(x = log_rt, colour = sex, fill = sex)) +
+  geom_histogram(position = "dodge") +
+  scale_x_continuous(breaks = seq(5, 8, .25)) +
+  scale_colour_viridis_d(end = .6) +
+  scale_fill_viridis_d(end = .6)
+
+```
+
+```{r echo = F, out.width="100%", fig.height=7}
+plot_blomkvist / log_blomkvist + plot_layout(guides = "collect")
+```
+
+</div>
+
+
+## Real data {.smaller}
+
+<div style="float: left; width: 50%;">
+- Data are unimodal, roughly normal distributed (there is some positive skew).
+- Variance is roughly the same in both groups.
+- There seem to be more longer rts for males (?).
+- We assume that the $\text{log}(rt)$ that we denote $y_1, y_2\dots y_n$ are sampled from a normal distribution with a fixed and unknown mean $\mu$ ans standard deviation $\sigma$.
+
+$$
+y_i \sim N(\mu_i, \sigma^2), \text{ for } i \in 1\dots n.
+$$
+
+- Predictor variable sex is denoted as $x_1, x_2, \dots x_n$.
+
+$$
+\mu_i = \beta_0 + \beta_1 \cdot x_i
+$$
+
+- where $x_i$ takes on $0$ for females and $1$ for males (because "f" is before "m" in the alphabet).
+
+$$
+x_i = \left\{ 
+\begin{array}{ll}
+0, \text{ if sex}_i = \texttt{female}\\
+1, \text{ if sex}_i = \texttt{male}
+
+\end{array}
+\right.
+$$
+
+- For females $\mu_i = \beta_0 + \beta_1 \cdot 0 = \beta_0$ and for males $\mu_i = \beta_0 + \beta_1 \cdot 1 = \beta_0 + \beta_1$, so $\beta_1$ gives the difference in the averages of the distribution of rts.
+
+
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+```{r echo = F, out.width="100%", fig.height=7}
+log_blomkvist +
+  facet_wrap(~sex, nrow = 2) +
+  theme(strip.background = element_blank(),
+        strip.text = element_blank())
+```
+
+</div>
+
+## Compare
+
+
+<div style="float: left; width: 45%;">
+
+```{r eval = F}
+# Set parameter values
+n <- 100
+beta_0 <- 600 
+beta_1 <- 30
+sigma <- 50
+```
+
+```{r eval = F, echo = F}
+# Generate data
+sim_data <- tibble(beta_0 = rnorm(n = n/2, mean = beta_0, sd = sigma),
+                   beta_1 = rnorm(n = n/2, mean = beta_0 + beta_1, sd = sigma)) 
+
+```
+
+```{r eval = F}
+# Specify model
+model <- lm(outcome ~ mu, data = sim_data)
+```
+
+```{r}
+# Model coefficients
+coef(model)
+```
+
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+```{r}
+# Load and transform data
+blomkvist <- read_csv("../data/blomkvist.csv") %>% 
+  select(id, sex, rt = rt_hand_d) %>% 
+  mutate(log_rt = log(rt))
+```
+
+```{r}
+# Specify model
+model <- lm(log_rt ~ sex, data = blomkvist)
+```
+
+```{r}
+# Model coefficients
+coef(model)
+```
+
+
+</div>
+
+## Interpreting coeffcients {.smaller}
+
+
+<div style="float: left; width: 47%;">
+
+- Log transformation: slope is no longer additive (linear scale) but multiplicative (exponential scale)
+
+```{r}
+# Specify model
+model <- lm(log_rt ~ sex, data = blomkvist)
+# Model coefficients
+(coefs <- as.vector(coef(model)))
+```
+
+- I.e. rt difference isn't $\beta_0 + \beta_1$ but $\beta_0 \cdot \beta_1$
+- rt is $\beta_1$ times shorter / longer.
+- Intercept $\beta_0$ is the average for females and slope $\beta_1$ is difference for males.
+
+
+</div>
+
+<div style="float: right; width: 47%;">
+
+
+```{r}
+# Converting coefficients to msecs
+intercept <- coefs[1]
+slope <- coefs[2]
+```
+
+- Exponentional function `exp` can be used to un-log coefficients.
+
+```{r}
+exp(intercept) # female group in msecs
+```
+
+```{r}
+exp(intercept + slope) # male group in msecs
+```
+
+
+```{r}
+exp(intercept + slope) - exp(intercept) 
+```
+
+
+
+</div>
+
+
+
+
+## Interpreting coeffcients {.smaller}
+
+
+<div style="float: left; width: 47%;">
+
+- According to the model, for any given sex $x'$, the corresponding distribution of rts is normally distributed with a mean $\mu' = \beta_0 + \beta_1 \cdot x'$ and standard deviation $\sigma$.
+
+```{r}
+coef(model)
+```
+
+```{r}
+exp(intercept) # female group in msecs
+```
+
+
+
+</div>
+
+<div style="float: right; width: 47%;">
+
+- If sex changes by $\Delta_x$, the mean of the corresponding normal distribution over rts changes by
+exactly $\beta_1\Delta_x$.
+- This fact entails that if sex changes by exactly $\Delta_x=1$, the mean of the corresponding normal distribution over rts changes by exactly $\beta_1$.
+
+
+```{r}
+exp(intercept + slope) - exp(intercept) 
+```
+
+
+
+</div>
+
+
+
+
+## Contrast coding {.smaller}
+
+- Change contrast coding so intercept represents population average and slope shows difference between groups.
+
+
+<div style="float: left; width: 35%;">
+
+```{r echo = F}
+# Coefficients from earlier
+#exp(intercept); exp(intercept + slope) - exp(intercept)
+```
+
+```{r}
+coef(model)
+```
+
+
+
+```{r echo=F}
+blomkvist <- mutate(blomkvist, across(sex, factor))
+```
+
+
+```{r}
+# Default: treatment contrast
+contrasts(blomkvist$sex)
+```
+
+
+</div>
+
+<div style="float: right; width: 56%;">
+
+```{r}
+# Sum contrast
+contrasts(blomkvist$sex) <- c(-.5, .5)
+colnames(contrasts(blomkvist$sex)) <- ": female vs male"
+```
+
+```{r echo =F}
+contrasts(blomkvist$sex)
+```
+
+
+```{r}
+# Re-fit model with sum contrast
+model <- lm(log_rt ~ sex, data = blomkvist)
+coef(model)
+```
+
+```{r eval = F, echo = F}
+coefs <- as.vector(coef(model))
+intercept <- coefs[1]; slope <- coefs[2]
+
+exp(intercept) # overall average
+exp(intercept + slope) - exp(intercept) # difference 
+
+```
+
+</div>
+
+## Normal linear model of rts by sex and age {.smaller}
+
+<div style="float: left; width: 45%;">
+
+- We may also model how the distribution of rts varies as either, or both, sex and age.
+- In this figure, we see the density of rts for the different sexs, and the different terciles of age.
+- Denoting sexs by $x_{11},x_{12}\dots x_{1i}\dots x_{1n}$ and age by $x_{21},x_{22}\dots x_{2i}\dots x_{2n}$ the model is now
+
+$$
+y_i \sim N(\mu_i, \sigma^2)\\
+\mu_i = \beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i}.
+$$
+
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+```{r echo = F, out.width="100%", fig.height=7}
+# Load and transform data
+blomkvist <- read_csv("../data/blomkvist.csv") %>% 
+  select(id, sex, age, rt = rt_hand_d) %>% 
+  mutate(log_rt = log(rt),
+         age = cut(age, breaks = 3, labels = 1:3))
+
+ggplot(blomkvist, aes(x = log_rt, colour = sex, fill = sex)) +
+  geom_density(alpha = .5, show.legend = F) +
+  facet_grid(age ~ sex, labeller = label_both) +
+  scale_colour_viridis_d(end = .6) +
+  scale_fill_viridis_d(end = .6)
+```
+
+</div>
+
+
+## Normal linear model of rts by sex and age {.smaller}
+
+<div style="float: left; width: 45%;">
+
+- For any given combination of sex and age, we have a normal distribution over rts.
+- If the sex variable changes by one unit, when age is held constant, then the average value of the corresponding distribution of rts changes by $\beta_1$.
+- Conversely, if the age variable changes by one unit, when sex is held constant, then the average value of the corresponding distribution of rts changes by $\beta_2$.
+
+
+$$
+y_i \sim N(\mu_i, \sigma^2)\\
+\mu_i = \beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i}.
+$$
+
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+```{r echo = F, out.width="100%", fig.height=7}
+# Load and transform data
+blomkvist <- read_csv("../data/blomkvist.csv") %>% 
+  select(id, sex, age, rt = rt_hand_d) %>% 
+  mutate(log_rt = log(rt),
+         age = cut(age, breaks = 3, labels = 1:3))
+
+ggplot(blomkvist, aes(x = log_rt, colour = sex, fill = sex)) +
+  geom_density(alpha = .5, show.legend = F) +
+  facet_grid(age ~ sex, labeller = label_both) +
+  scale_colour_viridis_d(end = .6) +
+  scale_fill_viridis_d(end = .6)
+```
+
+</div>
+
+
+## Model fitting {.smaller}
+
+- If we assume the model
+
+
+$$
+y_i \sim N(\mu_i, \sigma^2) \text{, for } i \in 1\dots n\\ 
+\mu_i = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}
+$$
+
+we face the problem of inferring the values of $K+2$ unknowns $\beta_0, \beta_1\dots\beta_K$, and $\sigma$. 
+
+- In general in statistics, maximum likelihood estimation is a method by which we estimate the values of the unknown variables in a statistical model.
+- In the case of normal linear model, the maximum likelihood estimators of the $K + 2$ unknowns, which we can denote by
+
+$$
+\hat\beta_0,\hat\beta_1\dots\hat\beta_K,\hat\sigma,
+$$
+are the set of values $K+2$ unknown variables that make the observed data most probable.
+
+## Model fitting {.smaller}
+
+- The maximum likelihood values of the $K+1$ coefficients, $\hat\beta_0,\hat\beta_1\dots\hat\beta_K$, are those values of the $\beta_0,\beta_1\dots\beta_K$ variables that minimize the *residual sum of squares*
+
+$$
+\text{RSS} = \sum_{i=1}^n \mid y_i - \mu_i\mid^2,
+$$
+
+where $\mu_i$ is defined above.
+
+- Once we have $\hat\beta$, then the maximum likelihood estimate of $\sigma$, denoted as $\hat\sigma$ is:
+
+$$
+\hat\sigma = \sqrt{\frac{1}{n-K-1}\sum_{i=1}^n\mid y_i-\hat\mu_i\mid^2}.
+$$
+
+## Fitting a normal linear model using `lm` {.smaller}
+
+- Let's continue with the Blomkvist rt data.
+- For simplicity of explanation we will use the untransformed rts.
+
+
+```{r echo = F}
+blomkvist <- read_csv("../data/blomkvist.csv") %>% 
+  select(id, sex, age, rt = rt_hand_d) %>% 
+  mutate(log_rt = log(rt)) %>% 
+  drop_na()
+```
+
+
+```{r}
+model <- lm(rt ~ sex + age, data = blomkvist)
+```
+
+- Maximum likelihood estimates of $\beta_0$ (intercept) and $\beta_1$ (coefficient of sex) and $\beta_2$ (coefficent of age) are as follow:
+
+```{r}
+(coefs <- coef(model))
+```
+
+## Fitting a normal linear model using `lm` {.smaller}
+
+
+<div style="float: left; width: 42%;">
+
+- Maximum likelihood estimate of $\sigma$ is
+
+```{r}
+sigma(model)
+```
+
+- Using:
+
+$$
+\hat\sigma = \sqrt{\frac{1}{n-K-1}\sum_{i=1}^n\mid y_i-\hat\mu_i\mid^2}
+$$
+
+</div>
+
+<div style="float: right; width: 52%;">
+
+```{r}
+mutate(blomkvist, 
+       sex = recode(sex, female = 0, male = 1),
+       mu = coefs[1] + coefs[2]*sex + coefs[3]*age,
+       squared_diffs = (rt - mu)^2) %>% 
+summarise(sum_of_squres = sum(squared_diffs),
+          K = 2,
+          N = n(),
+          sigma_2 = 1 / (N-K-1) * sum_of_squres,
+          sigma = sqrt(sigma_2))
+```
+
+</div>
+
+## Hypothesis testing and confidence intervals
+
+- If $\beta_k$ is the *hypothesized* true value of the coefficient, then
+
+$$
+\frac{\hat\beta_k - \beta_k}{\hat{\text{se}}_k} \sim t_{n-K-1}, 
+$$
+- which tells us that if the true value of the coefficient was some hypothesized value $\beta_k$, then we expect the *t*-statistic to have a certain range of values with high probability.
+
+## Hypothesis testing and confidence intervals {.smaller}
+
+- We will test a hypothesis about the coefficient for sex in the model above.
+
+<div style="float: left; width: 47%;">
+
+```{r}
+# Extract the coefficients table from summary
+coefs <- summary(model)$coefficients
+# MLE for sex
+(beta_sex <- coefs['sexmale', 'Estimate'])
+```
+
+```{r}
+# Standard error
+(se_sex <- coefs['sexmale', 'Std. Error'])
+```
+
+</div>
+
+<div style="float: right; width: 47%;">
+
+- If we hypothesize the true value of the coefficient is exactly 1.0,
+then our *t*-statistic is
+
+```{r}
+(t <- (beta_sex - 1.0)/se_sex)
+```
+
+</div>
+
+
+$$
+\frac{\hat\beta_k - \beta_k}{\hat{\text{se}}_k} = \frac{-58.9 - 1.0}{18.5} = -3.24
+$$
+
+## *p*-values {.smaller}
+
+- The *p*-value for the hypothesis is the probability of getting a value *as or more extreme* than the absolute value of *t*-statistic in the *t*-distribution.
+- This is the area under the curve in the *t*-distribution that is as or
+more extreme than the absolute value of *t*-statistic.
+- It tells us how far into the tails of the distribution the *t*-statistic is.
+
+```{r}
+n <- nrow(blomkvist)
+K <- 2
+pt(abs(t), df = n - K - 1, lower.tail = FALSE) * 2
+```
+
+## Hypothesis testing and confidence intervals {.smaller}
+
+- *Null hypothesis significance testing*: we hypothesize the true value of the coefficient is exactly 0.0, then our *t*-statistic is
+
+$$
+\frac{\hat\beta_k - \beta_k}{\hat{\text{se}}_k} = \frac{-58.9 - 0.0}{18.5} = -3.19
+$$
+
+```{r}
+(t <- (beta_sex - 0.0)/se_sex)
+```
+
+```{r}
+n <- nrow(blomkvist)
+K <- 2
+pt(abs(t), df = n - K - 1, lower.tail = FALSE) * 2
+```
+
+
+## *p*-values {.smaller}
+
+- Calculate *t* and *p*-value for the coefficient for age under the asumption that the true value for $\beta_\text{age}$ is 0.0.
+- Verify your calculation using
+
+```{r}
+summary(model)$coefficients
+```
+
+## Confidence intervals {.smaller}
+
+- The set of all hypotheses that we do not rule out at the $p < 0.05$ level of significance is known as the 0.95 (or 95%) confidence interval.
+- Likewise, the set of all hypotheses that we do not rule out at the $p < 0.01$ level of significance is known as the 0.99 confidence interval, and so on.
+- In a normal linear model, the formula for the $1 - 2\epsilon$ confidence interval on coefficient $k$ is
+
+$$
+\hat\beta_k \pm \tau_{(1-\epsilon,\nu)} \cdot \hat{\text{se}}_k,
+$$
+where $\tau_{(1-\epsilon,\nu)}$ is value in a *t*-distribution with $\nu$ degrees of freedom below which lines $1-\epsilon$ of the area under the curve.
+
+
+## Confidence intervals {.smaller}
+
+- We can calculate $\tau$ using `qt`
+
+```{r}
+(tau <- qt(.975, df = n - K - 1))
+```
+
+We then obtain the confidence intervals as follows
+
+```{r}
+beta_sex + c(-1, 1) * se_sex * tau
+```
+
+- Verification:
+
+```{r}
+confint(model, parm = 'sexmale', level = .95)
+```
+
+
+## Predictions {.smaller}
+
+- Using $\hat\beta_0,\hat\beta_1\dots\hat\beta_K$ and $\hat\sigma^2$, then for any new vector of predictor variables $\overrightarrow{x}_{i'}$, the corresponding $y_i$ is now
+
+$$
+y_{i'} \sim N(\hat\mu_{i'}, \sigma^2)\\ 
+\hat\mu_{i'} = \hat\beta_0 + \sum_{k=1}^K \hat\beta_k \cdot x_{i'k}
+$$
+
+- To calculate $\hat\mu_{i'}$ for any given new vector of predictor variables $\overrightarrow{x}_{i'}$ use `predict` and related functions.
+
+```{r}
+rt_data_new <- tibble(sex = "female", age = 95)
+predict(model, newdata = rt_data_new) # in msecs
+```
+
+## Prediction confidence intervals {.smaller}
+
+- We can calculate confidence intervals for the predicted values of $\mu_{i'}$.
+- The $1-2\epsilon$ confidence interval for $\mu_{i'}$ is as follows:
+
+$$
+\hat\mu_{i'} \pm \tau_{(1-\epsilon,\nu)} \cdot \hat{\text{se}}_{\mu_{i'}}
+$$
+
+where $\hat{\text{se}}_{\mu_{i'}}$ is the standard error term that corresponds to $\hat\mu_{i'}$.
+
+- We can obtain the confidence intervals on $\hat\mu_{i'}$ by using the option `interval = 'confidence'` in the `predict` function.
+
+```{r}
+predict(model, interval = 'confidence', newdata = rt_data_new)
+```
+
+
+
+## Interactions and varying intercepts model {.smaller}
+
+- When we include `sex` as an explanatory variable in additional to a continuous predictor variable, the is as follows. 
+
+$$
+y_i \sim N(\mu_i, \sigma^2), \mu_i = \beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i}, \text{ for } i \in 1\dots n.
+$$
+
+- To implement this model using `lm` we would do the following.
+
+
+```{r}
+model_2 <- lm(log_rt ~ sex + age, data = blomkvist)
+coef(model_2)
+```
+
+## Interactions and varying intercepts model {.smaller}
+
+- Given that $x_{2i}$ takes that value of 0 when the gender is female and 1 when gender is male, this model can be written as follows.
+
+
+$$
+y_i \sim N(\mu_i, \sigma^2) \\
+\mu_i =  \left\{ 
+\begin{array}{ll}
+\beta_0 + \beta_2 \cdot x_{2i}, \text{ if sex}_i = \texttt{female}\\
+\beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i}, \text{ if sex}_i = \texttt{male}
+\end{array}
+\right.
+$$
+
+- This is a *varying intercepts* model.
+
+## Interactions and varying intercepts model {.smaller}
+
+```{r echo = F}
+model <- lm(log_rt ~ age, data = blomkvist)
+
+blomkvist$pred <- predict(model)
+blomkvist$resid <- residuals(model)
+
+plot <- ggplot(blomkvist, aes(x = age, y = pred) ) +
+  stat_smooth(method = "lm", size = 2, colour = "darkred") +
+  labs(y = "log rts", 
+       subtitle = bquote("y"[i]~"~"~"N("*mu["i"]*","~sigma^2*"),"~mu["i"] == beta[0]~+~beta["1"]~"*"~"x"["age"])) +
+  geom_point(aes(x = age, y = log(rt)), size = 1);plot
+
+```
+
+
+## Interactions and varying intercepts model {.smaller}
+
+```{r echo = F}
+model <- lm(log_rt ~ age + sex, data = blomkvist)
+
+blomkvist$pred <- predict(model)
+blomkvist$resid <- residuals(model)
+
+plot <- ggplot(blomkvist, aes(x = age, y = pred, colour = sex) ) +
+  stat_smooth(method = "lm", size = 2) +
+  labs(y = "log rts", 
+       subtitle = bquote("y"[i]~"~"~"N("*mu["i"]*","~sigma^2*"),"~mu["i"] == beta[0]~+~beta["1"]~"*"~"x"["age"]~+~beta["2"]~"*"~"x"["sex"])) +
+  geom_point(aes(x = age, y = log(rt), colour = sex), size = 1) +
+  scale_colour_viridis_d(end = .6) +
+  theme(legend.position = c(.45,.85),
+        legend.direction = "horizontal");plot
+
+```
+
+## Interactions and varying-slopes model {.smaller}
+
+
+- The varying-intercepts model is written as follows:
+
+$$
+y_i \sim N(\mu_i, \sigma^2), \mu_i = \beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i}, \text{ for } i \in 1\dots n.
+$$
+
+- The following is a varying intercepts and varying slopes model:
+
+$$
+y_i \sim N(\mu_i, \sigma^2),\\ 
+\mu_i = \beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i} + \underbrace{\beta_3 \cdot x_{1i} \cdot x_{2i}}_\text{interaction}
+$$
+- We effectively have a third predictor $x_{1i} \cdot x_{2i}$ that is the product of $x_{1i}$ and $x_{2i}$.
+
+
+## Interactions and varying-slopes model {.smaller}
+
+- Using `sex` and `age` as predictors, we can do the following to perform a varying-intercepts and varying-slopes model:
+
+```{r}
+model_3 <- lm(log_rt ~ sex + age + sex:age, data = blomkvist)
+```
+
+- Or slightly shorter:
+
+```{r}
+model_3 <- lm(log_rt ~ sex * age, data = blomkvist)
+```
+
+
+## Interactions and varying-slopes model {.smaller}
+
+
+<div style="float: left; width: 45%;">
+
+```{r echo = F, out.width="100%", fig.height=7}
+model <- lm(log_rt ~ age + sex, data = blomkvist)
+
+blomkvist$pred <- predict(model)
+blomkvist$resid <- residuals(model)
+
+plot <- ggplot(blomkvist, aes(x = age, y = pred, colour = sex) ) +
+  stat_smooth(method = "lm", size = 2) +
+  labs(y = "log rts", 
+       subtitle = bquote("y"[i]~"~"~"N("*mu["i"]*","~sigma^2*"),"~mu["i"] == beta[0]~+~beta["1"]~"*"~"x"["age"]~+~beta["2"]~"*"~"x"["sex"])) +
+  geom_point(aes(x = age, y = log(rt), colour = sex), size = 1) +
+  scale_colour_viridis_d(end = .6) +
+  theme(legend.position = c(.45,.9),
+        legend.direction = "horizontal",
+        plot.subtitle = element_text(size = 14));plot
+
+```
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+```{r echo = F, out.width="100%", fig.height=7}
+model <- lm(log_rt ~ age * sex, data = blomkvist)
+
+blomkvist$pred <- predict(model)
+blomkvist$resid <- residuals(model)
+
+plot <- ggplot(blomkvist, aes(x = age, y = pred, colour = sex) ) +
+  stat_smooth(method = "lm", size = 2) +
+  labs(y = "log rts", 
+       subtitle = bquote("y"[i]~"~"~"N("*mu["i"]*","~sigma^2*"),"~mu["i"] == beta[0]~+~beta["1"]~"*"~"x"["age"]~+~beta["2"]~"*"~"x"["sex"]~+~beta["3"]~"*"~"x"["sex"]~"*"~"x"["age"])) +
+  geom_point(aes(x = age, y = log(rt), colour = sex), size = 1) +
+  scale_colour_viridis_d(end = .6) +
+  theme(legend.position = c(.45,.9),
+        legend.direction = "horizontal",
+        plot.subtitle = element_text(size = 14));plot
+
+```
+
+</div>
+
+
+## Interactions and varying-slopes model {.smaller}
+
+
+<div style="float: left; width: 50%;">
+
+- For simplicity, lets start with untransformed rts.
+
+```{r}
+model_3 <- lm(rt ~ sex * age, data = blomkvist)
+```
+
+- From the varying-intercepts and varying-slopes model, the intercept terms for `female` and `male` are
+
+```{r}
+(betas <- coef(model_3))
+```
+
+
+```{r echo = F}
+betas <- as.vector(coef(model_3))
+```
+
+
+```{r}
+# females
+betas[1]
+```
+
+
+</div>
+
+<div style="float: right; width: 42%;">
+
+
+
+
+```{r}
+# males
+betas[1] + betas[2]
+```
+
+
+- The slope terms are as follows:
+
+```{r}
+# females
+betas[3]
+```
+
+
+```{r}
+# males
+betas[3] + betas[4]
+```
+
+</div>
+
+## Interactions and varying-slopes model {.smaller}
+
+```{r}
+model_3 <- lm(log_rt ~ sex * age, data = blomkvist)
+```
+
+- From the varying-intercepts and varying-slopes model, the intercept terms for `female` and `male` are
+
+<div style="float: left; width: 45%;">
+
+```{r}
+(betas <- coef(model_3))
+```
+
+```{r echo = F}
+betas <- as.vector(coef(model_3))
+```
+
+
+```{r}
+# females
+exp(betas[1]) 
+```
+
+
+```{r}
+# males
+exp(betas[1] + betas[2])
+```
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+- The slope terms are as follows:
+
+```{r}
+# females
+exp(betas[1] + betas[3]) - exp(betas[1])
+```
+
+
+```{r}
+# males
+exp(betas[1] + betas[3] + betas[4]) -
+  exp(betas[1])
+```
+
+</div>
+
+## Polychotomous predictors {.smaller}
+
+- We can also use categorical predictor variables that have more than two levels (as `sex` did), which can be referred to as polychotomous predictor variables.
+
+
+<div style="float: left; width: 55%;">
+
+
+```{r}
+# Load and pre-process data
+blomkvist <- read_csv("../data/blomkvist.csv") %>% 
+  select(id, sex, age, rt = rt_hand_d, smoker) %>% 
+  mutate(log_rt = log(rt)) %>% 
+  drop_na()
+```
+
+</div>
+
+<div style="float: right; width: 35%;">
+
+```{r}
+# Categories of smoker
+unique(blomkvist$smoker)
+```
+
+</div> 
+
+
+<div style="float: left; width: 100%;">
+
+- Using `smoker` as out single categorical predictor variable, the linear model would be as follows.
+
+$$
+y_i \sim N(\mu_i, \sigma^2), \mu_i = \beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i}, \text{ for } i \in 1\dots n.
+$$
+
+where $x_{1i}$, $x_{2i}$ are as follows.
+
+$$
+x_{1i}, x_{2i}
+ =  \left\{ 
+\begin{array}{ll}
+0,0 \text{ if smoker}_i = \texttt{former}\\
+1,0 \text{ if smoker}_i = \texttt{no}\\
+0,1 \text{ if smoker}_i = \texttt{yes}\\
+\end{array}
+\right.
+$$
+
+</div> 
+
+## Polychotomous predictors {.smaller}
+
+
+- Using `lm`, we would simply do as follows.
+
+```{r}
+model_smoker <- lm(log_rt ~ smoker, data = blomkvist)
+(betas <- coef(model_smoker))
+```
+
+
+```{r echo = F}
+betas <- as.vector(coef(model_smoker))
+```
+
+
+- The intercept term is the predicted average of the distribution of rt when `smoker` is `former`.
+
+```{r}
+exp(betas[1])
+```
+
+
+
+## Polychotomous predictors {.smaller}
+
+
+- Using `lm`, we would simply do as follows.
+
+```{r}
+model_smoker <- lm(log_rt ~ smoker, data = blomkvist)
+(betas <- coef(model_smoker))
+```
+
+
+
+```{r echo = F}
+betas <- as.vector(coef(model_smoker))
+```
+
+
+- The predicted mean of the weight distribution for `no`
+
+$$
+\hat\beta_0 + \hat\beta_1 \cdot 1 + \hat\beta_2 \cdot 0 
+$$
+
+
+
+
+```{r}
+exp(betas[1] + betas[2] * 1 + betas[3] * 0)
+```
+
+
+
+## Polychotomous predictors {.smaller}
+
+
+- Using `lm`, we would simply do as follows.
+
+```{r}
+model_smoker <- lm(log_rt ~ smoker, data = blomkvist)
+(betas <- coef(model_smoker))
+```
+
+
+
+```{r echo = F}
+betas <- as.vector(coef(model_smoker))
+```
+
+
+
+- When `smoker` is `yes`, the predicted mean of the rt distribution for smokers is 
+
+
+$$
+\hat\beta_0 + \hat\beta_1 \cdot 0 + \hat\beta_2 \cdot 1 
+$$
+
+```{r }
+exp(betas[1] + betas[2] * 0 + betas[3] * 1)
+```
+
+</div>
+
+
+## References
+
+<style>
+slides > slide { overflow: scroll; }
+slides > slide:not(.nobackground):after {
+  content: '';
+}
+</style>
+
+

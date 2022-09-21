@@ -1,0 +1,734 @@
+---
+title: 'Reproducible data analysis using RMarkdown documentation'
+author: "Jens Roeser"
+output: 
+  ioslides_presentation:
+    incremental: false
+    transition: slower
+    widescreen: true
+    css: ../slides.css
+bibliography      : ["../references.bib"]
+---
+
+<style>
+.forceBreak { -webkit-column-break-after: always; break-after: column; }
+
+slides > slide.backdrop {
+  background: white;
+}
+
+div.footnotes {
+  position: absolute;
+  bottom: 0;
+  margin-bottom: 15px;
+  width: 80%;
+  font-size: 0.6em;
+}
+
+pre {
+  font-size: 15px;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, eval = TRUE, message = FALSE, comment=NA)
+options("kableExtra.html.bsTable" = T, digits = 2)
+options(pillar.print_min = 5, pillar.print_max = 6)
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+```
+
+
+## Aims for today
+
+- Sorting out our RStudio working environment
+- Introducing the data I'll use in my sessions
+- Getting you ready to produce reproducible reports in RMarkdown
+
+
+## Download repository
+
+- Download: [github.com/jensroes/stats-iii](https://github.com/jensroes/stats-iii)
+- Click on: `Code` \> `Download ZIP` \> unzip directory on your machine.
+- Open project by double clicking on `stats-iii.Rproj`
+- `data/`: my scripts will read in data from here
+- `xxx/slides.Rmd`: these slides in RMarkdown format (`.html` format provided as well)
+
+
+## Example data set: @blomkvist2017reference 
+
+```{r fig.align='center', out.width="80%", echo = F}
+knitr::include_graphics("../gfx/plos.png")
+```
+
+- Age-related changes in cognitive performance through adolescence and adulthood in a real-world task.
+
+## Real-world task: StarCraft 2
+
+<div style="float: left; width: 45%;">
+
+```{r fig.align='left', out.width="80%", echo = F}
+knitr::include_graphics("../gfx/sc2b.jpeg")
+```
+
+- Real-time strategy video game
+- Nintendo Wii Balance Board
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+```{r fig.align='right', out.width="80%", echo = F}
+knitr::include_graphics("../gfx/sc2.jpeg")
+```
+
+```{r fig.align='right', out.width="80%", echo = F}
+knitr::include_graphics("../gfx/sc2c.jpeg")
+```
+
+</div>
+
+
+
+
+
+## Example data set: @blomkvist2017reference 
+
+<div style="float: left; width: 50%;">
+
+```{r eval = F}
+blomkvist <- read_csv("../data/blomkvist.csv")
+glimpse(blomkvist)
+```
+
+```{r echo = F}
+blomkvist <- read_csv("../data/blomkvist.csv")
+glimpse(blomkvist, width = 60)
+```
+</div>
+
+<div style="float: right; width: 45%;">
+
+- Average reaction time (`rt`) of dominant (`_d`) or non-dominant (`_nd`) `hand` or `foot` in msecs
+- `medicine`: number of drugs used daily
+
+</div>
+
+
+## Rules for reproducible data analysis!
+
+- Never change your data manually; document everything in code.
+  - Retrospective amendments made easy
+  - Documentation / reproducibility
+- Organized working environment
+  - `.Rproj` with one director per project with sub-directories for scripts, data, plots, etc
+  - Short scripts: less code with one clear purpose is always better (test is: does the name of your script suggest a specific or general purpose?)
+- Comment your code (`# Ceci n'est pas un comment!`)
+- Use RMarkdown for full reproducibility of your results.
+
+
+
+
+## How do you know you can trust someones published results? {.smaller}
+
+- Results are communicated through reports such as peer reviewed scientific articles.
+- Results should be reproducible! -- Are they?
+- Data and code should be made available to others. -- Is this enough though?
+- It will be difficult to relate code to figures, tables, numbers etc for people that where not directly involved in the analysis.
+- This is true when results were copied and pasted from the stats software.
+- Also manual generation of reports is error prone.
+
+
+## Why do our results need to be reproducible? {.smaller}
+
+<div style="float: left; width: 50%;">
+
+- Open Science Collaboration project led by Brian Nosek [@open2015estimating].
+- Aimed to replicate important findings in psychological research.
+- Main finding: 36% of those findings tested where replicated; only 23% for Social Psychology
+- Many reasons for why: small sample sizes, pressure to publish sensational results and fast.
+- Make Psychology Science Again: pre-registration, more replications, larger samples (power analysis), abandoning *p*-value significance testing, transparency (sharing data and fully reproducible analyses).
+
+</div>
+
+<div style="float: right; width: 40%;">
+```{r fig.align='right', out.width="100%", echo = F, eval = T}
+include_graphics("../gfx/rc.jpg")
+```
+
+</div>
+
+## A truely reproducible report {.smaller}
+
+<div style="float: left; width: 50%;">
+
+- Data, code and resulting document need be one unit going beyond how documents are traditionally written.
+- Coupling code, data, and text is based on the concept of *literate programming* [@knuth1984literate]: text and code are linked in one single file that can be processed by different programs to generate the documentation manual or the computer program.
+- This principle can be used to creating reproducible data analysis reports, sometimes known as *dynamic documents* [@xie2017dynamic].
+- RMarkdown is the best way of doing this using R (in combination of tools incl. *knitr*, *pandoc*, $\LaTeX$, et al.)
+
+</div>
+
+
+<div style="float: right; width: 40%;">
+
+```{r fig.align='right', out.width="90%", echo = F, eval = T}
+include_graphics("../gfx/markdown.png")
+```
+
+</div>
+
+
+
+
+## Why RMarkdown? {.smaller}
+
+<div style="float: left; width: 30%;">
+
+```{r fig.align='right', out.width="100%", echo = F, eval = T}
+include_graphics("../gfx/rmarkdown.png")
+```
+
+</div>
+
+<div style="float: right; width: 60%;">
+
+- Documentation of all analysis steps (for us and our readers)
+- Quickly updating and repeating analysis
+- Communication of analysis / results 
+- Producing texts, website, supplementary materials, APA-style manuscripts, slides
+- Easy cross referencing of tables and figures, citations 
+- Automatically compiling reference lists
+- Easy type-setting of equations
+
+</div>
+
+## Key concepts and tools {.smaller}
+
+<div style="float: left; width: 40%;">
+
+```{r fig.align='right', out.width="90%", echo = F, eval = T}
+include_graphics("../gfx/markdown.png")
+```
+
+</div>
+
+
+
+<div style="float: right; width: 50%;">
+
+
+What is RMarkdown?
+
+- Text file format, a script not unlike an R script.
+- Open, edit, run in RStudio like scripts.
+- RMarkdown are a mixture of *markdown* code and normal R code (and your data).
+- R code in RMarkdown documents occurs in R *chunks*, i.e. blocks of code or *inline* R code inside of Markdown code
+
+What is Markdown?
+
+- Minimal markup language.
+- Normal text and minimal syntax that instructs how text should be formatted.
+- Rendering into output documents in `.pdf`, `.html`, `.docx`, `.doc`
+- Rending is supported by **Knitr** and **Pandoc**
+
+</div>
+
+
+
+
+## Key concepts and tools {.smaller}
+
+<div style="float: left; width: 40%;">
+
+```{r fig.align='left', out.width="90%", echo = F, eval = T}
+include_graphics("../gfx/latex.png")
+```
+
+</div>
+
+<div style="float: right; width: 50%;">
+
+- Document preparation system for creating high quality technical and scientific documents especially when involving mathematical formulas and technical diagrams.
+- Great for cross referencing (citations, figure labels) and automatic generation of content tables, reference lists.
+- Widely used in statistics, computer science, physics
+- $\LaTeX$ documents are written in a `.tex` source code file and rendered to pdf
+
+</div>
+
+
+
+
+
+## Installation {.smaller}
+
+<div style="float: left; width: 40%;">
+
+- RStudio comes with necessary R packages `rmarkdown` and `knitr`
+- `rmarkdown` installed pandoc
+- To create pdf outputs, $\LaTeX$ must be installed which gives you access to a wide range of $\LaTeX$ tools which is handy for experienced users.
+- For the purpose of using $\LaTeX$ with RMarkdown, we only require the package `tinytex`
+
+
+</div>
+
+<div style="float: right; width: 50%;">
+
+```{r}
+"tidyverse" %in% rownames(installed.packages())
+```
+
+- If `tidyverse` is not installed, run
+
+```{r}
+install.packages("tidyverse")
+```
+
+
+```{r eval = F}
+install.packages("tinytex")
+tinytex::install_tinytex()
+```
+
+- Restart RStudio once completed and try
+
+```{r}
+tinytex:::is_tinytex()
+```
+
+</div>
+
+## Installation {.smaller}
+
+- Test that `rmarkdown` will render pdf documents using $\LaTeX$ with the following code:
+
+```{r eval = F}
+writeLines("Hello $x^2$", 'test.Rmd')
+rmarkdown::render("test.Rmd", output_format = "pdf_document")
+```
+
+- `writeLines` creates an `.Rmd` file named `text.Rmd`.
+- `rmarkdown::render` renders `.Rmd` as pdf document (via $\LaTeX$) named `test.pdf`.
+
+
+## Minimal RMarkdown example {.smaller}
+
+- Open `rmarkdown/examples/example.Rmd`
+- R *chunk*: try `CTRL+ALT+I` or `CMD+ALT+I` (upper case "i")
+- Two pieces of inline R code.
+- Remainder is plain Markdown.
+- `Knit > Knit to PDF` to compile `.Rmd` file to `.pdf`. Wow!!!
+- Notice how the code was interpreted / rendered in pdf.
+- Important: R code is executed in the order it appears in the document.
+- Other demos and examples are provided.
+
+## From the R-Studio menu ...
+
+- `File` > `New File` > `R Markdown`
+- Document (PDF, WORD, HTML)
+- Notice the YAML header between `---` (Y*AML* A*in’t* *a* M*arkup* L*anguag*e*)
+- YAML is a minimal markup language.
+- `output: pdf_document`: use pdfs for writing manuscripts    
+  - `output: word_document`
+  - `output: html_document`
+  
+## The setup-R chunk | set global options used by `knitr`
+
+```{r eval = F}
+
+ ```{r setup, echo=FALSE}
+  knitr::opts_chunk$set(message = F, # don't return messages
+                        warning = F, # don't return warnings
+                        comment = NA, # don't comment output
+                        echo = T, # display chunk (is default)
+                        eval = T, # evaluate chunk (is default)
+                        out.width = '45%',  # figure width
+                        fig.align='center') # figure alignment
+    ```
+
+```
+
+## The setup R chunk
+
+- Chunk label `setup` (optional): useful for file navigation and cross-referencing of *floating* figures and tables.
+- Try to always use unique labels for each R chunk.
+- Chunk configuration option `echo = FALSE`: don't display chunk
+
+```{r eval = F}
+    ```{r setup, echo=FALSE}
+```
+
+- `echo = TRUE` shows chunk. This is most frequently changed option because we don't always want to show all code but we still want it to live in the RMarkdown code.
+
+
+## Section headers
+
+```
+# This is a section header
+
+## This is a subsection header
+
+# This is another section header
+
+## This is another subsection header
+
+## This is a subsubsection header
+```
+
+
+## Load data
+
+- Create a chunk called `loaddata`
+- Inside that chunk load libraries needed: `library(tidyverse`
+- Load @blomkvist2017reference data in same chunk.
+
+```{r}
+blomkvist <- read_csv("../data/blomkvist.csv") %>% 
+  select(id, age, smoker, sex, rt = rt_hand_d) %>% 
+  drop_na()
+```
+
+- `../` depends on the location of your `.Rproj` file.
+
+
+## R chunk outputs
+
+- Create a chunk labeled `analysis`
+
+```{r}
+(model <- lm(rt ~ sex, data = blomkvist))
+```
+
+
+## $\LaTeX$ mathematical typesetting {.smaller}
+
+- Strings are parsed using $\LaTeX$ and typeset accordingly when used between `$` symbols for inline mode.
+- For example `$\beta$` is lower case $\beta$.
+- You can create subscripts using `_`: `$\beta_0$` is $\beta_0$ and using `{}` for more than one symbol as in `$\beta_{01}$` which is $\beta_{01}$
+- How would you write $\beta_{0_1}$?
+- Superscript is `^` as in `$\sigma^2$` which is $\sigma^2$.
+- How would you write $\sigma^{2^2}$?
+- How about $\sigma_e^2$
+
+## $\LaTeX$ mathematical typesetting {.smaller}
+
+- Longer example
+
+`If $\Phi = \phi_1, \phi_2 \ldots \phi_k \ldots \phi_k$, where each $0 \leq \phi_k \leq 1$,
+and $\sum_{k=1}^K \phi_k = 1$, then $\Phi$ is a probability mass function.`
+
+Renders
+
+If $\Phi = \phi_1, \phi_2 \ldots \phi_k \ldots \phi_k$, where each $0 \leq \phi_k \leq 1$,
+and $\sum_{k=1}^K \phi_k = 1$, then $\Phi$ is a probability mass function.
+
+- Try also `$\LaTeX$`.
+- Task: Write Einstein's famous formula for mass-energy equivalence.
+- For a list of $\LaTeX$ symboles [see page 19](https://now.ntu.ac.uk/d2l/le/content/887088/viewContent/9653013/View).
+
+## $\LaTeX$ mathematical typesetting {.smaller}
+
+- *Display* mode using `$$` as delimiters.
+
+```
+The probability of the observed data is as follows:
+
+$$
+\mathrm{P}(x_i \ldots x_n \vert \mu, \sigma^2)
+= \prod_{i=1}^n \mathrm{P}(x_i \vert \mu, \sigma^2),
+$$
+
+where $\mu$ and $\sigma$ are parameters.
+```
+
+Renders the following
+
+The probability of the observed data is as follows:
+$$
+\mathrm{P}(x_i \ldots x_n \vert \mu, \sigma^2)
+= \prod_{i=1}^n \mathrm{P}(x_i \vert \mu, \sigma^2),
+$$
+where $\mu$ and $\sigma$ are parameters.
+
+- Top tip: you can literally copy $\LaTeX$ for formulas from Wikipedia: find the formula for the Gaussian probability density function.
+
+
+## Figures {.smaller}
+
+- Create a new chunk (`CTRL+ALT+I`)
+- Label the chunk `scatterplot` 
+- Set `echo = F` cause we only need the figure in the plot.
+- Add a figure caption `fig.cap = "A scatterplot."` in the chunk configurations.
+- Create a histogram
+
+```{r eval = F}
+library(psyntur)
+scatterplot(x = age, y = rt, data = blomkvist)
+```
+
+- Or using `ggplot2` (cause we're aiming for the R black belt)
+
+```{r eval = F}
+ggplot(blomkvist, aes(x = age, y = rt)) +
+    geom_point() +
+    theme_classic()
+```
+
+- Try and change the default size to `out.width = 50%`.
+- Cross-reference figure using `\ref{fig:scatterplot}` in the text (for tables use `\ref{tab:descriptives}`). 
+- You might have noticed that the figure changed position. $\LaTeX$ is calling objects like figures and tables *floats* cause the placement depends on constraints such as whitespace on page, number of figures on page ...
+- Tip don't fine-tune the placement until you're done with your document.
+
+## Additional YAML header options
+
+```
+output:
+  pdf_document:
+    keep_tex: TRUE
+header-includes:
+- \usepackage{booktabs}
+```
+
+- Gives you access to a wide range of $\LaTeX$ type setting options.
+- For now, we just need `booktabs` to improve type setting.
+
+## Formatted tables {.smaller}
+
+- Reporting results in tables formatted to a high standard.
+- This format isn't good enough for papers:
+
+```{r}
+library(psyntur)
+(smoker_age <- describe(data = blomkvist, by = smoker, mean = mean(age), sd = sd(age)))
+```
+
+- For R black belts:
+
+```{r eval = F}
+smoker_age <- blomkvist %>% 
+  group_by(smoker) %>% 
+  summarise(across(age, list(mean = mean, 
+                             sd = sd), .names = "{.fn}"))
+```
+
+## Formatted tables {.smaller}
+
+- Try this in your RMarkdown to have a publication quality APA table.
+
+```{r eval = F}
+smoker_age %>% 
+  kable(format = 'latex',
+        booktabs = TRUE,
+        align = 'c',  # centre value in each column
+        caption = 'Descriptives of age by smoker.')
+```
+
+```{r eval = F}
+library(kableExtra)
+smoker_age %>% 
+  kable(format = 'latex',
+        booktabs = TRUE,
+        align = 'c', # centre value in each column
+        caption = 'Descriptives of age by smoker.') %>% 
+  kable_styling(position = 'center') # centre position of table
+```
+
+- Also label you table chunk `smoker` and cross-reference the table in the text like so `\ref{tab:smoker}`.
+
+
+## Display maths
+
+- Using $\LaTeX$'s `aligned` environment to align multiple mathematical statements.
+- We will get back to what this means.
+
+```
+$$
+\begin{aligned}
+  y_i &\sim N(\mu_i, \sigma^2),\\
+  \mu_i &= \beta_0 + \beta_1 \cdot x_i + beta_2 \cdot z_i
+\end
+$$
+```
+
+- The `&` is used to align the lines so that $\sim$ and $=$ are aligned.
+- $\\$ forces a line break.
+
+## Formatted inline R output {.smaller}
+
+```{r}
+# Fit the model and get the summary
+model <- lm(rt ~ sex, data = blomkvist)
+model_summary <- summary(model)
+```
+
+```{r}
+# Extract R^2
+r2 <- model_summary$r.sq
+```
+
+```{r eval=FALSE}
+The $R^2$ for this model is `r round(r2, 2)`.
+```
+
+## Formatted inline R output {.smaller}
+
+```{r}
+# Extract F statistic
+f_stat <- model_summary$fstatistic
+p_value <- pf(f_stat[1], f_stat[2], f_stat[3], lower.tail = FALSE)
+```
+
+
+```{r eval = FALSE}
+The model summary can be summarised like so $F(`r round(f_stat[2])`, `r round(f_stat[3])`) =
+`r round(f_stat[1],2)`$, $p `r format.pval(p_value, eps = 0.01)`$.
+```
+
+```{r}
+p <- c(0.05, 0.02, 0.011, 0.005, 0.001)
+format.pval(p, eps = 0.01)
+```
+
+
+
+## Bibliography and citations {.smaller}
+
+- Add to the YAML preamble:
+
+```{r eval = F}
+bibliography: refs.bib
+biblio-style: apalike
+```
+
+- At the end of your document create a section `# References`
+- Create a file called `refs.bib` (save in same working directory as your `.Rmd` file)
+- Get the citation for @blomkvist2017reference from Google Scholar and paste it into `refs.bib`.
+- Notice the citation *key* `blomkvist2017reference`.
+- Cite @blomkvist2017reference using `@blomkvist2017reference` and `[@blomkvist2017reference]`.
+- `.bib` entries have different types like `@book`, `@article`, `@incollection`
+
+
+## Some arithmetic operations and fractions {.smaller}
+
+<div style="float: left; width: 60%;">
+
+- `$x + y$`, `$x - y$`
+- Multiplication use either `$\cdot$` or `$\times$` to get $\cdot$ or $\times$, respectively.
+- Division: `$/$` or `$\div$` to get $/$ or $\div$, respectively, or `$\frac{1}{2}$` for $\frac{1}{2}$
+- `$\pm$` renders to $\pm$
+
+</div>
+
+<div style="float: right; width: 30%;">
+
+- Try the following
+- Sums
+
+```
+$$
+\sum x_i
+$$
+```
+
+```
+$$
+\sum_{i=1}^n x_i
+$$
+```
+- Products
+
+```
+$$
+\prod_{i=1}^n x_i
+$$
+```
+
+- Integrals
+
+```
+$$
+\int_{0}^1 f(x) dx
+$$
+```
+
+</div>
+
+## Some arithmetic operations and fractions {.smaller}
+
+- Roots for single digit `$\sqrt 2$` returns $\sqrt 2$
+- or for single digits and more `$\sqrt{24}$` returns $\sqrt{24}$
+- *n*-the root: `$\sqrt[3]{125}$` for the cubed root $\sqrt[3]{125}$
+
+- Formula for standard deviation:
+
+```
+$$
+  s = \sqrt{\frac{\sum^n_{i=1} (x_i - \bar{x})^2}{n-1}}
+$$
+```
+Returns
+
+$$
+s = \sqrt{\frac{\sum^n_{i=1} (x_i - \bar{x})^2}{n-1}}
+$$
+
+
+## For other formats ...
+
+```{r eval = FALSE}
+install.packages("rmdformats")
+```
+
+or 
+
+```{r eval = FALSE}
+install.packages("remotes")
+remotes::install_github("juba/rmdformats")
+```
+
+## From the R-Studio menu ...
+
+- `File` > `New File` > `R Markdown`
+- Document (PDF, WORD, HTML)
+- From template: 
+  - e.g. `readthedown` or `robobook` for documents
+  - `rmdshower::shower_presentations` for slides
+
+## Documents
+
+- Example: <https://rpubs.com/jensroes/765467>
+- Online sharing on RPubs ("Publish")
+- Create from template:
+  - `File` > `New File` > `R Markdown`
+
+## APA manuscripts using `papaja`
+
+- Example: <https://osf.io/vayhq/> published in @roeser2021modelling
+- Installation: <https://github.com/crsh/papaja>
+  - `File` > `New File` > `R Markdown`
+  - "APA article (6th edition)" using `papaja`
+- Template for APA article (7th edition)
+
+## The end
+
+- You will use RMarkdown for your class assignment.
+- Check out the [lecture notes](https://now.ntu.ac.uk/d2l/le/content/887088/viewContent/9653013/View) on RMarkdown.
+- For formatting tables using `kableExtra` check [here](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html)
+- Check the [`rmarkdown` website](https://rmarkdown.rstudio.com/lesson-1.html).  
+- And chapter 27 in ["R for Data Science"](https://r4ds.had.co.nz/r-markdown.html) [@wickham2016r]
+- What questions have you got?
+
+
+
+
+## References
+
+<style>
+slides > slide { overflow: scroll; }
+slides > slide:not(.nobackground):after {
+  content: '';
+}
+</style>
+
+
