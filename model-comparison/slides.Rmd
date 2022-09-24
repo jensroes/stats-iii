@@ -162,7 +162,208 @@ sigma(model)
 - Fitting the observed data is good but even better would be if it can accurately predict unobserved data.
 
 
-## Residuals
+## Probabilistic generative models {.smaller}
+
+- In any statistical analysis, we assume out data are drawn from some probability distribution.
+- This is that we mean by *statistical model*, a *probabilistic generative model*.
+- A model of the *statistical population*, which could also be described as the true generative model.
+- In our analysis, we aim to find a good, or good enough, model of the population.
+- Remember
+
+> "All models are wrong, but some are useful"
+>
+> George E.P. Box
+
+## Model evaluation
+
+- One way to evaluate a model is by asking if the data are compatible with the model.
+- Calculate the probability of the data according to the model.
+- If the probability of observing the data is higher in model $\mathcal{M}_0$ than in another $\mathcal{M}_1$, which model are the data more compatible with?
+- The probability of the data according to the model is the model's *likelihood*.
+
+
+## Example problem
+
+- Distribution of log rts from @blomkvist2017reference.
+
+```{r echo=F, out.width="100%"}
+ggplot(blomkvist, aes(x = log_rt)) +
+  geom_histogram()
+```
+
+## Probabilistic model
+
+- A possible model of log rt is the following
+
+$$
+y_i \sim N(\mu, \sigma^2)\\
+\text{for } i \in 1\dots n,
+$$
+where $y_i$ is the log rt of observation $i$.
+
+- This means we are modelling log rt as normally distributed with a mean $\mu$ and standard deviation $\sigma$, but we don't know the value of either of these parameters.
+
+## Model likelihood {.smaller}
+
+- Assuming values for $\mu$ and $\sigma$, what is the probability of the observed values of the log rt variable, $y_1, y_2, y_3\dots y_n$? 
+
+$$
+P(y_1\dots y_n\mid\mu, \sigma)
+$$
+
+- In this model, all $y$'s are conditionally independent of one another, so the joint probability is as follows:
+
+$$
+P(y_1\dots y_n\mid\mu, \sigma) = \prod_\text{i=1}^n P(y_i\mid \mu, \sigma).
+$$
+
+- We don't know the values of $\mu$ and $\sigma$, so we use their *maximum likelihood estimates*: $\hat\mu$ and $\hat\sigma$:
+
+$$
+P(y_1\dots y_n\mid\hat\mu, \hat\sigma) = \prod_\text{i=1}^n P(y_i\mid \hat\mu, \hat\sigma).
+$$
+
+## Model log likelihood
+
+- The join probability
+
+$$
+P(y_1\dots y_n\mid\mu, \sigma) = \prod_\text{i=1}^n P(y_i\mid \mu, \sigma).
+$$
+
+
+will be a very small number (as product of probabilities; called numeric underflow), so we usually calculate its logarithm:
+
+
+$$
+\text{log} \left( P(y_1\dots y_n\mid\mu, \sigma) \right) = \sum_\text{i=1}^n \text{log } P(y_i\mid \mu, \sigma),
+$$
+
+and with maximum likelihood estimators for the unknowns:
+
+$$
+\text{log } P(y_1\mid \hat\mu, \hat\sigma).
+$$
+
+## Model log likelihood: calculations
+
+```{r}
+model_0 <- lm(log_rt ~ 1, data = blomkvist)
+mu_hat <- coef(model_0) # MLE of mu
+sigma_hat <- sigma(model_0) # MLE of sigma
+```
+
+```{r}
+logp <- dnorm(blomkvist$log_rt, mean = mu_hat, sd = sigma_hat, log = TRUE)
+sum(logp)
+```
+
+```{r}
+logLik(model_0)
+```
+
+
+## Stepping it up a notch {.smaller}
+
+<div style="float: left; width: 45%;">
+
+```{r}
+select(blomkvist, id, log_rt, sex)
+```
+
+</div>
+
+<div style="float: right; width: 45%;">
+- Using the `sex` variable, the potential model of the log rt data is
+
+$$
+\begin{aligned}
+y_i &\sim N(\mu_i, \sigma^2)\text{ for } i \in 1\dots n,\\
+\mu_i&= \beta_0 + \beta_1 \cdot x_i,
+\end{aligned}
+$$
+where $y_i$ is the log rt and $x_i$ is `sex` on observation $i$.
+
+- We are modelling log rt as normally distributed around a mean that is a function of `sex`, and with a fixed variance $\sigma^2$.
+- Unknowns are $\beta_0,\beta_1,\sigma^2$.
+
+## Regression model likelihood {.smaller}
+
+- Assuming values for $\beta_0,\beta_1,\sigma$, what is the probability of the observed values of the log rt, $y_1, y_2, y_3\dots y_n$? 
+
+$$
+P(y_1\dots y_n\mid x_1\dots x_n,\beta_0,\beta_1,\sigma) = \prod_\text{i=1}^n P(y_i\mid x_i,\beta_0,\beta_1,\sigma).
+$$
+- The log likelihood of the model is
+
+$$
+\sum_\text{i=1}^n\text{ log} P(y_i\mid x_i,\beta_0,\beta_1,\sigma).
+$$
+- Again, we don't know $\beta_0,\beta_1,\sigma$, so we use their MLEs, $\hat\beta_0,\hat\beta_1,\hat\sigma$.
+
+</div>
+
+## Regression model log likelihood: calculation {.smaller}
+
+
+```{r}
+model_1 <- lm(log_rt ~ sex, data = blomkvist)
+mu_hat <- predict(model_1) # mu_hat = beta_0 + beta_1 * x
+sigma_hat <- sigma(model_1)
+```
+
+```{r}
+logp <- dnorm(blomkvist$log_rt, mean = mu_hat, sd = sigma_hat, log = TRUE)
+sum(logp)
+```
+
+```{r}
+logLik(model_1)
+```
+
+
+## Compare log likelihoods
+
+- Which model are the data more compatible with?
+
+<div style="float: left; width: 45%;">
+
+```{r}
+logLik(model_0) # L_0
+```
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+```{r}
+logLik(model_1) # L_1
+```
+
+</div>
+
+<div style="float: left; width: 100%;">
+
+- Including `sex` increased the log likelihood.
+- Let's denote these log likelihoods as log $\mathcal{L}_0$ and log $\mathcal{L}_1$.
+- The log of their ratio is 
+
+$$
+\begin{aligned}
+\text{log} \left(\frac{\mathcal{L}_1}{\mathcal{L}_0}\right)&=\text{log}\mathcal{L}_1-\text{log}\mathcal{L}_0,\\
+&=-13.3--17.6,\\
+&=4.3.
+\end{aligned}
+$$
+or
+
+$$
+\frac{\mathcal{L}_1}{\mathcal{L}_0} = \text{e}^{4.3} \approx 73.7
+$$
+
+</div>
+
+## Residuals: assessing the unexplained variance
 
 <div style="float: left; width: 45%;">
 
@@ -223,7 +424,7 @@ ggplot(data = sim, aes(x = x, y = predict(fake_model))) +
 </div>
 
 
-## Residuals
+## Residuals: assessing the unexplained variance
 
 
 <div style="float: left; width: 45%;">
@@ -241,7 +442,7 @@ plot <- ggplot(blomkvist, aes(x = age, y = pred, colour = sex) ) +
 </div>
 
 
-## Residuals {.smaller}
+## Residuals: assessing the unexplained variance {.smaller}
 
 <div style="float: left; width: 45%;">
 
@@ -262,7 +463,7 @@ plot <- plot + geom_segment(
 </div>
 
 
-## Residuals
+## Residuals: assessing the unexplained variance {.smaller}
 
 <div style="float: left; width: 45%;">
 
@@ -286,21 +487,165 @@ mutate(blomkvist,
 </div>
 
 
+## RSS: Residual sum of squares {.smaller}
+
+- The sum of squared residuals in normal linear models when using the maximum likelihood estimators is
+
+$$
+\begin{aligned}
+\text{RSS}&=\sum_\text{i=1}^n \mid y_i - (\hat\beta_0+\hat\beta_1\cdot x_i)\mid^2,\\
+&=\sum_\text{i=1}^n\mid y_i-\hat{y}_i\mid
+\end{aligned}
+$$
+
+```{r}
+residuals(model_1)[1:5]
+```
+
+```{r}
+y <- blomkvist$log_rt
+mu_hat <- predict(model_1)
+(y - mu_hat)[1:5]
+```
+
+
+## RSS: Residual sum of squares {.smaller}
+
+<div style="float: left; width: 45%;">
+
+```{r}
+# Specify models
+model_0 <- lm(log_rt ~ 1, data = blomkvist)
+as.vector(coef(model_0))
+```
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+```{r}
+# RSS: total of unexplained variance
+(rss <- sum(residuals(model_0)^2))
+```
+
+```{r}
+(tss <- ess + rss)
+```
+
+
+</div>
+
+<div style="float: left; width: 100%;">
+
+
+```{r echo = F, out.width="100%", fig.height=2.25}
+resid <- as.vector(residuals(model_0))
+y <- blomkvist$log_rt
+#as.vector(predict(model_0, newdata = blomkvist))
+
+y_plot <- ggplot(data = NULL, aes(x = y)) +
+  geom_histogram() +
+  labs(x = "y") +
+  theme_bw(base_size = 11) +
+  theme(axis.title.y = element_blank())
+
+resid_plot <- ggplot(data = NULL, aes(x = resid)) +
+  geom_histogram() +
+  theme_bw(base_size = 11) +
+  labs(x = bquote("residuals" == "y" - tilde("y"))) +
+  theme(axis.title.y = element_blank())
+
+resid_sqrt_plot <- ggplot(data = NULL, aes(x = resid^2)) +
+  geom_histogram() +
+  theme_bw(base_size = 11) +
+  labs(x = bquote("residuals"^2)) +
+  theme(axis.title.y = element_blank())
+
+y_plot + resid_plot + resid_sqrt_plot
+```
+
+</div>
+
+
+# Residual sum of squares and log likelihood
+
+- RSS is a measure of the model's lack of fit.
+- Log likelihood and RSS are related as follows:
+
+$$
+\text{log}\mathcal{L}=-\frac{n}{2}\left( \text{log}(2\pi)-\text{log}(n) + \text{log(RSS)}+1 \right)
+$$
+
+```{r}
+rss <- sum(residuals(model_0)^2)
+n <- nrow(blomkvist)
+-(n/2) * (log(2*pi) - log(n) + log(rss) + 1)
+```
+
+```{r}
+logLik(model_1)
+```
+
+- In two normal linear models of the same data, the differences in likelihood is determined only by differences in RSS.
+
+## Root mean square error
+
+- The larger the sample size, the larger the RSS.
+- An alternative to RSS as a measure of model fit is the square root of the mean of the squared residuals, aka. *root mean square error* (RMSE):
+
+$$
+\text{RMSE} = \sqrt{\frac{\text{RSS}}{n}},
+$$
+
+```{r}
+n <- nrow(blomkvist)
+rss <- sum(residuals(model_1)^2)
+sqrt(rss/n)
+```
+
+```{r}
+sqrt(mean(residuals(model_1)^2))
+```
+
+which is $\hat\sigma$
+
+```{r}
+sigma(model_0)
+```
+
+
+## Mean absolute error
+
+- Related to the root mean squared error is the mean absolute error (MAE), which is the mean of the absolute values of the residuals.
+
+$$
+\text{MAE} = \frac{\sum_\text{i=1}^n\mid y_i-\hat{y}_1\mid}{n}
+$$
+```{r}
+sum(abs(residuals(model_1))) / n
+```
+
+
+```{r}
+mean(abs(residuals(model_1)))
+```
+
+
 ## $R^2$ {.smaller}
 
 - Coefficient of determination: ability of a model to predict an outcome.
 
 $$
-\underbrace{\sum_{i=1}^n(y_i-\tilde{y})^2}_\text{TSS} = \underbrace{\sum_{i=1}^n(\hat\mu_i-\tilde{y})^2}_\text{ESS} + \underbrace{\sum_{i=1}^n(y_i-\hat\mu_i)^2}_\text{RSS}
+\underbrace{\sum_{i=1}^n(y_i-\bar{y})^2}_\text{TSS} = \underbrace{\sum_{i=1}^n(\hat\mu_i-\bar{y})^2}_\text{ESS} + \underbrace{\sum_{i=1}^n(y_i-\hat\mu_i)^2}_\text{RSS}
 $$
-<div style="float: left; width: 45%;">
+<div style="float: left; width: 40%;">
 
 - TSS: total sum of squares
 - ESS: explained sum of squares
 - RSS: residual sum of squares
 
 </div>
-<div style="float: left; width: 45%;">
+<div style="float: left; width: 50%;">
 
 - Proportion of the variability in the outcome variable due to changes in the predictors.
 
@@ -312,6 +657,41 @@ $$
 - $R^2$ gives the proportion of total variation due to variation in the predictor variables.
 
 </div>
+
+
+## ESS: Explained sum of squares {.smaller}
+
+<div style="float: left; width: 45%;">
+
+- $\mu_i = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}$
+
+```{r}
+# Specify models
+model_0 <- lm(log_rt ~ 1, data = blomkvist)
+```
+
+- $\mu_i = \beta_0$
+
+```{r}
+(mu <- as.vector(coef(model_0)))
+```
+
+- $\tilde{y} = \mu_i$
+
+```{r}
+(y_bar <- mean(blomkvist$log_rt))
+```
+
+
+```{r}
+# ESS: explained sum of squares
+(ess <- sum( mu - y_bar ))
+```
+
+
+
+
+
 
 ## Adjusted $R^2$ {.smaller}
 
@@ -500,14 +880,36 @@ gt <- patchwork::patchworkGrob(plot)
 gridExtra::grid.arrange(gt, left = "Brain volume (cc)", bottom = "Body mass (kg)")
 ```
 
+
+
+
 ## $R^2$ and Adjusted $R^2$ with `lm` {.smaller}
+
+```{r}
+# Specify models
+model_0 <- lm(log_rt ~ 1, data = blomkvist)
+model_1 <- lm(log_rt ~ sex, data = blomkvist)
+
+RSS_0 <- sum(residuals(model_0)^2)
+RSS_1 <- sum(residuals(model_1)^2)
+
+c(RSS_0, RSS_1)
+```
+
+```{r}
+(RSS_0 - RSS_1)/RSS_1
+```
+
+
+## $R^2$ and Adjusted $R^2$ with `lm` {.smaller}
+
 
 <div style="float: left; width: 55%;">
 
 ```{r}
 # Specify models
+model_0 <- lm(log_rt ~ 1, data = blomkvist)
 model_1 <- lm(log_rt ~ sex, data = blomkvist)
-model_2 <- lm(log_rt ~ sex + age, data = blomkvist)
 ```
 
 
@@ -515,8 +917,8 @@ model_2 <- lm(log_rt ~ sex + age, data = blomkvist)
 
 ```{r}
 # Generate model summary
+summary_model_0 <- summary(model_0)
 summary_model_1 <- summary(model_1)
-summary_model_2 <- summary(model_2)
 ```
 
 </div>
@@ -524,34 +926,72 @@ summary_model_2 <- summary(model_2)
 <div style="float: right; width: 35%;">
 
 ```{r}
+summary_model_0$r.squared
+```
+
+```{r}
 summary_model_1$r.squared
 ```
 
 ```{r}
-summary_model_2$r.squared
+summary_model_0$adj.r.squared
 ```
 
 ```{r}
 summary_model_1$adj.r.squared
 ```
 
+</div>
+
+
+## Calculating $R^2$ and $R_\text{Adj}^2$
+
 ```{r}
-summary_model_2$adj.r.squared
+# Extract the outcome variable
+y <- blomkvist %>% pull(log_rt)
+# Total sum of squares
+tss <- sum((y - mean(y))^2)
+# Residual sum of squares
+epsilon <- residuals(model_1)
+rss <- sum(epsilon^2)
+# R^2
+(rsq <- 1 - rss/tss)
+```
+- From before
+
+```{r}
+summary_model_1$r.squared
 ```
 
-</div>
+```{r}
+# Adjusted R^2
+n <- length(y)
+K <- 1 # number of predictors
+(adj_rsq <- 1 - rss/tss * (n-1)/(n-K-1))
+```
+```{r}
+summary_model_1$adj.r.squared
+```
+- Because $n \gg K$, the penalty term is (very) close to 1.0 and the adjustment is minimal.
+
+```{r}
+(n - 1) / (n - K - 1)
+```
+
 
 
 ## Model comparison {.smaller}
 
+- $R^2=0$ is only true if $\beta_1=\beta_2=\dots\beta_k=0$.
 - When all coefficients are simultaneously zero, we are essentially saying that the following two models are identical.
 
 $$
-\mathcal{M}_0: y_i \sim N(\hat\mu, \sigma^2), \hat\mu_i = \beta_0, \text{ for } i \in 1\dots n,\\
-\mathcal{M}_1: y_i \sim N(\hat\mu, \sigma^2), \hat\mu_i = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}, \text{ for } i \in 1\dots n,
-
-
+\begin{aligned}
+\mathcal{M}_0:& y_i \sim N(\hat\mu, \sigma^2), \hat\mu_i = \beta_0, \text{ for } i \in 1\dots n,\\
+\mathcal{M}_1:& y_i \sim N(\hat\mu, \sigma^2), \hat\mu_i = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}, \text{ for } i \in 1\dots n,
+\end{aligned}
 $$
+
 
 - The residual sums of squares for these two models can be denoted RSS$_0$ and RSS$_1$.
 - Under the null hypothesis that these two models are identical, and so the coefficients for all predictors are simultaneously zero, we have the following result:
@@ -573,8 +1013,18 @@ $$
 
 
 $$
+\begin{aligned}
+\text{proportional increase in error} &= \frac{\text{change in error (from } \mathcal{M}_0\text{ to }\mathcal{M}_1)}{\text{minimal error}}\\
+&= \frac{\text{RSS}_0-\text{RSS}_1}{\text{RSS}_1}
+\end{aligned}
+$$
+
+$$
 \frac{(\text{RSS}_0-\text{RSS}_1)/(K_1-K_0)}{\text{RSS}_1/(n - K_1 - 1)} \sim F(K_1 - K_0, n-K_1-1).
 $$
+- Nested normal linear models can be compared using F tests.
+
+
 
 ## Model comparison {.smaller}
 
@@ -591,7 +1041,260 @@ model_1 <- lm(log_rt ~ sex, data = blomkvist)
 anova(model_0, model_1)
 ```
 
+- `RSS` column are the TSS and RSS of model `model_1`.
 
+```{r}
+tss; rss
+```
+- TSS is RSS of `model_0` because in model with no predictors the variance of the outcome variable and the variance of the residuals are necessarily identical. 
+
+- ESS is the `Sum of Sq` and the difference of the `RSS` values.
+
+```{r}
+(ess <- tss - rss)
+```
+- `Df` and bottom value of `Res.Df` give us the degrees of freedom 
+
+```{r}
+c(K, n - K - 1)
+```
+
+by which `ess` and `rss` are divided for the F value (ratio).
+
+```{r}
+(f_stat <- (ess/K) / (rss/(n - K - 1)))
+```
+- *p*-value gives the probability of getting a results greater than this F statistic in an F distribution with $K$ and $n - K - 1$ degrees of freedom.
+
+- Cumulative distribution function of the F distribution `pf`
+
+```{r}
+pf(f_stat, K, n-K-1, lower.tail = FALSE)
+```
+
+
+## F-ratio
+
+$$
+\text{F} = \underbrace{\frac{\text{RSS}_0 - \text{RSS}_1}{\text{RSS}_1}}_\text{effect size} \cdot \underbrace{\frac{\text{df}_1}{\text{df}_0 -\text{df}_1}}_\text{sample size} = \frac{(\text{RSS}_0 - \text{RSS}_1)/(\text{df}_0 - \text{df}_1)}{\text{RSS}_1/\text{df}_1}
+$$
+
+where df$_1$ is $n - K_1 + 1$, where $K_1$ is the number of coefficients in $\mathcal{M}_1$ (predictors excluding intercept).
+
+## F-ratio
+
+```{r}
+# Dfs
+df_0 <- model_0$df.residual
+df_1 <- model_1$df.residual
+df_0 - df_1; df_1
+```
+
+```{r}
+# RSS
+rss_0 <- sum(residuals(model_0)^2)
+rss_1 <- sum(residuals(model_1)^2)
+```
+
+
+```{r}
+(rss_0 - rss_1)/(df_0 - df_1)
+```
+
+```{r}
+rss_1 / df_1
+```
+
+```{r}
+((rss_0 - rss_1)/(df_0 - df_1))/(rss_1/df_1)
+```
+
+
+## F distribution
+
+```{r}
+df1 <- K # Number of fixed effects
+df2 <- n - K - 1  
+F_grid <- seq(0, 10, .1) 
+p_values <- pf(q = F_grid, df1 = df1, df2 = df2, lower.tail = F)
+```
+
+```{r echo = F, fig.height=3}
+p <- ggplot(data = NULL, aes(x = F_grid, y = p_values)) +
+  geom_line() +
+  labs(x = "Theoretical F value",
+       y = "p value",
+       subtitle = bquote("F distribution for"~"df"[1] == .(df1)~"and df"[2] == .(df2)));p 
+```
+
+
+## F distribution
+
+```{r}
+df1 <- K # Number of fixed effects
+df2 <- n - K - 1  
+F_grid <- seq(0, 10, .1) 
+p_values <- pf(q = F_grid, df1 = df1, df2 = df2, lower.tail = F)
+```
+
+```{r echo = F, fig.height=3}
+label <- deparse(bquote(paste("F" == .(round(f_stat, 1)))))
+
+p2 <- p + geom_segment(aes(x = 8.2, y = .2, xend = f_stat, yend = 0.02),
+                  arrow = arrow(length = unit(0.35, "cm")),
+               colour = "red") +
+  geom_label(aes(x = 8, y = 0.3, label = label), parse = T); p2
+```
+
+## F distribution
+
+```{r}
+df1 <- K # Number of fixed effects
+df2 <- n - K - 1  
+F_grid <- seq(0, 10, .1) 
+p_values <- pf(q = F_grid, df1 = df1, df2 = df2, lower.tail = F)
+```
+
+```{r echo = F, fig.height=3}
+p_value <- pf(q = f_stat, df1 = df1, df2 = df2, lower.tail = F)
+label_2 <- deparse(bquote(paste("p" == .(round(p_value, 3)))))
+
+p2 + geom_hline(yintercept = p_value, colour = "red", linetype = "dashed") +
+  geom_label(aes(x = .65, y = 0.1, label = label_2), parse = T) 
+```
+
+## F distribution for varying df
+
+
+<div style="float: left; width: 45%;">
+```{r}
+# df1 <- K # Number of fixed effects
+df1 <- seq(1, 21, 3)
+df2 <- n - K - 1  
+F_grid <- seq(0, 5, .1) 
+```
+
+```{r echo = F, out.width="100%"}
+# Increase df1 as for more complex model
+data_df1 <- map_dfr(df1, ~pf(q = F_grid, df1 = .x, df2 = df2, lower.tail = F) %>% tibble(F_grid = F_grid, p = .) %>%  
+    mutate(df1 = .x)) 
+
+ggplot(data = data_df1, aes(x = F_grid, y = p, colour = factor(df1))) +
+  geom_line() +
+  labs(x = "Theoretical F value",
+       y = "p value",
+       colour = bquote("df"[1])) +
+  scale_colour_viridis_d() +
+  geom_hline(yintercept = 0.05, linetype = "dotted")
+
+```
+
+</div>
+<div style="float: right; width: 45%;">
+
+```{r}
+df1 <- K # Number of fixed effects
+#df2 <- n - K - 1  
+df2 <- seq(3, 300, 30)
+F_grid <- seq(0, 5, .1) 
+```
+
+```{r echo = F, out.width="100%"}
+# Increase df1 as for more complex model
+data_df2 <- map_dfr(df2, ~pf(q = F_grid, df1 = df1, df2 = .x, lower.tail = F) %>% tibble(F_grid = F_grid, p = .) %>%  
+    mutate(df2 = .x)) 
+
+ggplot(data = data_df2, aes(x = F_grid, y = p, colour = factor(df2))) +
+  geom_line() +
+  labs(x = "Theoretical F value",
+       y = "p value",
+       colour = bquote("df"[2])) +
+  scale_colour_viridis_d() +
+  geom_hline(yintercept = 0.05, linetype = "dotted")
+
+```
+
+</div>
+
+## Model comparison {.smaller}
+
+```{r}
+anova(model_0, model_1)
+```
+
+```{r}
+drop1(model_1, scope = ~ sex, test = 'F')
+```
+
+
+## Deviance information criterion (DIC)
+
+$$
+\text{DIC} = -2 \cdot \text{log} \hat{\mathcal{L}}
+$$
+
+where $\hat{\mathcal{L}}$ is the likelihood of the model using the MLEs.
+
+- *Lower* deviance indicates better model fit
+- Equivalent to RSS for generalised linear models.
+
+```{r}
+deviance(model_0)
+```
+
+
+```{r}
+rss_0
+```
+
+
+
+## Akaike information criterion (AIC)
+
+- Estimator of prediction error
+- Relative quality of statistical models for a given set of data
+- Similar to the decrease in $R^2$ when adding predictors, the log likelihood will always increase, even if the true value of the coefficient is zero.
+
+$$
+\text{AIC} = 2 \cdot K - 2 \cdot \text{log}(\hat{\mathcal{L}})
+$$
+
+where $K$ is the number of model parameters
+
+```{r}
+k <- 2 # beta_0, sigma^2
+(2 * K) - 2 * ll
+```
+
+```{r}
+AIC(model_0)
+```
+
+- Penalises models with more parameters to prevent overfitting.
+
+## Model comparison {.smaller}
+
+- What about the varying-intercepts and the varying-intercepts and varying-slopes model?
+
+```{r}
+# Specify models
+model_0 <- lm(log_rt ~ 1, data = blomkvist)
+model_1 <- lm(log_rt ~ sex, data = blomkvist)
+model_2 <- lm(log_rt ~ sex + age, data = blomkvist)
+model_3 <- lm(log_rt ~ sex * age, data = blomkvist)
+```
+
+```{r}
+# Compare models
+anova(model_0, model_1, model_2, model_3)
+```
+
+## Model comparison {.smaller}
+
+
+```{r}
+drop1(model_3, scope = ~ sex * age, test = 'F')
+```
 
 
 ## References

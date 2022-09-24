@@ -323,16 +323,18 @@ rmarkdown::render("test.Rmd", output_format = "pdf_document")
 - Important: R code is executed in the order it appears in the document.
 - Other demos and examples are provided.
 
+
 ## From the R-Studio menu ...
 
-- `File` > `New File` > `R Markdown`
+- Click on `File` > `New File` > `R Markdown`
 - Document (PDF, WORD, HTML)
-- Notice the YAML header between `---` (Y*AML* A*in’t* *a* M*arkup* L*anguag*e*)
+- Notice the YAML header between `---`s 
+- YAML = Y*AML* A*in’t* *a* M*arkup* L*anguage*
 - YAML is a minimal markup language.
-- `output: pdf_document`: use pdfs for writing manuscripts    
-  - `output: word_document`
-  - `output: html_document`
+- `output: pdf_document`: use pdfs for writing manuscripts   
+- Also available `output: word_document`, `output: html_document`
   
+
 ## The setup-R chunk | set global options used by `knitr`
 
 ```{r eval = F}
@@ -380,7 +382,7 @@ rmarkdown::render("test.Rmd", output_format = "pdf_document")
 ## Load data
 
 - Create a chunk called `loaddata`
-- Inside that chunk load libraries needed: `library(tidyverse`
+- Inside that chunk load libraries needed: `library(tidyverse)`
 - Load @blomkvist2017reference data in same chunk.
 
 ```{r}
@@ -389,7 +391,7 @@ blomkvist <- read_csv("../data/blomkvist.csv") %>%
   drop_na()
 ```
 
-- `../` depends on the location of your `.Rproj` file.
+- "../" depends on the location of your `.Rproj` file.
 
 
 ## R chunk outputs
@@ -429,6 +431,8 @@ and $\sum_{k=1}^K \phi_k = 1$, then $\Phi$ is a probability mass function.
 
 ## $\LaTeX$ mathematical typesetting {.smaller}
 
+<div style="float: left; width: 50%;">
+
 - *Display* mode using `$$` as delimiters.
 
 ```
@@ -451,8 +455,13 @@ $$
 $$
 where $\mu$ and $\sigma$ are parameters.
 
-- Top tip: you can literally copy $\LaTeX$ for formulas from Wikipedia: find the formula for the Gaussian probability density function.
+</div>
 
+<div style="float: right; width: 40%;">
+
+Top tip: you can literally copy $\LaTeX$ code for formulas from straight Wikipedia: e.g. look for the formula for the Gaussian probability density function.
+
+</div>
 
 ## Figures {.smaller}
 
@@ -475,10 +484,13 @@ ggplot(blomkvist, aes(x = age, y = rt)) +
     theme_classic()
 ```
 
+## Figures {.smaller}
+
 - Try and change the default size to `out.width = 50%`.
-- Cross-reference figure using `\ref{fig:scatterplot}` in the text (for tables use `\ref{tab:descriptives}`). 
-- You might have noticed that the figure changed position. $\LaTeX$ is calling objects like figures and tables *floats* cause the placement depends on constraints such as whitespace on page, number of figures on page ...
-- Tip don't fine-tune the placement until you're done with your document.
+- Cross-reference figure using `\ref{fig:scatterplot}` in the text. 
+- You might have noticed that the figure changed position. 
+- $\LaTeX$ is calling objects like figures and tables *floats* cause the placement depends on constraints such as whitespace on page, number of figures on page ... (i.e. they are floating).
+- Tip: don't fine-tune the placement until you're done with your document.
 
 ## Additional YAML header options
 
@@ -508,8 +520,7 @@ library(psyntur)
 ```{r eval = F}
 smoker_age <- blomkvist %>% 
   group_by(smoker) %>% 
-  summarise(across(age, list(mean = mean, 
-                             sd = sd), .names = "{.fn}"))
+  summarise(across(age, list(mean = mean, sd = sd)))
 ```
 
 ## Formatted tables {.smaller}
@@ -534,10 +545,10 @@ smoker_age %>%
   kable_styling(position = 'center') # centre position of table
 ```
 
-- Also label you table chunk `smoker` and cross-reference the table in the text like so `\ref{tab:smoker}`.
+- Also, label your chunk "`smoker`" and cross-reference the table in the text using `\ref{tab:smoker}`.
 
 
-## Display maths
+## Display maths {.smaller}
 
 - Using $\LaTeX$'s `aligned` environment to align multiple mathematical statements.
 - We will get back to what this means.
@@ -551,8 +562,8 @@ $$
 $$
 ```
 
-- The `&` is used to align the lines so that $\sim$ and $=$ are aligned.
-- $\\$ forces a line break.
+- The "`&`" is used to align the lines so that "$\sim$" and "$=$" are aligned.
+- `$\\$` forces a line break.
 
 ## Formatted inline R output {.smaller}
 
@@ -567,7 +578,7 @@ model_summary <- summary(model)
 r2 <- model_summary$r.sq
 ```
 
-```{r eval=FALSE}
+```{r eval = F}
 The $R^2$ for this model is `r round(r2, 2)`.
 ```
 
@@ -581,7 +592,7 @@ p_value <- pf(f_stat[1], f_stat[2], f_stat[3], lower.tail = FALSE)
 
 
 ```{r eval = FALSE}
-The model summary can be summarised like so $F(`r round(f_stat[2])`, `r round(f_stat[3])`) =
+The model summary can be summarised like so: $F(`r round(f_stat[2])`, `r round(f_stat[3])`) =
 `r round(f_stat[1],2)`$, $p `r format.pval(p_value, eps = 0.01)`$.
 ```
 
@@ -601,12 +612,13 @@ bibliography: refs.bib
 biblio-style: apalike
 ```
 
-- At the end of your document create a section `# References`
 - Create a file called `refs.bib` (save in same working directory as your `.Rmd` file)
-- Get the citation for @blomkvist2017reference from Google Scholar and paste it into `refs.bib`.
-- Notice the citation *key* `blomkvist2017reference`.
+- Get the citation for @blomkvist2017reference from Google Scholar and paste it into `refs.bib`:
+  - Just copy the title "Reference Data on Reaction Time and Aging Using the Nintendo Wii Balance Board: A Cross-Sectional Study of 354 Subjects from 20 to 99 Years of Age"
+- Notice the citation *key* `blomkvist2017reference`
 - Cite @blomkvist2017reference using `@blomkvist2017reference` and `[@blomkvist2017reference]`.
-- `.bib` entries have different types like `@book`, `@article`, `@incollection`
+- `.bib` entries have different types like `@book{}`, `@article{}`, `@incollection{}`
+- At the end of your document create a section "`# References`"
 
 
 ## Some arithmetic operations and fractions {.smaller}
@@ -614,7 +626,7 @@ biblio-style: apalike
 <div style="float: left; width: 60%;">
 
 - `$x + y$`, `$x - y$`
-- Multiplication use either `$\cdot$` or `$\times$` to get $\cdot$ or $\times$, respectively.
+- Multiplication use either `$\cdot$` or `$\times$` to get $\cdot$ or $\times$, respectively, as in $3 \cdot 2$
 - Division: `$/$` or `$\div$` to get $/$ or $\div$, respectively, or `$\frac{1}{2}$` for $\frac{1}{2}$
 - `$\pm$` renders to $\pm$
 
@@ -622,7 +634,6 @@ biblio-style: apalike
 
 <div style="float: right; width: 30%;">
 
-- Try the following
 - Sums
 
 ```

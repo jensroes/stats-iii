@@ -178,7 +178,7 @@ there is a corresponding mean $\mu_{i'}$, i.e. $\mu_{i'} = \beta_0 + \sum_{k=1}^
 
 </div>
 
-## Simulation
+## Simulation of normal distributed data
 
 <div style="float: left; width: 45%;">
 
@@ -203,7 +203,7 @@ ggplot(data = NULL, aes(x = x)) +
 </div>
 
 
-## Simulation
+## Simulation of normal distributed data
 
 <div style="float: left; width: 45%;">
 
@@ -228,7 +228,7 @@ ggplot(data = NULL, aes(x = x)) +
 </div>
 
 
-## Simulation
+## Simulation of normal distributed data
 
 <div style="float: left; width: 45%;">
 
@@ -253,7 +253,7 @@ ggplot(data = NULL, aes(x = x)) +
 
 
 
-## Simulation
+## Simulation of normal distributed data
 
 ```{r}
 # Set parameter values
@@ -272,7 +272,7 @@ sim_data <- tibble(beta_0 = rnorm(n = n/2, mean = beta_0, sd = sigma),
 glimpse(sim_data)
 ```
 
-## Simulation
+## Simulation of normal distributed data
 
 ```{r}
 # Set parameter values
@@ -289,8 +289,7 @@ sim_data <- pivot_longer(sim_data, cols = c(beta_0, beta_1), names_to = "mu", va
 glimpse(sim_data)
 ```
 
-
-## Simulation
+## Simulation of normal distributed data
 
 ```{r}
 # Set parameter values
@@ -308,7 +307,7 @@ model <- lm(outcome ~ mu, data = sim_data)
 ```
 
 
-## Simulation
+## Simulation of normal distributed data
 
 <div style="float: left; width: 35%;">
 
@@ -345,7 +344,7 @@ emmeans::emmeans(model, specs = "mu") %>%
   geom_pointrange() +
   coord_cartesian(ylim = c(570, 660)) +
   scale_y_continuous(breaks = seq(500, 700, 10)) +
-  labs(y = "Estimated means with 95% CIs")
+  labs(y = "Estimated means")
 ```
 
 </div>
@@ -399,7 +398,7 @@ emmeans::emmeans(model, specs = "mu") %>%
   geom_pointrange() +
   coord_cartesian(ylim = c(570, 660)) +
   scale_y_continuous(breaks = seq(500, 700, 10)) +
-  labs(y = "Estimated means with 95% CIs")
+  labs(y = "Estimated means")
 ```
 
 </div>
@@ -423,6 +422,14 @@ plot_sim <- ggplot(data = sim_data, aes(x = outcome, colour = mu, fill = mu)) +
   scale_fill_viridis_d(end = .6) 
 ```
 
+
+## Simulation: exercise
+
+- Work through the scripts 
+   - `exercises/normal_model_simulation_1.R`
+   - `exercises/normal_model_simulation_2.R`
+- You will need to complete the scripts.
+- Then observe how changing the number of observations affects the estimates.
 
 ## Real data {.smaller}
 
@@ -453,15 +460,12 @@ plot_sim / plot_spacer()
 - Yet, reaction times are notoriously skewed [cause they have lower but no upper bound; see @baa08book] 
 - Sometimes even simulated data don't appear normal distribution because the sample is too small.
 
-```{r eval = F}
+```{r}
 blomkvist <- read_csv("../data/blomkvist.csv") %>% 
   select(id, sex, rt = rt_hand_d)
-glimpse(blomkvist)
 ```
 
 ```{r echo = F}
-blomkvist <- read_csv("../data/blomkvist.csv") %>% 
-    select(id, sex, rt = rt_hand_d)
 glimpse(blomkvist, width = 50)
 ```
 
@@ -499,17 +503,13 @@ plot_sim / plot_blomkvist
 - Sometimes even simulated data don't appear normal distribution because the sample is too small.
 
 
-```{r eval = F}
+```{r}
 blomkvist <- read_csv("../data/blomkvist.csv") %>% 
   select(id, sex, rt = rt_hand_d) %>% 
   mutate(log_rt = log(rt))
-glimpse(blomkvist)
 ```
 
 ```{r echo = F}
-blomkvist <- read_csv("../data/blomkvist.csv") %>% 
-  select(id, sex, rt = rt_hand_d) %>% 
-  mutate(log_rt = log(rt))
 glimpse(blomkvist, width = 50)
 ```
 
@@ -544,11 +544,33 @@ plot_blomkvist / log_blomkvist + plot_layout(guides = "collect")
 - There seem to be more longer rts for males (?).
 - We assume that the $\text{log}(rt)$ that we denote $y_1, y_2\dots y_n$ are sampled from a normal distribution with a fixed and unknown mean $\mu$ ans standard deviation $\sigma$.
 
+
 $$
 y_i \sim N(\mu_i, \sigma^2), \text{ for } i \in 1\dots n.
 $$
 
+
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+```{r echo = F, out.width="100%", fig.height=7}
+log_blomkvist +
+  facet_wrap(~sex, nrow = 2) +
+  theme(strip.background = element_blank(),
+        strip.text = element_blank())
+```
+
+</div>
+
+
+## Real data {.smaller}
+
+<div style="float: left; width: 50%;">
+
 - Predictor variable sex is denoted as $x_1, x_2, \dots x_n$.
+
 
 $$
 \mu_i = \beta_0 + \beta_1 \cdot x_i
@@ -556,15 +578,16 @@ $$
 
 - where $x_i$ takes on $0$ for females and $1$ for males (because "f" is before "m" in the alphabet).
 
+
 $$
 x_i = \left\{ 
-\begin{array}{ll}
-0, \text{ if sex}_i = \texttt{female}\\
-1, \text{ if sex}_i = \texttt{male}
-
-\end{array}
+  \begin{array}{ll}
+  0, \text{ if sex}_i = \texttt{female}\\
+  1, \text{ if sex}_i = \texttt{male}\\
+  \end{array}
 \right.
 $$
+
 
 - For females $\mu_i = \beta_0 + \beta_1 \cdot 0 = \beta_0$ and for males $\mu_i = \beta_0 + \beta_1 \cdot 1 = \beta_0 + \beta_1$, so $\beta_1$ gives the difference in the averages of the distribution of rts.
 
@@ -583,7 +606,17 @@ log_blomkvist +
 
 </div>
 
-## Compare
+## Real data: exercise
+
+
+- Complete exercise scripts
+  - `exercises/normal_model_blomkvist_1.R`
+  - `exercises/normal_model_blomkvist_2.R`
+- Make sure you understand how the model coefficients relate to the visualisation.
+
+
+
+## Compare simulated and real data
 
 
 <div style="float: left; width: 45%;">
@@ -897,7 +930,7 @@ $$
 
 ## Fitting a normal linear model using `lm` {.smaller}
 
-- Let's continue with the Blomkvist rt data.
+- Let's continue with the @blomkvist2017reference rt data.
 - For simplicity of explanation we will use the untransformed rts.
 
 
@@ -953,6 +986,20 @@ summarise(sum_of_squres = sum(squared_diffs),
 ```
 
 </div>
+
+## Fitting a normal linear model using `lm`: exercise 
+
+- Work through scripts:
+  - `exercises/calculating_sigma.R`
+  - `exercises/interpreting_coefficients_1.R`
+  - `exercises/interpreting_coefficients_2.R`
+
+- For the first script (exercise), you will need this:
+
+$$
+\hat\sigma = \sqrt{\frac{1}{n-K-1}\sum_{i=1}^n\mid y_i-\hat\mu_i\mid^2}
+$$
+
 
 ## Hypothesis testing and confidence intervals
 
@@ -1033,12 +1080,127 @@ pt(abs(t), df = n - K - 1, lower.tail = FALSE) * 2
 
 ## *p*-values {.smaller}
 
-- Calculate *t* and *p*-value for the coefficient for age under the asumption that the true value for $\beta_\text{age}$ is 0.0.
+- Calculate *t* and *p*-value for the coefficient for age under the assumption that the true value for $\beta_\text{age}$ is 0.0.
 - Verify your calculation using
 
 ```{r}
 summary(model)$coefficients
 ```
+
+- Work through script `exercise/t_values.R` 
+
+
+
+
+## *t*-distribution {.smaller}
+
+
+```{r echo = F,  out.width="80%", fig.height=4}
+t <- abs(beta_sex / se_sex)
+n <- nrow(blomkvist)
+K <- 1
+df <- n - K - 1
+p_value <- pt(t, df = df, lower.tail = FALSE) * 2
+
+# Hypothetical t values
+t_grid <- seq(0, 10, .1) 
+p_values <- pt(t_grid, df = df, lower.tail = FALSE) * 2
+
+p <- ggplot(data = NULL, aes(x = t_grid, y = p_values)) +
+  geom_line() +
+  geom_hline(yintercept = 0.05, linetype = 'dotted') +
+  scale_x_continuous(breaks = seq(0, 20, 1)) +
+  labs(x = 'Theoretical t-value',
+       y = 'p-value',
+       subtitle = bquote("t distribution for"~"Df" == .(df)));p 
+
+```
+
+
+## *t*-distribution {.smaller}
+
+```{r echo = F,  out.width="80%", fig.height=4}
+label <- deparse(bquote(paste("t" == .(round(t, 2)))))
+
+p2 <- p + geom_segment(aes(x = t+1, y = .2, xend = t, yend = 0.02),
+                  arrow = arrow(length = unit(0.35, "cm")),
+               colour = "red") +
+  geom_label(aes(x = t + 1, y = 0.3, label = label), parse = T); p2
+```
+
+## *t*-distribution {.smaller}
+
+```{r echo = F,  out.width="80%", fig.height=4}
+label_2 <- deparse(bquote(paste("p" == .(round(p_value, 3)))))
+p2 + geom_hline(yintercept = p_value, colour = "red", linetype = "dashed") +
+  geom_label(aes(x = .65, y = 0.05, label = label_2), parse = T) 
+
+```
+
+
+## *t*-distribution {.smaller}
+
+```{r echo = F,  out.width="80%", fig.height=4}
+label_2 <- deparse(bquote(paste("p" == .(round(p_value, 3)))))
+p2 + geom_hline(yintercept = p_value, colour = "red", linetype = "dashed") +
+  geom_label(aes(x = .65, y = 0.05, label = label_2), parse = T) +
+  annotate("label", x = 8, y = .9, label = "Work through script\n exercise/t_distribution.R")
+
+```
+
+
+
+
+## *t*-distribution {.smaller}
+
+
+```{r echo = F, out.width="80%", fig.height=4}
+t_grid <- seq(0, 15, .1) 
+df <- c(1, 2, 5, 8, 10, 100, 1000, 10000)
+
+data_df <- map_dfr(df, ~pt(t_grid, df = .x, lower.tail = F) %>% tibble(t_grid = t_grid, p = . * 2) %>%  
+    mutate(df = .x)) 
+
+ggplot(data = data_df, aes(x = t_grid, y = p, colour = factor(df))) +
+  geom_line() +
+  labs(x = "Theoretical t-value",
+       y = "p-value",
+       subtitle = "t-distribution",
+       colour = bquote("Df")) +
+  scale_colour_viridis_d() +
+  scale_x_continuous(breaks = seq(0, 20, 1)) +
+  geom_hline(yintercept = 0.05, linetype = "dotted") +
+  theme(legend.position = c(.925,.55),
+        legend.title = element_text(size = 10),
+        legend.text = element_text(size = 10))
+
+
+```
+
+## *t*-distribution {.smaller}
+
+
+```{r echo = F, out.width="80%", fig.height=4}
+t_grid <- seq(0, 3, .1) 
+df <- c(1, 2, 5, 8, 10, 100, 1000, 10000)
+
+data_df <- map_dfr(df, ~pt(t_grid, df = .x, lower.tail = F) %>% tibble(t_grid = t_grid, p = . * 2) %>%  
+    mutate(df = .x)) 
+
+ggplot(data = data_df, aes(x = t_grid, y = p, colour = factor(df))) +
+  geom_line() +
+  labs(x = "Theoretical t-value",
+       y = "p-value",
+       subtitle = "t-distribution",
+       colour = bquote("Df")) +
+  scale_colour_viridis_d() +
+  scale_x_continuous(breaks = seq(0, 3, .25)) +
+  geom_hline(yintercept = 0.05, linetype = "dotted") +
+  theme(legend.position = "none")
+
+
+```
+
 
 ## Confidence intervals {.smaller}
 
@@ -1052,7 +1214,12 @@ $$
 where $\tau_{(1-\epsilon,\nu)}$ is value in a *t*-distribution with $\nu$ degrees of freedom below which lines $1-\epsilon$ of the area under the curve.
 
 
+
+
+
 ## Confidence intervals {.smaller}
+
+<div style="float: left; width: 40%;">
 
 - We can calculate $\tau$ using `qt`
 
@@ -1066,14 +1233,147 @@ We then obtain the confidence intervals as follows
 beta_sex + c(-1, 1) * se_sex * tau
 ```
 
+</div>
+
+<div style="float: right; width: 50%;">
+
+```{r}
+coef(model) 
+```
+
 - Verification:
 
 ```{r}
-confint(model, parm = 'sexmale', level = .95)
+confint(model, parm = 'sexmale',  level = .95)
+```
+
+- Open `exercises/confidence_interval.R` and complete the script,
+
+</div>
+
+
+## Confidence intervals: a simulation {.smaller}
+
+<div style="float: left; width: 50%;">
+
+```{r echo = F}
+set.seed(324)
 ```
 
 
+```{r}
+# Set simulation parameters
+mu <- 600 # True parameter value
+n_sims <- 10 # Number of hypothetical experiments
+n <- 1000 # Number of observations per experiment
+# Empty data frame for results
+sims <- tibble()
+# Run n_sims simulations
+for(i in 1:n_sims){
+  # Simulate normal distributed data
+  y <- rnorm(n, mean = mu, sd = 100)
+  # Get MLEs
+  m <- lm(y ~ 1)
+  # Extract CI
+  cis <- confint(m) %>% as.vector()
+  # Store results
+  sims <- tibble(sim_id = i, 
+                 lower = cis[1], 
+                 upper = cis[2]) %>% 
+    bind_rows(sims)
+}
+```
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+
+```{r echo = FALSE, out.width="100%", fig.height=7}
+mutate(sims, 
+       mu_in_ci = ifelse(mu < lower | mu > upper, "no", "yes")) %>% 
+  ggplot(aes(x = sim_id, 
+             ymin = lower, 
+             ymax = upper, 
+             colour = mu_in_ci)) +
+  geom_errorbar(width = 0) +
+  geom_hline(yintercept = mu, linetype = "dotted", colour = "blue") +
+  scale_colour_manual(values = c("no" = "red", "yes" =" grey50")) +
+  scale_x_continuous(breaks = seq(1, n_sims, 1)) +
+  scale_y_continuous(limits = c(580, 620)) +
+  labs(colour = bquote("95% CI includes"~mu*":"),
+        caption = bquote(.(n_sims)~"simulations"),
+       x = "Experiment id (simulation)",
+       y = "Parameter estimate") +
+  coord_flip()
+
+```
+</div>
+
+## Confidence intervals: a simulation 
+
+- Complete and run script 
+  - `exercises/confidence_interval_simulation.R`
+- Change the number of simulations to, one at a time, `n_sims = 20,50,100,500,1000`
+- Notice how often the CI does not contain the true parameter value $\mu$.
+- How many % of simulations contain $\mu$ (it's okay to guess)?
+
+## Confidence intervals: a simulation {.smaller}
+
+<div style="float: left; width: 45%;">
+
+```{r echo = F}
+mu <- 600 # True parameter value
+n_sims <- 1000 # Number of hypothetical experiments
+n <- 1000 # Number of observations per experiment
+sims <- tibble()
+for(i in 1:n_sims){
+  y <- rnorm(n, mean = mu, sd = 100)
+  m <- lm(y ~ 1)
+  cis <- confint(m) %>% as.vector()
+  sims <- tibble(sim_id = i, lower = cis[1], upper = cis[2]) %>% 
+    bind_rows(sims)
+}
+```
+
+```{r echo = FALSE, out.width="100%", fig.height=7}
+sims <- mutate(sims, mu_in_ci = ifelse(mu < lower | mu > upper, "no", "yes"))
+ggplot(sims, aes(x = sim_id, 
+                 ymin = lower, 
+                 ymax = upper, 
+             colour = mu_in_ci)) +
+  geom_errorbar(width = 0) +
+  geom_hline(yintercept = mu, linetype = "dotted", colour = "blue") +
+  scale_colour_manual(values = c("no" = "darkred", "yes" =" grey50")) +
+  scale_y_continuous(limits = c(580, 620)) +
+  labs(colour = bquote("95% CI includes"~mu*":"),
+       caption = bquote(.(n_sims)~"simulations"),
+       x = "Experiment id (simulation)",
+       y = "Parameter estimate") +
+  coord_flip()
+```
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+```{r}
+count(sims, mu_in_ci) %>% 
+  mutate(prop = n / n_sims)
+```
+
+- When our number of experiments approaches $\infty$ and we calculate a 95% CI for each experiment, 95% of these CIs will contain $\mu$.
+- Note though, 5% of the time, the confidence interval does not contain $\mu$!
+- What does this mean for real (as opposed to simulated) experiments?
+
+
+</div>
+
+
+
 ## Predictions {.smaller}
+
+<div style="float: left; width: 40%;">
 
 - Using $\hat\beta_0,\hat\beta_1\dots\hat\beta_K$ and $\hat\sigma^2$, then for any new vector of predictor variables $\overrightarrow{x}_{i'}$, the corresponding $y_i$ is now
 
@@ -1085,9 +1385,34 @@ $$
 - To calculate $\hat\mu_{i'}$ for any given new vector of predictor variables $\overrightarrow{x}_{i'}$ use `predict` and related functions.
 
 ```{r}
-rt_data_new <- tibble(sex = "female", age = 95)
-predict(model, newdata = rt_data_new) # in msecs
+coef(model)
 ```
+
+</div>
+
+<div style="float: right; width: 50%;">
+
+
+- As $K$ is 2 we can rewrite, then simplify, and predict rts for females age 95.
+
+$$
+\begin{aligned}
+\hat\mu_i &= \hat\beta_0 + \hat\beta_1 \cdot x_{i1} + \hat\beta_2 \cdot x_{i2}\\
+&=338.64 + -58.83 \cdot x_{i1} + 5.75 \cdot x_{i2}\\
+&=338.64 + -58.83 \cdot 0 + 5.75 \cdot 95\\
+&=338.64 + 5.75 \cdot 95\\
+&=885
+\end{aligned}
+$$
+
+```{r}
+newdata <- tibble(sex = "female", age = 95)
+predict(model, newdata = newdata) 
+```
+
+
+
+</div>
 
 ## Prediction confidence intervals {.smaller}
 
@@ -1103,9 +1428,15 @@ where $\hat{\text{se}}_{\mu_{i'}}$ is the standard error term that corresponds t
 - We can obtain the confidence intervals on $\hat\mu_{i'}$ by using the option `interval = 'confidence'` in the `predict` function.
 
 ```{r}
-predict(model, interval = 'confidence', newdata = rt_data_new)
+predict(model, interval = 'confidence', newdata = newdata)
 ```
 
+
+## Prediction confidence intervals: exercise
+
+- Work through scripts
+  - `exercises/predictions.R`
+  - `exercises/predictions_with_cis.R`
 
 
 ## Interactions and varying intercepts model {.smaller}
@@ -1363,11 +1694,20 @@ exp(betas[1] + betas[3] + betas[4]) -
   exp(betas[1])
 ```
 
+
 </div>
+
+
+## Interactions and varying-slopes model: exercise
+
+- Work through scripts
+  - `exercises/varying_intercepts_model.R`
+  - `exercises/varying_slopes_model.R`
+
 
 ## Polychotomous predictors {.smaller}
 
-- We can also use categorical predictor variables that have more than two levels (as `sex` did), which can be referred to as polychotomous predictor variables.
+- We can also use categorical predictor variables that have more than two levels (i.e. dichotomous like `sex`), which can be referred to as polychotomous predictor variables.
 
 
 <div style="float: left; width: 55%;">
@@ -1482,13 +1822,9 @@ model_smoker <- lm(log_rt ~ smoker, data = blomkvist)
 (betas <- coef(model_smoker))
 ```
 
-
-
 ```{r echo = F}
 betas <- as.vector(coef(model_smoker))
 ```
-
-
 
 - When `smoker` is `yes`, the predicted mean of the rt distribution for smokers is 
 
@@ -1501,7 +1837,29 @@ $$
 exp(betas[1] + betas[2] * 0 + betas[3] * 1)
 ```
 
+- Exercise: work through script `exercises/polychotomous_predictor.R`
+
 </div>
+
+## Recap
+
+- Normal model assumes that data are continues normal distributed.
+- Estimate unknown population parameters using MLE.
+- For rts researchers often use log-normal distributions to correct for positive skew.
+- We can specify models with continues and categorical predictors and combinations of them.
+- Model specifications using varying intercepts and varying slopes.
+- Read lecture notes on NOW [@andrews2021doing].
+- Next week: how can we compare different models of the data?
+
+## Homework for Tuesday
+
+- We will start preparing your report for the formative assessment.
+- Review the [details for the formative assessment.](https://now.ntu.ac.uk/d2l/le/content/887088/viewContent/9653015/View)
+
+> *Using a data-set of your own choice, perform and report a linear regression analysis to address a set of theoretical questions of your choice that relate to your chosen data-set*
+
+- Familiarise yourself with [the demo](https://now.ntu.ac.uk/d2l/le/content/887088/viewContent/9653011/View) for the formative assessment.
+- Find a suitable data set you can use for the formative assessment.
 
 
 ## References

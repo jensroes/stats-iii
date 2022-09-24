@@ -62,7 +62,7 @@ library(kableExtra)
 
 <div style="float: left; width: 60%;">
 
-- Senior lecturer @ psychology department (Nottingham Trent University)
+- Senior lecturer in psycholinguistics @ psychology department (Nottingham Trent University)
 - Theory: psycholinguistics; language production / comprehension / acquisition [e.g. @roeser2019advance]
 - Methods: Bayesian modelling [talk to me about mixture models, @roeser2021modelling] in Stan; keystroke logging; eyetracking
 - Teaching and consultancy: advanced statistical modelling, data wrangling, data visualisation; R package [`psyntur`, @psyntur]
@@ -74,6 +74,26 @@ library(kableExtra)
 
 ```{r fig.align='right', out.width="100%", echo = F, eval = T}
 knitr::include_graphics("../gfx/me.jpg")
+```
+</div>
+
+
+
+## About us: Thom Baguley
+ 
+<div style="float: left; width: 60%;">
+
+- Professor of Experimental Psychology
+- Teaching lectures on modeling discrete outcomes (e.g., for binary and count data)
+- My work focuses on modeling data from a wide range of areas including cognitive, forensic and occupational data
+- Author of *Serious Stats: A guide to advanced statistics for the behavioral sciences* [@baguley2018serious]
+
+</div>
+
+<div style="float: right; width: 30%;">
+
+```{r fig.align='right', out.width="100%", echo = F, eval = T}
+knitr::include_graphics("../gfx/tsb.jpg")
 ```
 </div>
 
@@ -98,36 +118,19 @@ knitr::include_graphics("../gfx/lucy.png")
 
 
 
-## About us: Thom Baguley
-
- 
-<div style="float: left; width: 60%;">
-
-- Professor of Experimental Psychology
-- Teaching lectures on modeling discrete outcomes (e.g., for binary and count data)
-- My work focuses on modeling data from a wide range of areas including cognitive, forensic and occupational data
-- Author of *Serious Stats: A guide to advanced statistics for the behavioral sciences.* [@baguley2018serious]
-
-</div>
-
-<div style="float: right; width: 30%;">
-
-```{r fig.align='right', out.width="100%", echo = F, eval = T}
-knitr::include_graphics("../gfx/tsb.jpg")
-```
-</div>
-
 
 ## Who are you?
 
 - Why did you choose *Statistics III*?
 - What do you expect to learn?
+- How confident are you with RStudio?
+- How about stats?
 
 
 ## Module Aims {.smaller}
 
 - Provide a unified set of advanced statistical techniques that can cover an exceptionally wider range of data-analysis problems.
-  - Aka. multilevel generalised linear models.
+  - Aka. multilevel generalised linear models
   - General data-analytical framework encapsulating a range of widely used techniques including linear regression, ANOVA, ANCOVA, MANCOVA, logistic regression, Poisson regression, log-linear analysis, random effects / mixed-effects models etc. 
 - Describe how these models arise as special cases of a single underlying general principle.
 - Demonstrate using real-world data-sets how we can apply this general principle to a wider range of data analysis problems.
@@ -135,11 +138,11 @@ knitr::include_graphics("../gfx/tsb.jpg")
 
 ## Module Aims {.smaller}
 
-- Multilevel generalized linear models will be introduce as sequence of consecutively more general models, all of which build on the familiar principle of linear regression.
-- Linear regression: review of multiple linear regression and factorial ANOVA. 
-- General linear models: certain problems, which are poorly handled by standard ANOVA, can be easily accommodated (e.g. varying slope regression models).
-- Generalized linear models: transformations can be applied to linear models to allow them to be applied to a wide variety of data-types including categorical, ordinal and discrete frequency data (logistic and Poisson regression models).
-- Multi-level models: data with inherently hierarchical structure arise naturally and widely in psychology, e.g. repeated measures data and data collected from large numbers of sub-groups, yet have often been inadequately dealt with in data analysis until recently.
+- **Multilevel generalized linear models** will be introduce as sequence of consecutively more general models, all of which build on the familiar principle of linear regression.
+- **Linear regression**: review of multiple linear regression and factorial ANOVA. 
+- **General linear models**: certain problems, which are poorly handled by standard ANOVA, can be easily accommodated (e.g. varying slope regression models).
+- **Generalized linear models**: transformations can be applied to linear models to allow them to be applied to a wide variety of data-types including categorical, ordinal and discrete frequency data (logistic and Poisson regression models).
+- **Multi-level models**: data with inherently hierarchical structure arise naturally and widely in psychology, e.g. repeated measures data and data collected from large numbers of sub-groups, yet have often been inadequately dealt with in data analysis until recently.
 
 
 ## Learning outcomes {.smaller}
@@ -200,26 +203,30 @@ readODS::read_ods("schedule.ods") %>%
 
 ## Assessment {.smaller}
 
-- All details are [here](https://now.ntu.ac.uk/d2l/le/content/887088/Home?itemIdentifier=D2L.LE.Content.ContentObject.ModuleCO-9652998).
-- Assessments specifications are [here](https://now.ntu.ac.uk/d2l/le/content/887088/viewContent/9657330/View).
-- 4 separate data analyses reported on no more than 4 pages each (max 16 pages overall)
-- Using a data-set of your own choice, perform and report the analyses below to address a set of theoretical questions of your choice that relate to your chosen data-set.
+- All details are [here](https://now.ntu.ac.uk/d2l/le/content/887088/Home?itemIdentifier=D2L.LE.Content.ContentObject.ModuleCO-9652998) and assessments specifications are [here](https://now.ntu.ac.uk/d2l/le/content/887088/viewContent/9658207/View).
+
+> **Using data-sets of your own choice, perform and report analyses using the tools in 1 -- 4 to address a set of theoretical questions of your choice that relate to your chosen data-sets.**
 
 1. Binary logistic regression
 2. Regression models for count data (e.g. Poisson, negative binomial, zero-inflated count model)
 3. Multilevel linear regression models
 4. A new topic / methods that was not explicitly covered in class
 
-- As with all questions, provide full technical details, and graphical analysis.
+- Choose a different data set per each question.
+- 4 separate data analyses reported on no more than 4 pages each (max 16 pages overall)
+- For all questions, provide full technical details, and graphical analysis.
 - By *theoretical question*, we mean some non-trivial question. 
-- E.g. if your chosen data set concerned rates of extra-marital affairs and properties of people who do and not have affairs, a theoretical question could simply be what variables (such as age, gender, religiousness, etc) explain why people have affairs and how often they do so.
+
+E.g. if your chosen data set concerned rates of extra-marital affairs and properties of people who do and not have affairs, a theoretical question could simply be what variables (such as age, gender, religiousness, etc) explain why people have affairs and how often they do so.
+
+
 
 
 ## Assessment {.smaller}
 
 
 - Deadline for submission: 9 January 2023, 2pm
-- Submitted via dropbox.
+- Submitted via Dropbox.
 - Individual written feedback by 30 January 2023
 - Feedback will help you how to best carry out and report the types of statistical analyses that are at the core of this course.
 
@@ -230,14 +237,15 @@ skills in data manipulation and analysis.
 that goes beyond the content explicitly taught in class. 
 - See [Grading Matrix](https://now.ntu.ac.uk/d2l/le/content/887088/viewContent/9658207/View) for details.
 
+
 ## Assessment {.smaller}
 
 - Work must be submitted as *single* zip archive with 
-  - one RMarkdown file (these slides are made in RMarkdown!)
-  - the pdf document generated from this file
+  - one RMarkdown file
+  - the pdf document generated from the RMarkdown file
   - the RStudio project file
-  - all relevant data files and any supplementary files (e.g. bibliography references, custom R function etc)
-  - see [Demo](https://now.ntu.ac.uk/d2l/le/content/887088/viewContent/9653011/View)
+  - all relevant data files and any supplementary files (e.g. bibliography references, custom R function etc.)
+  - for an example see [Demo](https://now.ntu.ac.uk/d2l/le/content/887088/viewContent/9653011/View)
 - Work must be reproducible as per requirement of the assignment: we must be able to reproduce your report from the RMarkdown file.
 - Your work, analysis, plots, descriptions, for each question will be contained in the RMarkdown file, and this will reference all relevant data files.
 - For all questions choose a different data set that is appropriate to the task. 
@@ -250,52 +258,54 @@ that goes beyond the content explicitly taught in class.
 
 For all tasks, you should provide ...
 
-- descriptive statistics of the data and graphical visualizations of the data
+- descriptive statistics and graphical visualizations of the data.
 - full details of the statistical model that you are using.
 - full statistical details of the inferred model parameters.
 - analysis, including graphical analysis, of the predictions of the model.
-- full statistical details of the model fit and perform model comparison with plausible alternative models.
-- Ideally, all analyses should contain multiple predictors, including categorical predictors, and possibly interaction terms. It is not strictly necessary to have categorical and interaction terms in all analyses, but it is expected that you will use them in at least some of the analyses.
+- full statistical details of model fit and comparisons with plausible alternative models.
+- Ideally, all analyses should contain multiple predictors, including categorical predictors, and possibly interaction terms. 
+- It is not strictly necessary to have those in all analyses, but it is expected that you will use them in at least some of the analyses.
 - For high or exceptional grades it is vital that you display learning that goes beyond the content explicitly taught in class.
 
 
 
-## Task 4. A new topic / method that was not explicitly covered in class
+## Question 4. A new topic / method that was not explicitly covered in class
 
 - Year 3 modules require you to go beyond what as covered in class for upper grade bands.
-- [DataCamp](https://app.datacamp.com/learn)
-- Introductory text books
+- You will get 6 months free access to [DataCamp](https://app.datacamp.com/learn)
+- Introductory text books and online tutorials.
 - Examples: time series, structural equation modelling (SEM), auto-regression models, non-linear regression, signal detection theory, mixture models, categorical models, multi-nomial models, multi-variate models, diffusion models, Bayesian models ...
 
 
-## Formative assessment {.smaller}
+## Formative assessment 
 
 - To learn how best to write a report of the kind we expect in the (summative, i.e. real) assessment, you have the opportunity to write a data analysis report on linear regression (first topic).
-- Submit via Dropbox until October 28th 2pm.
+- Submit via Dropbox until **October 28th 2pm**
 - We will provide feedback on what you did well and what you can improve.
 - This is the best way for you to learn how to write a good report.
 - This is just a learning and feedback opportunity for you. 
-- It does not affect your grade for the course, and in fact, it is up to you whether you even take this opportunity. 
+- It does not affect your grade for the course.
+- In fact, it is up to you whether you even take this opportunity. 
 - We encourage you to do so, but can not demand you do so.
 
-## Formative assessment {.smaller}
+## Formative assessment 
 
 - Follow the same procedure as for the final assessment (discussed before).
 - Submit your work as a single zip archive -- see [demo](https://now.ntu.ac.uk/d2l/le/content/887088/viewContent/9653011/View) for an example.
 - There is just one data analysis to do for the formative assessment (hence, 4 pages max).
-- Use a data set of your own choice; report a *linear regression* analysis to address a set of theoretical questions of your own choice that relate to your chosen data-set.
+- Use a data set of your own choice; report a **linear regression** analysis to address a set of theoretical questions of your own choice that relate to your chosen data-set.
 
 
-## Support {.smaller}
+## Support 
 
-- Email for questions that are less general or correspondence that is of sensitive nature: primary contact should be `jens.roeser@ntu.ac.uk`
-- Teams for general problems that might be of interest for others.
-  - We might refer email questions to Teams so everyone can benefit from our answer.
-  - Ask on Teams because we will be able to respond faster.
-  - Help each other!
-  - Make sure you have access to our Teams channel.
-- Individual feedback on formative assessment.
-- Online support will stop at Dec 21 2022.
+- **Email for questions** that are less general or correspondence that is of sensitive nature: primary contact `jens.roeser@ntu.ac.uk`
+- **Teams** for discussing R, stats, assessment-related questions, and useful resources because all of this might be of interest to others.
+  - We might refer certain emails to Teams so everyone can benefit from our answer.
+  - Make sure you have access to our Teams channel!
+  - Ask on Teams because you will receive an answer faster.
+  - Do help each other out!
+  - Obviously lecturers like seeing engagement with their module :)
+- Online support will stop at **Dec 21 2022**.
 
 
 ## Tech requirements
@@ -303,11 +313,6 @@ For all tasks, you should provide ...
 - You need R and RStudio on your machine: [Instructions can be found here](https://rstudio-education.github.io/hopr/starting.html)
 - Ideally don't rely on RStudio Cloud or machines that you don't have admin rights for.
 - Check if `tidyverse` is installed.
-
-```{r}
-system.file(package = "tidyverse")
-```
-
 - If not run
 
 ```{r}
@@ -320,7 +325,7 @@ install.packages("tidyverse")
 <div style="float: left; width: 40%;">
 
 - Lecture notes are available for each topic we will cover in class.
-- Mark Andrew's Lecture notes on NOW also published in [this book](https://us.sagepub.com/en-us/nam/author/mark-andrews) [@andrews2021doing] 
+- Mark Andrew's Lecture notes on NOW also published [here](https://us.sagepub.com/en-us/nam/author/mark-andrews) [@andrews2021doing] 
 - Data sets and R code for this book can be found [here](https://www.mjandrews.org/book/ddsr) 
 - ["R for Data Science"](https://r4ds.had.co.nz/) by Wickham and Grolemund for data wrangling, visualisation and modelling [@wickham2016r].
 - For more topic specific literature see *Assessment section* on NOW.
@@ -347,6 +352,13 @@ knitr::include_graphics("../gfx/wickham.jpg")
 </div>
 </div>
 
+
+## What questions have you got?
+
+- How will the module be taught?
+- What's the assessment?
+- Where do you find support?
+- What's expected of you?
 
 
 ## References
