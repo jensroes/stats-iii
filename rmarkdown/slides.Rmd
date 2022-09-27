@@ -7,28 +7,46 @@ output:
     transition: slower
     widescreen: true
     css: ../slides.css
+    logo: ../gfx/ntu.png
 bibliography      : ["../references.bib"]
 ---
 
+
+```{=html}
 <style>
-.forceBreak { -webkit-column-break-after: always; break-after: column; }
 
 slides > slide.backdrop {
   background: white;
 }
 
-div.footnotes {
+.gdbar img {
+  width: 240px !important;
+  height: 54px !important;
+  margin: 8px 8px;
   position: absolute;
-  bottom: 0;
-  margin-bottom: 15px;
-  width: 80%;
-  font-size: 0.6em;
+}
+
+.gdbar {
+  width: 350px !important;
+  height: 70px !important;
+}
+
+slides > slide:not(.nobackground):before {
+  width: 128px;
+  height: 33px;
+  background-size: 100px 30px;
+}
+
+.smalltable .table{
+  font-size: 18px;
 }
 
 pre {
   font-size: 15px;
 }
 </style>
+```
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, eval = TRUE, message = FALSE, comment=NA)
@@ -42,18 +60,9 @@ library(kableExtra)
 
 ## Aims for today
 
-- Sorting out our RStudio working environment
-- Introducing the data I'll use in my sessions
-- Getting you ready to produce reproducible reports in RMarkdown
-
-
-## Download repository
-
-- Download: [github.com/jensroes/stats-iii](https://github.com/jensroes/stats-iii)
-- Click on: `Code` \> `Download ZIP` \> unzip directory on your machine.
-- Open project by double clicking on `stats-iii.Rproj`
-- `data/`: my scripts will read in data from here
-- `xxx/slides.Rmd`: these slides in RMarkdown format (`.html` format provided as well)
+- Introducing the data I'll use in my sessions.
+- Sorting out our RStudio working environment.
+- Getting you ready to produce reproducible reports in RMarkdown.
 
 
 ## Example data set: @blomkvist2017reference 
@@ -116,6 +125,19 @@ glimpse(blomkvist, width = 60)
 </div>
 
 
+
+
+## How do you know you can trust someones published results? 
+
+- Results are communicated through reports such as peer reviewed scientific articles.
+- Results should be reproducible! -- Are they?
+- Data and code should be made available to others. -- Is this enough though?
+- It will be difficult to relate code to figures, tables, numbers etc for people that where not directly involved in the analysis.
+- This is true when results were copied and pasted from the stats software.
+- Also manual generation of reports is error prone.
+
+
+
 ## Rules for reproducible data analysis!
 
 - Never change your data manually; document everything in code.
@@ -127,17 +149,6 @@ glimpse(blomkvist, width = 60)
 - Comment your code (`# Ceci n'est pas un comment!`)
 - Use RMarkdown for full reproducibility of your results.
 
-
-
-
-## How do you know you can trust someones published results? {.smaller}
-
-- Results are communicated through reports such as peer reviewed scientific articles.
-- Results should be reproducible! -- Are they?
-- Data and code should be made available to others. -- Is this enough though?
-- It will be difficult to relate code to figures, tables, numbers etc for people that where not directly involved in the analysis.
-- This is true when results were copied and pasted from the stats software.
-- Also manual generation of reports is error prone.
 
 
 ## Why do our results need to be reproducible? {.smaller}
@@ -258,6 +269,15 @@ include_graphics("../gfx/latex.png")
 </div>
 
 
+## Download repository
+
+- Download: [github.com/jensroes/stats-iii](https://github.com/jensroes/stats-iii)
+- Click on: `Code` \> `Download ZIP` \> unzip directory on your machine.
+- Open project by double clicking on `stats-iii.Rproj`
+- `data/`: my scripts will read in data from here
+- `xxx/slides.Rmd`: these slides in RMarkdown format (`.html` format provided as well)
+- `xxx/exercises`: R scripts that you need to complete.
+
 
 
 
@@ -270,24 +290,22 @@ include_graphics("../gfx/latex.png")
 - To create pdf outputs, $\LaTeX$ must be installed which gives you access to a wide range of $\LaTeX$ tools which is handy for experienced users.
 - For the purpose of using $\LaTeX$ with RMarkdown, we only require the package `tinytex`
 
-
 </div>
 
 <div style="float: right; width: 50%;">
 
 ```{r}
-"tidyverse" %in% rownames(installed.packages())
+'tidyverse' %in% rownames(installed.packages())
 ```
 
 - If `tidyverse` is not installed, run
 
 ```{r}
-install.packages("tidyverse")
+install.packages('tidyverse')
 ```
 
-
 ```{r eval = F}
-install.packages("tinytex")
+install.packages('tinytex')
 tinytex::install_tinytex()
 ```
 
@@ -299,20 +317,20 @@ tinytex:::is_tinytex()
 
 </div>
 
-## Installation {.smaller}
+## Installation
 
 - Test that `rmarkdown` will render pdf documents using $\LaTeX$ with the following code:
 
 ```{r eval = F}
-writeLines("Hello $x^2$", 'test.Rmd')
-rmarkdown::render("test.Rmd", output_format = "pdf_document")
+writeLines('Hello $x^2$', 'test.Rmd')
+rmarkdown::render('test.Rmd', output_format = 'pdf_document')
 ```
 
 - `writeLines` creates an `.Rmd` file named `text.Rmd`.
 - `rmarkdown::render` renders `.Rmd` as pdf document (via $\LaTeX$) named `test.pdf`.
 
 
-## Minimal RMarkdown example {.smaller}
+## Minimal RMarkdown example 
 
 - Open `rmarkdown/examples/example.Rmd`
 - R *chunk*: try `CTRL+ALT+I` or `CMD+ALT+I` (upper case "i")
@@ -328,14 +346,14 @@ rmarkdown::render("test.Rmd", output_format = "pdf_document")
 
 - Click on `File` > `New File` > `R Markdown`
 - Document (PDF, WORD, HTML)
-- Notice the YAML header between `---`s 
+- Notice the YAML header between `'---'`s 
 - YAML = Y*AML* A*in’t* *a* M*arkup* L*anguage*
 - YAML is a minimal markup language.
 - `output: pdf_document`: use pdfs for writing manuscripts   
 - Also available `output: word_document`, `output: html_document`
   
 
-## The setup-R chunk | set global options used by `knitr`
+## The setup R chunk | set global options used by `knitr`
 
 ```{r eval = F}
 
@@ -396,14 +414,15 @@ blomkvist <- read_csv("../data/blomkvist.csv") %>%
 
 ## R chunk outputs
 
-- Create a chunk labeled `analysis`
+- Create a chunk labeled `analysis`.
+- Fit the following model.
 
 ```{r}
 (model <- lm(rt ~ sex, data = blomkvist))
 ```
 
 
-## $\LaTeX$ mathematical typesetting {.smaller}
+## $\LaTeX$ mathematical typesetting 
 
 - Strings are parsed using $\LaTeX$ and typeset accordingly when used between `$` symbols for inline mode.
 - For example `$\beta$` is lower case $\beta$.
@@ -508,13 +527,13 @@ header-includes:
 ## Formatted tables {.smaller}
 
 - Reporting results in tables formatted to a high standard.
-- This format isn't good enough for papers:
+- Calculate descriptives:
 
 ```{r}
 library(psyntur)
 (smoker_age <- describe(data = blomkvist, by = smoker, mean = mean(age), sd = sd(age)))
 ```
-
+- This format isn't good enough for papers.
 - For R black belts:
 
 ```{r eval = F}
@@ -582,6 +601,11 @@ r2 <- model_summary$r.sq
 The $R^2$ for this model is `r round(r2, 2)`.
 ```
 
+Renders
+
+> "The $R^2$ for this model is `r round(r2, 2)`."
+
+
 ## Formatted inline R output {.smaller}
 
 ```{r}
@@ -595,6 +619,11 @@ p_value <- pf(f_stat[1], f_stat[2], f_stat[3], lower.tail = FALSE)
 The model summary can be summarised like so: $F(`r round(f_stat[2])`, `r round(f_stat[3])`) =
 `r round(f_stat[1],2)`$, $p `r format.pval(p_value, eps = 0.01)`$.
 ```
+
+Renders 
+
+> "The model summary can be summarised like so: $F(`r round(f_stat[2])`, `r round(f_stat[3])`) = `r round(f_stat[1],2)`$, $p `r format.pval(p_value, eps = 0.01)`$."
+
 
 ```{r}
 p <- c(0.05, 0.02, 0.011, 0.005, 0.001)
@@ -614,7 +643,9 @@ biblio-style: apalike
 
 - Create a file called `refs.bib` (save in same working directory as your `.Rmd` file)
 - Get the citation for @blomkvist2017reference from Google Scholar and paste it into `refs.bib`:
-  - Just copy the title "Reference Data on Reaction Time and Aging Using the Nintendo Wii Balance Board: A Cross-Sectional Study of 354 Subjects from 20 to 99 Years of Age"
+  - Just copy the title "Reference Data on Reaction Time and Aging Using the Nintendo Wii Balance Board: A Cross-Sectional Study of 354 Subjects from 20 to 99 Years of Age" into Google Scholar
+  - Click `cite` and `BibTeX` 
+  - Copy the bib entry into `refs.bib`
 - Notice the citation *key* `blomkvist2017reference`
 - Cite @blomkvist2017reference using `@blomkvist2017reference` and `[@blomkvist2017reference]`.
 - `.bib` entries have different types like `@book{}`, `@article{}`, `@incollection{}`
@@ -733,7 +764,7 @@ remotes::install_github("juba/rmdformats")
 
 
 
-## References
+## References {.smaller}
 
 <style>
 slides > slide { overflow: scroll; }

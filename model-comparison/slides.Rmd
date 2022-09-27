@@ -1,5 +1,5 @@
 ---
-title: 'Model comparisons'
+title: 'Model comparison'
 author: "Jens Roeser"
 output: 
   ioslides_presentation:
@@ -47,7 +47,6 @@ pre {
 ```
 
 
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, eval = TRUE, message = FALSE, comment=NA)
 options("kableExtra.html.bsTable" = T, digits = 3)
@@ -63,7 +62,13 @@ theme_set(theme_bw(base_size = 18) +
                   panel.grid = element_blank()))
 ```
 
+## Aims for today
 
+- Recap on linear models.
+- Evaluating models based on likelihood.
+- Evaluating models based on residuals.
+- Comparing models based on fit to data.
+- Penalising more complex models.
 
 ## Normal linear model {.smaller}
 
@@ -80,7 +85,7 @@ $$
 
 - Outcome variable is normally distributed.
 - Distribution can be characterised with an unknown mean $\mu_i$ and variance $\sigma^2$.
-- The mean $\mu_i$ is composed of the intercept $\beta_0$ and the sum of a vector of slopes $\beta_k$.
+- The mean $\mu_i$ is composed of the intercept $\beta_0$ and the sum of a vector of predictor coefficients $\beta_k$.
 - The values of the unknown parameters can be estimated from the outcome variable $y_i$ and the vector of predictors $x_{ki}$.
 
 
@@ -153,7 +158,12 @@ sigma(model)
 </div>
 
 
-## Why do we need model comparions {.smaller}
+## Why do we need model comparions 
+
+> "All models are wrong, but some are useful"
+>
+> George E.P. Box
+
 
 - How useful is my model?
 - How useful is my model compared to other models?
@@ -161,18 +171,33 @@ sigma(model)
 - Are my model's predictions useful for new observations?
 - Fitting the observed data is good but even better would be if it can accurately predict unobserved data.
 
+## Ockham's razor: the principle of parsimony {.smaller}
 
-## Probabilistic generative models {.smaller}
+<div style="float: left; width: 45%;">
+
+- Is it worth assuming a more complex model?
+- Philosopher William of Ockham (1285-1347/49): "pluralitas non est ponenda sine necessitate"
+- "Plurality should not be posited without necessity."
+- Precedence to simplicity: of two competing theories, the simpler explanation of an entity is to be preferred. 
+- The principle is also expressed as "Entities are not to be multiplied beyond necessity."
+
+</div>
+
+<div style="float: right; width: 50%;">
+```{r echo=F, out.width="100%"}
+include_graphics("../gfx/ockham.jpg")
+```
+
+</div>
+
+
+## Probabilistic generative models 
 
 - In any statistical analysis, we assume out data are drawn from some probability distribution.
 - This is that we mean by *statistical model*, a *probabilistic generative model*.
 - A model of the *statistical population*, which could also be described as the true generative model.
 - In our analysis, we aim to find a good, or good enough, model of the population.
-- Remember
 
-> "All models are wrong, but some are useful"
->
-> George E.P. Box
 
 ## Model evaluation
 
@@ -182,11 +207,9 @@ sigma(model)
 - The probability of the data according to the model is the model's *likelihood*.
 
 
-## Example problem
+## Distribution of log rts from @blomkvist2017reference
 
-- Distribution of log rts from @blomkvist2017reference.
-
-```{r echo=F, out.width="100%"}
+```{r echo=F, out.width="80%", fig.height=4}
 ggplot(blomkvist, aes(x = log_rt)) +
   geom_histogram()
 ```
@@ -223,7 +246,7 @@ $$
 P(y_1\dots y_n\mid\hat\mu, \hat\sigma) = \prod_\text{i=1}^n P(y_i\mid \hat\mu, \hat\sigma).
 $$
 
-## Model log likelihood
+## Model log likelihood {.smaller}
 
 - The join probability
 
@@ -245,7 +268,7 @@ $$
 \text{log } P(y_1\mid \hat\mu, \hat\sigma).
 $$
 
-## Model log likelihood: calculations
+## Model log likelihood: calculation
 
 ```{r}
 model_0 <- lm(log_rt ~ 1, data = blomkvist)
@@ -261,6 +284,8 @@ sum(logp)
 ```{r}
 logLik(model_0)
 ```
+
+Work through exercise script: `exercises/log_likelihood.R`
 
 
 ## Stepping it up a notch {.smaller}
@@ -322,7 +347,7 @@ logLik(model_1)
 ```
 
 
-## Compare log likelihoods
+## Compare log likelihoods {.smaller}
 
 - Which model are the data more compatible with?
 
@@ -355,11 +380,16 @@ $$
 &=4.3.
 \end{aligned}
 $$
-or
+```{r echo=F, eval=F}
 
 $$
 \frac{\mathcal{L}_1}{\mathcal{L}_0} = \text{e}^{4.3} \approx 73.7
 $$
+
+```
+
+
+
 
 </div>
 
@@ -368,10 +398,11 @@ $$
 <div style="float: left; width: 45%;">
 
 ```{r echo = F, out.width="100%"}
+set.seed(123)
 n <- 20
 beta_0 <- 50
 beta_1 <- 6
-sigma <- 5
+sigma <- 3
 sim <- tibble(id = 1:6) %>%
     mutate(x = 0:5,
            e = rnorm(n(), mean = 0, sd = sigma)) %>%
@@ -398,10 +429,11 @@ ggplot(data =sim, aes(x = x, y = predict(fake_model))) +
 <div style="float: right; width: 45%;">
 
 ```{r echo = F, out.width="100%"}
+set.seed(123)
 n <- 20
 beta_0 <- 50
 beta_1 <- 6
-sigma <- 15
+sigma <- 20
 sim <- tibble(id = 1:6) %>%
     mutate(x = 0:5,
            e = rnorm(n(), mean = 0, sd = sigma)) %>%
@@ -437,6 +469,7 @@ blomkvist$resid <- residuals(model)
 
 plot <- ggplot(blomkvist, aes(x = age, y = pred, colour = sex) ) +
   geom_line(size = 2) +
+  scale_colour_viridis_d(end = .6) +
   geom_point(aes(x = age, y = log(rt), colour = sex), size = 2);plot
 ```
 </div>
@@ -479,10 +512,77 @@ mutate(blomkvist,
        predicted = predict(model),
        resid_1 = log_rt - predicted,
        resid_2 = residuals(model)) %>% 
-  select(log_rt, pred, resid_1, resid_2) %>% 
-  glimpse(width = 50)
+  select(log_rt, pred, resid_1, resid_2)  
 ```
 
+
+</div>
+
+
+## $R^2$ {.smaller}
+
+- Coefficient of determination: ability of a model to predict an outcome.
+
+$$
+\underbrace{\sum_{i=1}^n(y_i-\bar{y})^2}_\text{TSS} = \underbrace{\sum_{i=1}^n(\hat\mu_i-\bar{y})^2}_\text{ESS} + \underbrace{\sum_{i=1}^n(y_i-\hat\mu_i)^2}_\text{RSS}
+$$
+<div style="float: left; width: 40%;">
+
+- TSS: total sum of squares
+- ESS: explained sum of squares
+- RSS: residual sum of squares
+
+</div>
+<div style="float: left; width: 50%;">
+
+- Proportion of the variability in the outcome variable due to changes in the predictors.
+
+$$
+R^2 = \frac{\text{ESS}}{\text{TSS}}
+$$
+
+- $R^2$ is routinely used as measure of model fit.
+- $R^2$ gives the proportion of total variation due to variation in the predictor variables.
+
+</div>
+
+
+
+
+
+## ESS: Explained sum of squares {.smaller}
+
+<div style="float: left; width: 45%;">
+
+$\mu_i = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}$
+
+```{r}
+# Specify models
+model_0 <- lm(log_rt ~ 1, data = blomkvist)
+```
+
+$\mu_i = \beta_0$
+
+```{r}
+(mu <- as.vector(coef(model_0)))
+```
+
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+$\tilde{y} = \mu_i$
+
+```{r}
+(y_bar <- mean(blomkvist$log_rt))
+```
+
+
+```{r}
+# ESS: explained sum of squares
+(ess <- sum( mu - y_bar ))
+```
 
 </div>
 
@@ -499,29 +599,20 @@ $$
 $$
 
 ```{r}
-residuals(model_1)[1:5]
+residuals(model_0)[1:5]
 ```
 
 ```{r}
 y <- blomkvist$log_rt
-mu_hat <- predict(model_1)
+mu_hat <- predict(model_0)
 (y - mu_hat)[1:5]
 ```
 
 
+
 ## RSS: Residual sum of squares {.smaller}
 
-<div style="float: left; width: 45%;">
 
-```{r}
-# Specify models
-model_0 <- lm(log_rt ~ 1, data = blomkvist)
-as.vector(coef(model_0))
-```
-
-</div>
-
-<div style="float: right; width: 45%;">
 
 ```{r}
 # RSS: total of unexplained variance
@@ -533,9 +624,6 @@ as.vector(coef(model_0))
 ```
 
 
-</div>
-
-<div style="float: left; width: 100%;">
 
 
 ```{r echo = F, out.width="100%", fig.height=2.25}
@@ -564,10 +652,9 @@ resid_sqrt_plot <- ggplot(data = NULL, aes(x = resid^2)) +
 y_plot + resid_plot + resid_sqrt_plot
 ```
 
-</div>
 
 
-# Residual sum of squares and log likelihood
+## Residual sum of squares and log likelihood
 
 - RSS is a measure of the model's lack of fit.
 - Log likelihood and RSS are related as follows:
@@ -583,7 +670,7 @@ n <- nrow(blomkvist)
 ```
 
 ```{r}
-logLik(model_1)
+logLik(model_0)
 ```
 
 - In two normal linear models of the same data, the differences in likelihood is determined only by differences in RSS.
@@ -629,65 +716,6 @@ sum(abs(residuals(model_1))) / n
 ```{r}
 mean(abs(residuals(model_1)))
 ```
-
-
-## $R^2$ {.smaller}
-
-- Coefficient of determination: ability of a model to predict an outcome.
-
-$$
-\underbrace{\sum_{i=1}^n(y_i-\bar{y})^2}_\text{TSS} = \underbrace{\sum_{i=1}^n(\hat\mu_i-\bar{y})^2}_\text{ESS} + \underbrace{\sum_{i=1}^n(y_i-\hat\mu_i)^2}_\text{RSS}
-$$
-<div style="float: left; width: 40%;">
-
-- TSS: total sum of squares
-- ESS: explained sum of squares
-- RSS: residual sum of squares
-
-</div>
-<div style="float: left; width: 50%;">
-
-- Proportion of the variability in the outcome variable due to changes in the predictors.
-
-$$
-R^2 = \frac{\text{ESS}}{\text{TSS}}
-$$
-
-- $R^2$ is routinely used as measure of model fit.
-- $R^2$ gives the proportion of total variation due to variation in the predictor variables.
-
-</div>
-
-
-## ESS: Explained sum of squares {.smaller}
-
-<div style="float: left; width: 45%;">
-
-- $\mu_i = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}$
-
-```{r}
-# Specify models
-model_0 <- lm(log_rt ~ 1, data = blomkvist)
-```
-
-- $\mu_i = \beta_0$
-
-```{r}
-(mu <- as.vector(coef(model_0)))
-```
-
-- $\tilde{y} = \mu_i$
-
-```{r}
-(y_bar <- mean(blomkvist$log_rt))
-```
-
-
-```{r}
-# ESS: explained sum of squares
-(ess <- sum( mu - y_bar ))
-```
-
 
 
 
@@ -1262,6 +1290,7 @@ $$
 where $K$ is the number of model parameters
 
 ```{r}
+ll <- logLik(model_0)
 k <- 2 # beta_0, sigma^2
 (2 * K) - 2 * ll
 ```
@@ -1271,6 +1300,7 @@ AIC(model_0)
 ```
 
 - Penalises models with more parameters to prevent overfitting.
+
 
 ## Model comparison {.smaller}
 
@@ -1297,7 +1327,17 @@ drop1(model_3, scope = ~ sex * age, test = 'F')
 ```
 
 
-## References
+## The end
+
+- Nested models.
+- Comparing models with different predictors.
+- Evaluation is based one likelihood of data under the model.
+- Penalising more complex models by considering number of parameters.
+- Cross-validation to prevent overfitting.
+- Models with different probability models (e.g. Poisson vs negative biomial).
+
+
+## References {.smaller}
 
 <style>
 slides > slide { overflow: scroll; }
