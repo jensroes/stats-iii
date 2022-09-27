@@ -127,28 +127,29 @@ glimpse(blomkvist, width = 60)
 
 
 
-## How do you know you can trust someones published results? 
+## How do you know you can trust someone's results? {.build}
 
 - Results are communicated through reports such as peer reviewed scientific articles.
 - Results should be reproducible! -- Are they?
 - Data and code should be made available to others. -- Is this enough though?
-- It will be difficult to relate code to figures, tables, numbers etc for people that where not directly involved in the analysis.
-- This is true when results were copied and pasted from the stats software.
-- Also manual generation of reports is error prone.
+- It is difficult to relate code to figures, tables, numbers etc for people that where not directly involved in the analysis.
+- Especially results were copied and pasted from the stats software.
+- Also manual processing of data and generation of reports is error prone.
 
-
-
-## Rules for reproducible data analysis!
+## Rules for reproducible data analysis! {.smaller}
 
 - Never change your data manually; document everything in code.
-  - Retrospective amendments made easy
   - Documentation / reproducibility
+  - Retrospective amendments made easy
 - Organized working environment
   - `.Rproj` with one director per project with sub-directories for scripts, data, plots, etc
-  - Short scripts: less code with one clear purpose is always better (test is: does the name of your script suggest a specific or general purpose?)
+  - Short scripts: less code with one clear purpose is always better.
 - Comment your code (`# Ceci n'est pas un comment!`)
+- Share code and data with your readers:
+  - [github.com](https://github.com/jensroes)
+  - [osf.io](https://osf.io/sp87n/)
 - Use RMarkdown for full reproducibility of your results.
-
+- Why does reproducibility matter?
 
 
 ## Why do our results need to be reproducible? {.smaller}
@@ -158,7 +159,7 @@ glimpse(blomkvist, width = 60)
 - Open Science Collaboration project led by Brian Nosek [@open2015estimating].
 - Aimed to replicate important findings in psychological research.
 - Main finding: 36% of those findings tested where replicated; only 23% for Social Psychology
-- Many reasons for why: small sample sizes, pressure to publish sensational results and fast.
+- Many reasons for why: small sample sizes, pressure to publish sensational results quickly.
 - Make Psychology Science Again: pre-registration, more replications, larger samples (power analysis), abandoning *p*-value significance testing, transparency (sharing data and fully reproducible analyses).
 
 </div>
@@ -193,7 +194,7 @@ include_graphics("../gfx/markdown.png")
 
 
 
-## Why RMarkdown? {.smaller}
+## Why RMarkdown? 
 
 <div style="float: left; width: 30%;">
 
@@ -205,8 +206,9 @@ include_graphics("../gfx/rmarkdown.png")
 
 <div style="float: right; width: 60%;">
 
-- Documentation of all analysis steps (for us and our readers)
-- Quickly updating and repeating analysis
+- Documentation of all analysis steps
+- Quickly updating and reproducing analysis
+- No copy-pasting between RStudio and Word documents
 - Communication of analysis / results 
 - Producing texts, website, supplementary materials, APA-style manuscripts, slides
 - Easy cross referencing of tables and figures, citations 
@@ -333,8 +335,7 @@ rmarkdown::render('test.Rmd', output_format = 'pdf_document')
 ## Minimal RMarkdown example 
 
 - Open `rmarkdown/examples/example.Rmd`
-- R *chunk*: try `CTRL+ALT+I` or `CMD+ALT+I` (upper case "i")
-- Two pieces of inline R code.
+- You'll see an R *chunk* and two pieces of inline R code.
 - Remainder is plain Markdown.
 - `Knit > Knit to PDF` to compile `.Rmd` file to `.pdf`. Wow!!!
 - Notice how the code was interpreted / rendered in pdf.
@@ -346,12 +347,12 @@ rmarkdown::render('test.Rmd', output_format = 'pdf_document')
 
 - Click on `File` > `New File` > `R Markdown`
 - Document (PDF, WORD, HTML)
+- `output: pdf_document`: use pdfs for writing manuscripts   
+- Also available `output: word_document`, `output: html_document`
 - Notice the YAML header between `'---'`s 
 - YAML = Y*AML* A*in’t* *a* M*arkup* L*anguage*
 - YAML is a minimal markup language.
-- `output: pdf_document`: use pdfs for writing manuscripts   
-- Also available `output: word_document`, `output: html_document`
-  
+- Create an *R chunk*: try `CTRL+ALT+I` or `CMD+ALT+I` (upper case "i")
 
 ## The setup R chunk | set global options used by `knitr`
 
@@ -371,7 +372,7 @@ rmarkdown::render('test.Rmd', output_format = 'pdf_document')
 
 ## The setup R chunk
 
-- Chunk label `setup` (optional): useful for file navigation and cross-referencing of *floating* figures and tables.
+- Chunk label `setup` (optional): useful for file navigation and cross-referencing of *floats* (figures and tables).
 - Try to always use unique labels for each R chunk.
 - Chunk configuration option `echo = FALSE`: don't display chunk
 
@@ -393,14 +394,14 @@ rmarkdown::render('test.Rmd', output_format = 'pdf_document')
 
 ## This is another subsection header
 
-## This is a subsubsection header
+### This is a subsubsection header
 ```
 
 
 ## Load data
 
-- Create a chunk called `loaddata`
-- Inside that chunk load libraries needed: `library(tidyverse)`
+- Create a chunk called `packages` and load libraries needed: `library(tidyverse)`
+- Create a new chunk called `loaddata`
 - Load @blomkvist2017reference data in same chunk.
 
 ```{r}
@@ -424,11 +425,11 @@ blomkvist <- read_csv("../data/blomkvist.csv") %>%
 
 ## $\LaTeX$ mathematical typesetting 
 
-- Strings are parsed using $\LaTeX$ and typeset accordingly when used between `$` symbols for inline mode.
+- Strings are parsed using $\LaTeX$ and typeset accordingly when used between `'$'` symbols for inline mode.
 - For example `$\beta$` is lower case $\beta$.
-- You can create subscripts using `_`: `$\beta_0$` is $\beta_0$ and using `{}` for more than one symbol as in `$\beta_{01}$` which is $\beta_{01}$
+- You can create subscripts using `'_'`: `$\beta_0$` is $\beta_0$ and using `'{}'` for more than one symbol as in `$\beta_{01}$` which is $\beta_{01}$
 - How would you write $\beta_{0_1}$?
-- Superscript is `^` as in `$\sigma^2$` which is $\sigma^2$.
+- Superscript is `'^'` as in `$\sigma^2$` which is $\sigma^2$.
 - How would you write $\sigma^{2^2}$?
 - How about $\sigma_e^2$
 
@@ -452,7 +453,7 @@ and $\sum_{k=1}^K \phi_k = 1$, then $\Phi$ is a probability mass function.
 
 <div style="float: left; width: 50%;">
 
-- *Display* mode using `$$` as delimiters.
+- *Display* mode using `'$$'` as delimiters.
 
 ```
 The probability of the observed data is as follows:
@@ -507,7 +508,7 @@ ggplot(blomkvist, aes(x = age, y = rt)) +
 
 - Try and change the default size to `out.width = 50%`.
 - Cross-reference figure using `\ref{fig:scatterplot}` in the text. 
-- You might have noticed that the figure changed position. 
+- The figure's position will changed. 
 - $\LaTeX$ is calling objects like figures and tables *floats* cause the placement depends on constraints such as whitespace on page, number of figures on page ... (i.e. they are floating).
 - Tip: don't fine-tune the placement until you're done with your document.
 
@@ -581,8 +582,8 @@ $$
 $$
 ```
 
-- The "`&`" is used to align the lines so that "$\sim$" and "$=$" are aligned.
-- `$\\$` forces a line break.
+- The `'&'` is used to align the lines so that '$\sim$' (`\sim`) and '$=$' are aligned.
+- `'$\\$'` forces a line break.
 
 ## Formatted inline R output {.smaller}
 
@@ -729,20 +730,12 @@ install.packages("remotes")
 remotes::install_github("juba/rmdformats")
 ```
 
-## From the R-Studio menu ...
-
-- `File` > `New File` > `R Markdown`
-- Document (PDF, WORD, HTML)
-- From template: 
-  - e.g. `readthedown` or `robobook` for documents
-  - `rmdshower::shower_presentations` for slides
-
-## Documents
-
-- Example: <https://rpubs.com/jensroes/765467>
-- Online sharing on RPubs ("Publish")
 - Create from template:
   - `File` > `New File` > `R Markdown`
+  - e.g. `readthedown` or `robobook` for documents
+  - `rmdshower::shower_presentations` for slides
+- Example: <https://rpubs.com/jensroes/765467>
+- Online sharing on RPubs ("Publish")
 
 ## APA manuscripts using `papaja`
 
