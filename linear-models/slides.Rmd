@@ -135,7 +135,10 @@ are a set of $K$ values used to explain $y_i$. $\overrightarrow{x_i}$ are a set 
 Introducing $K$ in $x_{Ki}$ allows us to abbreviate the model equation.
 
 $$
-\beta_0 + \beta_1 + \beta_2 \dots \beta_k \dots \beta_K = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}
+\begin{aligned}
+\mu_i &= \beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i} \dots \beta_k \cdot x_{ki} \dots \beta_K \cdot x_{Ki}\\
+&= \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}
+\end{aligned}
 $$
 
 ## Normal linear model {.smaller}
@@ -143,8 +146,8 @@ $$
 <div style="float: left; width: 35%;">
 
 $$
-y_i \sim N(\mu_i, \sigma^2)\\
 \mu_i = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}\\
+y_i \sim N(\mu_i, \sigma^2)\\
 \text{for } i \in 1\dots n
 $$
 </div>
@@ -164,8 +167,8 @@ $$
 <div style="float: left; width: 35%;">
 
 $$
-y_i \sim N(\mu_i, \sigma^2)\\
 \mu_i = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}\\
+y_i \sim N(\mu_i, \sigma^2)\\
 \text{for } i \in 1\dots n
 $$
 </div>
@@ -177,6 +180,14 @@ there is a corresponding mean $\mu_{i'}$, i.e. $\mu_{i'} = \beta_0 + \sum_{k=1}^
 - If we change $x_{ki'}$ by $\Delta_{k'}$, then $\mu_{i'}$ changes by $\beta_k\Delta_k$.
 
 </div>
+
+## Simulation of normal distributed data
+
+- We can used `lm` to easily implement such a model.
+- How do we know that `lm` returns accurate estimates for out model parameters?
+- We can simulate data that exactly meet model assumptions (normal distribution, equal variance, independence etc.) with known model parameters.
+- In simulations, we know that the model assumptions are met and we know the true parameter values, so we can evaluate whether the normal model does a sensible job in estimating those parameter values.
+
 
 ## Simulation of normal distributed data
 
@@ -685,8 +696,7 @@ model <- lm(log_rt ~ sex, data = blomkvist)
 (coefs <- as.vector(coef(model)))
 ```
 
-- I.e. rt difference isn't $\beta_0 + \beta_1$ but $\beta_0 \cdot \beta_1$
-- rt is $\beta_1$ times shorter / longer.
+- I.e. log rt difference isn't $\beta_0 + \beta_1$ but $\beta_0 \cdot \beta_1$; log rt is $\beta_1$ times shorter / longer.
 - Intercept $\beta_0$ is the average for females and slope $\beta_1$ is difference for males.
 
 
@@ -826,8 +836,8 @@ exp(intercept + slope) - exp(intercept) # difference
 <div style="float: left; width: 45%;">
 
 - We may also model how the distribution of rts varies as either, or both, sex and age.
-- In this figure, we see the density of rts for the different sexs, and the different terciles of age.
-- Denoting sexs by $x_{11},x_{12}\dots x_{1i}\dots x_{1n}$ and age by $x_{21},x_{22}\dots x_{2i}\dots x_{2n}$ the model is now
+- In this figure, we see the density of rts for the different sexes, and the different terciles of age.
+- Denoting sexes by $x_{11},x_{12}\dots x_{1i}\dots x_{1n}$ and age by $x_{21},x_{22}\dots x_{2i}\dots x_{2n}$ the model is now
 
 $$
 y_i \sim N(\mu_i, \sigma^2)\\
@@ -914,7 +924,9 @@ are the set of values $K+2$ unknown variables that make the observed data most p
 
 ## Model fitting {.smaller}
 
-- The maximum likelihood values of the $K+1$ coefficients, $\hat\beta_0,\hat\beta_1\dots\hat\beta_K$, are those values of the $\beta_0,\beta_1\dots\beta_K$ variables that minimize the *residual sum of squares*
+<div style="float: left; width: 40%;">
+
+The maximum likelihood values of the $K+1$ coefficients, $\hat\beta_0,\hat\beta_1\dots\hat\beta_K$, are those values of the $\beta_0,\beta_1\dots\beta_K$ variables that minimize the *residual sum of squares*
 
 $$
 \text{RSS} = \sum_{i=1}^n \mid y_i - \mu_i\mid^2,
@@ -922,14 +934,37 @@ $$
 
 where $\mu_i$ is defined above.
 
-- Once we have $\hat\beta$, then the maximum likelihood estimate of $\sigma$, denoted as $\hat\sigma$ is:
+</div>
 
-$$
-\hat\sigma = \sqrt{\frac{1}{n-K-1}\sum_{i=1}^n\mid y_i-\hat\mu_i\mid^2}.
-$$
+<div style="float: right; width: 50%;">
+
+```{r}
+# Define population parameter
+mu <- 100
+# Generate random data from normal distribution
+y <- rnorm(10, mean = mu, sd = 10)
+# Propose values for population parameter
+mu_grid <- seq(0, 500, 10)
+# Check which parameter value returns lowest RSS
+rss <- c()
+for(mu in mu_grid){
+  # calculate rss for mu
+  rss_mu <- sum((y - mu) ^ 2)
+  rss <- c(rss, rss_mu)
+}
+# Look for the smallest rss value
+idx <- which.min(rss)
+# Find corresponding mu value
+mu_grid[idx]
+```
+
+See script `exercises/mle.R` for example.
+
+</div>
 
 ## Fitting a normal linear model using `lm` {.smaller}
 
+- `lm` is using maximum likelihood estimation and can be used for larger sets of parameters.
 - Let's continue with the @blomkvist2017reference rt data.
 - For simplicity of explanation we will use the untransformed rts.
 
@@ -946,28 +981,32 @@ blomkvist <- read_csv("../data/blomkvist.csv") %>%
 model <- lm(rt ~ sex + age, data = blomkvist)
 ```
 
-- Maximum likelihood estimates of $\beta_0$ (intercept) and $\beta_1$ (coefficient of sex) and $\beta_2$ (coefficent of age) are as follow:
+- Maximum likelihood estimators of $\beta_0$ (intercept) and $\beta_1$ (coefficient of sex) and $\beta_2$ (coefficent of age) are as follow:
 
 ```{r}
 (coefs <- coef(model))
 ```
+
+
+
 
 ## Fitting a normal linear model using `lm` {.smaller}
 
 
 <div style="float: left; width: 42%;">
 
-- Maximum likelihood estimate of $\sigma$ is
+Once we have $\hat\mu$, then the maximum likelihood estimate of $\sigma$, denoted as $\hat\sigma$ is:
+
+$$
+\hat\sigma = \sqrt{\frac{1}{n-K-1}\sum_{i=1}^n\mid y_i-\hat\mu_i\mid^2}.
+$$
+
+
+Maximum likelihood estimate of $\sigma$ is
 
 ```{r}
 sigma(model)
 ```
-
-- Using:
-
-$$
-\hat\sigma = \sqrt{\frac{1}{n-K-1}\sum_{i=1}^n\mid y_i-\hat\mu_i\mid^2}
-$$
 
 </div>
 
@@ -1064,7 +1103,7 @@ pt(abs(t), df = n - K - 1, lower.tail = FALSE) * 2
 - *Null hypothesis significance testing*: we hypothesize the true value of the coefficient is exactly 0.0, then our *t*-statistic is
 
 $$
-\frac{\hat\beta_k - \beta_k}{\hat{\text{se}}_k} = \frac{-58.9 - 0.0}{18.5} = -3.19
+\frac{\hat\beta_k - \beta_k}{\hat{\text{se}}_k} = \frac{-58.9 - 0.0}{18.5} = \frac{-58.9}{18.5} = -3.19
 $$
 
 ```{r}
@@ -1080,14 +1119,13 @@ pt(abs(t), df = n - K - 1, lower.tail = FALSE) * 2
 
 ## *p*-values {.smaller}
 
-- Calculate *t* and *p*-value for the coefficient for age under the assumption that the true value for $\beta_\text{age}$ is 0.0.
+- Work through script `exercise/t_values.R` 
+- Calculate *t* and *p*-value for $\hat\beta_\text{age}$ testing the null hypothesis that the true value $\beta_\text{age}$ is 0.0.
 - Verify your calculation using
 
 ```{r}
 summary(model)$coefficients
 ```
-
-- Work through script `exercise/t_values.R` 
 
 
 
@@ -1177,42 +1215,19 @@ ggplot(data = data_df, aes(x = t_grid, y = p, colour = factor(df))) +
 
 ```
 
-## *t*-distribution {.smaller}
-
-
-```{r echo = F, out.width="80%", fig.height=4}
-t_grid <- seq(0, 3, .1) 
-df <- c(1, 2, 5, 8, 10, 100, 1000, 10000)
-
-data_df <- map_dfr(df, ~pt(t_grid, df = .x, lower.tail = F) %>% tibble(t_grid = t_grid, p = . * 2) %>%  
-    mutate(df = .x)) 
-
-ggplot(data = data_df, aes(x = t_grid, y = p, colour = factor(df))) +
-  geom_line() +
-  labs(x = "Theoretical t-value",
-       y = "p-value",
-       subtitle = "t-distribution",
-       colour = bquote("Df")) +
-  scale_colour_viridis_d() +
-  scale_x_continuous(breaks = seq(0, 3, .25)) +
-  geom_hline(yintercept = 0.05, linetype = "dotted") +
-  theme(legend.position = "none")
-
-
-```
-
 
 ## Confidence intervals {.smaller}
 
-- The set of all hypotheses that we do not rule out at the $p < 0.05$ level of significance is known as the 0.95 (or 95%) confidence interval.
-- Likewise, the set of all hypotheses that we do not rule out at the $p < 0.01$ level of significance is known as the 0.99 confidence interval, and so on.
-- In a normal linear model, the formula for the $1 - 2\epsilon$ confidence interval on coefficient $k$ is
+- The set of all hypotheses that we do not rule out at the $\alpha < 0.05$ level of significance is known as the 0.95 (or 95%) confidence interval.
+- Likewise, the set of all hypotheses that we do not rule out at the $\alpha < 0.01$ level of significance is known as the 0.99 confidence interval, and so on.
+- In a normal linear model, the formula for the confidence interval on coefficient $k$ is
 
 $$
 \hat\beta_k \pm \tau_{(1-\epsilon,\nu)} \cdot \hat{\text{se}}_k,
 $$
-where $\tau_{(1-\epsilon,\nu)}$ is value in a *t*-distribution with $\nu$ degrees of freedom below which lines $1-\epsilon$ of the area under the curve.
+where $\tau_{(1-\epsilon,\nu)}$ is value in a *t*-distribution with $\nu$ degrees of freedom below which is $1-\epsilon$ of the area under the curve.
 
+- $\tau$: how many standard errors above and below ('$\pm$') $\hat\beta_k$ are the lower and upper bound of the confidence interval.
 
 
 
@@ -1241,13 +1256,13 @@ beta_sex + c(-1, 1) * se_sex * tau
 coef(model) 
 ```
 
-- Verification:
+Verification:
 
 ```{r}
 confint(model, parm = 'sexmale',  level = .95)
 ```
 
-- Open `exercises/confidence_interval.R` and complete the script,
+Open and complete script `exercises/confidence_interval.R`
 
 </div>
 
@@ -1264,8 +1279,8 @@ set.seed(324)
 ```{r}
 # Set simulation parameters
 mu <- 600 # True parameter value
-n_sims <- 10 # Number of hypothetical experiments
 n <- 1000 # Number of observations per experiment
+n_sims <- 10 # Number of hypothetical experiments
 # Empty data frame for results
 sims <- tibble()
 # Run n_sims simulations
@@ -1298,7 +1313,7 @@ mutate(sims,
              colour = mu_in_ci)) +
   geom_errorbar(width = 0) +
   geom_hline(yintercept = mu, linetype = "dotted", colour = "blue") +
-  scale_colour_manual(values = c("no" = "red", "yes" =" grey50")) +
+  scale_colour_manual(values = c("no" = "red", "yes" =" black")) +
   scale_x_continuous(breaks = seq(1, n_sims, 1)) +
   scale_y_continuous(limits = c(580, 620)) +
   labs(colour = bquote("95% CI includes"~mu*":"),
@@ -1417,7 +1432,7 @@ predict(model, newdata = newdata)
 ## Prediction confidence intervals {.smaller}
 
 - We can calculate confidence intervals for the predicted values of $\mu_{i'}$.
-- The $1-2\epsilon$ confidence interval for $\mu_{i'}$ is as follows:
+- The confidence interval for $\mu_{i'}$ is as follows:
 
 $$
 \hat\mu_{i'} \pm \tau_{(1-\epsilon,\nu)} \cdot \hat{\text{se}}_{\mu_{i'}}
@@ -1843,22 +1858,22 @@ exp(betas[1] + betas[2] * 0 + betas[3] * 1)
 
 ## Recap
 
-- Normal model assumes that data are continues normal distributed.
+- Normal model assumes that data come from a single process that renders normal distributed data.
 - Estimate unknown population parameters using MLE.
-- For rts researchers often use log-normal distributions to correct for positive skew.
+- Log-normal transformation is often used to correct positive skew.
 - We can specify models with continues and categorical predictors and combinations of them.
 - Model specifications using varying intercepts and varying slopes.
 - Read lecture notes on NOW [@andrews2021doing].
-- Next week: how can we compare different models of the data?
+- Next workshop: model comparisons
 
-## Homework for Tuesday
+## Homework
 
 - We will start preparing your report for the formative assessment.
 - Review the [details for the formative assessment.](https://now.ntu.ac.uk/d2l/le/content/887088/viewContent/9653015/View)
 
 > *Using a data-set of your own choice, perform and report a linear regression analysis to address a set of theoretical questions of your choice that relate to your chosen data-set*
 
-- Familiarise yourself with [the demo](https://now.ntu.ac.uk/d2l/le/content/887088/viewContent/9653011/View) for the formative assessment.
+- Familiarize yourself with [the demo](https://now.ntu.ac.uk/d2l/le/content/887088/viewContent/9653011/View) for the formative assessment.
 - Find a suitable data set you can use for the formative assessment.
 
 

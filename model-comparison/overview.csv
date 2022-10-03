@@ -1,0 +1,4 @@
+Regression type,Model comparison measure (model vs model),Model fit measure (model vs data)
+Linear regression,"Adjusted \( R^2 \), AIC, BIC; Partial F-test if nested","\( R^2 \), AIC, BIC, Model F-test, Residual analysis"
+Logistic regression,"Deviance, LR test for deviance, AIC, BIC, AUC, NRI","Deviance, AIC, BIC, Hosmer-Lemeshow test, (AUC)"
+Poisson regression,"Deviance, AIC",Deviance

@@ -57,4 +57,9 @@ sigma <- sqrt(sigma_2)
 
 # Now, is your sigma identical to sigma(model)?
 
+# Btw, this value is equivalent to the standard deviation of the model's 
+# unexplained variance (the residuals):
+sd(residuals(---))
+
+
 

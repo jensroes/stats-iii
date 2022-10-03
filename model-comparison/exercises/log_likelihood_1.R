@@ -14,8 +14,10 @@ blomkvist <- read_csv('data/blomkvist.csv') %>%
 glimpse(---)
 
 # Log rts modelled as coming from a normal distribution
-model <- lm(--- ~ 1, data = ---)
-coef(model)
+model_0 <- lm(--- ~ 1, data = ---)
+
+# Check out the model coefficients.
+coef(---)
 
 # Extract MLEs
 mu_hat <- coef(---) # average log rt
@@ -33,7 +35,8 @@ prob_x <- dnorm(x, mean = ---, sd = ---)
 
 # Look at the distribution of x and their probability density:
 ggplot(data = NULL, aes(x = x, y = ---)) +
-  geom_line() 
+  geom_line() +
+  labs(x = "log rt", y = "likelihood")
 
 # Under this distribution we can calculate the probability of specific observations
 # which is shown on the y axis. For example, the density probability of an observation 
@@ -53,7 +56,8 @@ prob <- dnorm(---, mean = ---, sd = ---)
 
 # Let's look at the distribution of this probability
 ggplot(data = NULL, aes(x = y, y = ---)) +
-  geom_line()
+  geom_line() +
+  labs(x = "log rt", y = "log likelihood")
 # This is roughly the same as the plot above but only for the range of observed data.
 
 # Now, lets compare this to the log probability.

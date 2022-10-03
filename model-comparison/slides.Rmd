@@ -190,6 +190,27 @@ include_graphics("../gfx/ockham.jpg")
 
 </div>
 
+## Overview {.smaller}
+
+
+```{r overview, echo = F}
+read_csv("overview.csv") %>% 
+  kable(caption = "Popular model evaluation techniques") %>% 
+  kable_styling(full_width = T, bootstrap_options = c("responsive", "hover", "striped"))
+```
+
+
+
+```{r eval = FALSE, echo=FALSE}
+- Model evaluation: check how good the model fits the data
+- Testing whether a predictor explains variance and make the model beter
+- Hypothesis testing: testing whether one model is better than a simpler model with otherwise compareable properties.
+
+```
+
+
+
+
 
 ## Probabilistic generative models 
 
@@ -285,7 +306,7 @@ sum(logp)
 logLik(model_0)
 ```
 
-Work through exercise script: `exercises/log_likelihood.R`
+Work through exercise script: `exercises/log_likelihood_1.R`
 
 
 ## Stepping it up a notch {.smaller}
@@ -346,6 +367,8 @@ sum(logp)
 logLik(model_1)
 ```
 
+Work through exercise script: `exercises/log_likelihood_2.R`
+
 
 ## Compare log likelihoods {.smaller}
 
@@ -369,29 +392,32 @@ logLik(model_1) # L_1
 
 <div style="float: left; width: 100%;">
 
-- Including `sex` increased the log likelihood.
-- Let's denote these log likelihoods as log $\mathcal{L}_0$ and log $\mathcal{L}_1$.
-- The log of their ratio is 
+<div style="float: left; width: 60%;">
+
+- Let's denote these log likelihoods as log $\mathcal{L}_0$ and log $\mathcal{L}_1$; their ratio is:
 
 $$
 \begin{aligned}
-\text{log} \left(\frac{\mathcal{L}_1}{\mathcal{L}_0}\right)&=\text{log}\mathcal{L}_1-\text{log}\mathcal{L}_0,\\
-&=-13.3--17.6,\\
-&=4.3.
+\text{log} \left(\frac{\mathcal{L}_1}{\mathcal{L}_0}\right)&=\text{log}\mathcal{L}_1-\text{log}\mathcal{L}_0\\
+&=-13.3--17.6\\
+&=4.3\\
+\frac{\mathcal{L}_1}{\mathcal{L}_0}&= \text{e}^{4.3} \approx 73.7
 \end{aligned}
 $$
-```{r echo=F, eval=F}
-
-$$
-\frac{\mathcal{L}_1}{\mathcal{L}_0} = \text{e}^{4.3} \approx 73.7
-$$
-
-```
 
 
 
 
 </div>
+
+<div style="float: right; width: 35%;">
+
+- Including `sex` appears to increase the log likelihood.
+- Work through exercise script: `exercises/compare_log_lik.R`
+
+</div>
+</div>
+
 
 ## Residuals: assessing the unexplained variance
 
@@ -412,10 +438,8 @@ sim <- tibble(id = 1:6) %>%
 fake_model <- lm(y ~ x, data = sim)
 
 ggplot(data =sim, aes(x = x, y = predict(fake_model))) +
-  geom_point(aes(y = y)) +
+  geom_point(aes(y = y), size = 4) +
   geom_line(colour = "red") +
-  geom_segment( aes(xend = x, yend = y),
-      size = 0.5, alpha = 0.5, lineend = "round") +
   labs(subtitle = bquote(beta[0] == .(beta_0)*","~beta[1] == .(beta_1)*","~sigma^2 == .(sigma))) +
   theme(axis.title = element_blank(),
         axis.text = element_blank(),
@@ -443,15 +467,92 @@ sim <- tibble(id = 1:6) %>%
 fake_model <- lm(y ~ x, data = sim)
 
 ggplot(data = sim, aes(x = x, y = predict(fake_model))) +
-  geom_point(aes(y = y)) +
+  geom_point(aes(y = y), size = 4) +
   geom_line(colour = "red") +
-  geom_segment( aes(xend = x, yend = y),
-      size = 0.5, alpha = 0.5, lineend = "round") +
   labs(subtitle = bquote(beta[0] == .(beta_0)*","~beta[1] == .(beta_1)*","~sigma^2 == .(sigma))) +
   theme(axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank())
 ```
+
+</div>
+
+<div style="float: left; width: 100%;">
+
+- Which model is better and why?
+- Is the reason in the data or in the model of the data?
+- How can we reduce the residual deviation?
+
+</div>
+
+
+## Residuals: assessing the unexplained variance
+
+<div style="float: left; width: 45%;">
+
+```{r echo = F, out.width="100%"}
+set.seed(123)
+n <- 20
+beta_0 <- 50
+beta_1 <- 6
+sigma <- 3
+sim <- tibble(id = 1:6) %>%
+    mutate(x = 0:5,
+           e = rnorm(n(), mean = 0, sd = sigma)) %>%
+    mutate(y = beta_0 + beta_1 * x + e) %>%
+  select(id, x, y) 
+
+fake_model <- lm(y ~ x, data = sim)
+
+ggplot(data =sim, aes(x = x, y = predict(fake_model))) +
+  geom_point(aes(y = y), size = 4) +
+  geom_line(colour = "red") +
+  labs(subtitle = bquote(beta[0] == .(beta_0)*","~beta[1] == .(beta_1)*","~sigma^2 == .(sigma))) +
+  geom_segment( aes(xend = x, yend = y),
+      size = 0.5, alpha = 0.5, lineend = "round") +
+  theme(axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank())
+```
+
+</div>
+
+
+
+<div style="float: right; width: 45%;">
+
+```{r echo = F, out.width="100%"}
+set.seed(123)
+n <- 20
+beta_0 <- 50
+beta_1 <- 6
+sigma <- 20
+sim <- tibble(id = 1:6) %>%
+    mutate(x = 0:5,
+           e = rnorm(n(), mean = 0, sd = sigma)) %>%
+    mutate(y = beta_0 + beta_1 * x + e) %>%
+  select(id, x, y) 
+
+fake_model <- lm(y ~ x, data = sim)
+
+ggplot(data = sim, aes(x = x, y = predict(fake_model))) +
+  geom_point(aes(y = y), size = 4) +
+  geom_line(colour = "red") +
+  labs(subtitle = bquote(beta[0] == .(beta_0)*","~beta[1] == .(beta_1)*","~sigma^2 == .(sigma))) +
+  geom_segment( aes(xend = x, yend = y),
+      size = 0.5, alpha = 0.5, lineend = "round") +
+  theme(axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank())
+```
+
+</div>
+
+<div style="float: left; width: 100%;">
+
+- Which model is better and why?
+- Is the reason in the data or in the model of the data?
+- How can we reduce the residual deviation?
 
 </div>
 
@@ -515,76 +616,12 @@ mutate(blomkvist,
   select(log_rt, pred, resid_1, resid_2)  
 ```
 
-
-</div>
-
-
-## $R^2$ {.smaller}
-
-- Coefficient of determination: ability of a model to predict an outcome.
-
-$$
-\underbrace{\sum_{i=1}^n(y_i-\bar{y})^2}_\text{TSS} = \underbrace{\sum_{i=1}^n(\hat\mu_i-\bar{y})^2}_\text{ESS} + \underbrace{\sum_{i=1}^n(y_i-\hat\mu_i)^2}_\text{RSS}
-$$
-<div style="float: left; width: 40%;">
-
-- TSS: total sum of squares
-- ESS: explained sum of squares
-- RSS: residual sum of squares
-
-</div>
-<div style="float: left; width: 50%;">
-
-- Proportion of the variability in the outcome variable due to changes in the predictors.
-
-$$
-R^2 = \frac{\text{ESS}}{\text{TSS}}
-$$
-
-- $R^2$ is routinely used as measure of model fit.
-- $R^2$ gives the proportion of total variation due to variation in the predictor variables.
-
-</div>
-
-
-
-
-
-## ESS: Explained sum of squares {.smaller}
-
-<div style="float: left; width: 45%;">
-
-$\mu_i = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}$
-
-```{r}
-# Specify models
-model_0 <- lm(log_rt ~ 1, data = blomkvist)
-```
-
-$\mu_i = \beta_0$
-
-```{r}
-(mu <- as.vector(coef(model_0)))
-```
+Work through exercise script: `exercises/residuals.R`
 
 
 </div>
 
-<div style="float: right; width: 45%;">
 
-$\tilde{y} = \mu_i$
-
-```{r}
-(y_bar <- mean(blomkvist$log_rt))
-```
-
-
-```{r}
-# ESS: explained sum of squares
-(ess <- sum( mu - y_bar ))
-```
-
-</div>
 
 
 ## RSS: Residual sum of squares {.smaller}
@@ -599,12 +636,12 @@ $$
 $$
 
 ```{r}
-residuals(model_0)[1:5]
+residuals(model)[1:5]
 ```
 
 ```{r}
 y <- blomkvist$log_rt
-mu_hat <- predict(model_0)
+mu_hat <- predict(model)
 (y - mu_hat)[1:5]
 ```
 
@@ -616,18 +653,12 @@ mu_hat <- predict(model_0)
 
 ```{r}
 # RSS: total of unexplained variance
-(rss <- sum(residuals(model_0)^2))
+(rss <- sum(residuals(model)^2))
 ```
-
-```{r}
-(tss <- ess + rss)
-```
-
-
 
 
 ```{r echo = F, out.width="100%", fig.height=2.25}
-resid <- as.vector(residuals(model_0))
+resid <- as.vector(residuals(model))
 y <- blomkvist$log_rt
 #as.vector(predict(model_0, newdata = blomkvist))
 
@@ -664,21 +695,102 @@ $$
 $$
 
 ```{r}
-rss <- sum(residuals(model_0)^2)
+rss <- sum(residuals(model)^2)
 n <- nrow(blomkvist)
 -(n/2) * (log(2*pi) - log(n) + log(rss) + 1)
 ```
 
 ```{r}
-logLik(model_0)
+logLik(model)
 ```
 
 - In two normal linear models of the same data, the differences in likelihood is determined only by differences in RSS.
 
-## Root mean square error
 
-- The larger the sample size, the larger the RSS.
-- An alternative to RSS as a measure of model fit is the square root of the mean of the squared residuals, aka. *root mean square error* (RMSE):
+## ESS: Explained sum of squares {.smaller}
+
+<div style="float: left; width: 45%;">
+
+$\mu_i = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}$
+
+```{r}
+(mu <- predict(model))[1:10]
+```
+
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+$\bar{y}$ is the sample mean.
+
+```{r}
+(y_bar <- mean(blomkvist$log_rt))
+```
+
+
+```{r}
+# ESS: explained sum of squares
+(ess <- sum( (mu - y_bar)^2 ))
+```
+
+</div>
+
+
+
+## $R^2$ {.smaller}
+
+- Coefficient of determination: ability of a model to predict the outcome variable.
+
+$$
+\underbrace{\sum_{i=1}^n(y_i-\bar{y})^2}_\text{TSS} = \underbrace{\sum_{i=1}^n(\hat\mu_i-\bar{y})^2}_\text{ESS} + \underbrace{\sum_{i=1}^n(y_i-\hat\mu_i)^2}_\text{RSS}
+$$
+
+<div style="float: left; width: 100%;">
+
+<div style="float: left; width: 45%;">
+
+- $R^2$: proportion of total variation explained by the variation in the predictor variable(s).
+- Proportion of the variability in the outcome variable due to changes in the predictor(s).
+- Routinely used as measure of model fit.
+
+$$
+R^2 = \frac{\text{ESS}}{\text{TSS}}
+$$
+
+```{r}
+(tss <- ess + rss)
+```
+
+</div>
+<div style="float: right; width: 45%;">
+
+
+```{r}
+ess / tss
+```
+
+```{r}
+summary(model)$r.sq
+```
+
+
+Work through script: `exercises/rsquared.R`
+
+
+</div>
+</div>
+
+
+## Root mean square error {.smaller}
+
+<div style="float: left; width: 45%;">
+
+- In contrast to highlighting variance explained.
+- The larger the sample, the larger the RSS.
+- Alternative to RSS is the square root of the mean squared residuals.
+- Summaring average distance between model fit and data, while taking into account sample size.
+
 
 $$
 \text{RMSE} = \sqrt{\frac{\text{RSS}}{n}},
@@ -686,19 +798,33 @@ $$
 
 ```{r}
 n <- nrow(blomkvist)
-rss <- sum(residuals(model_1)^2)
+rss <- sum(residuals(model)^2)
 sqrt(rss/n)
 ```
 
+</div>
+
+<div style="float: right; width: 45%;">
+
+
 ```{r}
-sqrt(mean(residuals(model_1)^2))
+sqrt(mean(residuals(model)^2))
 ```
+
+- Standard deviation of the prediction error.
+
+```{r}
+sd(residuals(model))
+```
+
 
 which is $\hat\sigma$
 
 ```{r}
-sigma(model_0)
+sigma(model)
 ```
+
+</div>
 
 
 ## Mean absolute error
@@ -708,16 +834,18 @@ sigma(model_0)
 $$
 \text{MAE} = \frac{\sum_\text{i=1}^n\mid y_i-\hat{y}_1\mid}{n}
 $$
+
 ```{r}
-sum(abs(residuals(model_1))) / n
+sum(abs(residuals(model))) / n
 ```
 
 
 ```{r}
-mean(abs(residuals(model_1)))
+mean(abs(residuals(model)))
 ```
 
 
+Check out exercise `exercises/rmse_mae.R`
 
 
 
@@ -839,17 +967,15 @@ gridExtra::grid.arrange(gt, left = "Brain volume (cc)", bottom = "Body mass (kg)
 
 ## Adjusted $R^2$
 
-- To overcome this spurious increase in $R^2$, the following adjustment is applied.
+To overcome this spurious increase in $R^2$, the following adjustment is applied.
 
 $$
-R^2_\text{Adj} = 1 - \frac{\text{RSS}}{\text{TSS}} \cdot \frac{n-1}{n-K-1}
+\begin{aligned}
+R^2_\text{Adj} &= \frac{\text{ESS}}{\text{TSS}} \cdot \frac{n-1}{n-K-1}\\
+R^2_\text{Adj} &= R^2 \cdot \underbrace{\frac{n-1}{n-K-1}}_{\text{penalty}}\\
+\end{aligned}
 $$
 
-which is equivalent to
-
-$$
-R^2_\text{Adj} = 1 - (1-R^2) \cdot \underbrace{\frac{n-1}{n-K-1}}_{\text{penalty}}
-$$
 
 ## Adjusted $R^2$ 
 
@@ -917,10 +1043,10 @@ gridExtra::grid.arrange(gt, left = "Brain volume (cc)", bottom = "Body mass (kg)
 # Specify models
 model_0 <- lm(log_rt ~ 1, data = blomkvist)
 model_1 <- lm(log_rt ~ sex, data = blomkvist)
-
+# Calculate residual sum of squares
 RSS_0 <- sum(residuals(model_0)^2)
 RSS_1 <- sum(residuals(model_1)^2)
-
+# Compare
 c(RSS_0, RSS_1)
 ```
 
@@ -940,8 +1066,7 @@ model_0 <- lm(log_rt ~ 1, data = blomkvist)
 model_1 <- lm(log_rt ~ sex, data = blomkvist)
 ```
 
-
-- From the `lm` objects, $R^2$ and $R_\text{Adj}^2$ can be obtained using `summary`
+From the `lm` objects, $R^2$ and $R_\text{Adj}^2$ can be obtained using `summary`
 
 ```{r}
 # Generate model summary
@@ -972,39 +1097,50 @@ summary_model_1$adj.r.squared
 </div>
 
 
-## Calculating $R^2$ and $R_\text{Adj}^2$
+## Calculating $R^2$ and $R_\text{Adj}^2$ {.smaller}
+ 
+<div style="float: left; width: 45%;">
 
 ```{r}
-# Extract the outcome variable
 y <- blomkvist %>% pull(log_rt)
-# Total sum of squares
-tss <- sum((y - mean(y))^2)
-# Residual sum of squares
-epsilon <- residuals(model_1)
-rss <- sum(epsilon^2)
-# R^2
-(rsq <- 1 - rss/tss)
+mu <- predict(model_1)
+tss <- sum( (y - mean(y) )^2)
+ess <- sum( (mu - mean(y))^2)
+rss <- sum( residuals(model_1)^2)
+(rsq <- ess/tss) # R^2
 ```
-- From before
 
 ```{r}
 summary_model_1$r.squared
 ```
 
-```{r}
-# Adjusted R^2
-n <- length(y)
-K <- 1 # number of predictors
-(adj_rsq <- 1 - rss/tss * (n-1)/(n-K-1))
-```
+
 ```{r}
 summary_model_1$adj.r.squared
 ```
-- Because $n \gg K$, the penalty term is (very) close to 1.0 and the adjustment is minimal.
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+```{r}
+n <- length(y)
+K <- 1 # number of predictors
+(adj_rsq <- rsq * (n-1)/(n-K-1))
+```
+
+
+Because $n \gg K$, the penalty term is (very) close to 1.0 and the adjustment is minimal.
 
 ```{r}
 (n - 1) / (n - K - 1)
 ```
+
+
+Do exercise `exercises/adjrsquared.R`
+
+
+</div>
 
 
 
@@ -1020,6 +1156,8 @@ $$
 \end{aligned}
 $$
 
+
+## Model comparison {.smaller}
 
 - The residual sums of squares for these two models can be denoted RSS$_0$ and RSS$_1$.
 - Under the null hypothesis that these two models are identical, and so the coefficients for all predictors are simultaneously zero, we have the following result:
@@ -1050,7 +1188,8 @@ $$
 $$
 \frac{(\text{RSS}_0-\text{RSS}_1)/(K_1-K_0)}{\text{RSS}_1/(n - K_1 - 1)} \sim F(K_1 - K_0, n-K_1-1).
 $$
-- Nested normal linear models can be compared using F tests.
+
+- Nested normal linear models can be compared using F test.
 
 
 
@@ -1058,58 +1197,130 @@ $$
 
 - The results of the null hypothesis test that $R^2=0$ can be obtained in numerous ways, bu the easiest is to use the generic `anova` function where we compare `model_1` against `model_0`.  
 
+<div style="float: left; width: 47%;">
+
 ```{r}
 # Specify models
 model_0 <- lm(log_rt ~ 1, data = blomkvist)
 model_1 <- lm(log_rt ~ sex, data = blomkvist)
 ```
 
-```{r}
+```{r eval = F}
 # Compare models
 anova(model_0, model_1)
 ```
 
-- `RSS` column are the TSS and RSS of model `model_1`.
-
-```{r}
-tss; rss
+```{r echo = F}
+# Compare models
+print(anova(model_0, model_1), signif.stars=F)
 ```
-- TSS is RSS of `model_0` because in model with no predictors the variance of the outcome variable and the variance of the residuals are necessarily identical. 
 
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+- `RSS` column are TSS and RSS of model `model_1`.
+- TSS is RSS of `model_0` because in model with no predictors the variance of the outcome variable and the variance of the residuals are necessarily identical. 
 - ESS is the `Sum of Sq` and the difference of the `RSS` values.
 
 ```{r}
 (ess <- tss - rss)
 ```
+
+
+</div>
+
+
+## Model comparison {.smaller}
+
+- The results of the null hypothesis test that $R^2=0$ can be obtained in numerous ways, bu the easiest is to use the generic `anova` function where we compare `model_1` against `model_0`.  
+
+<div style="float: left; width: 47%;">
+
+```{r}
+# Specify models
+model_0 <- lm(log_rt ~ 1, data = blomkvist)
+model_1 <- lm(log_rt ~ sex, data = blomkvist)
+```
+
+```{r eval = F}
+# Compare models
+anova(model_0, model_1)
+```
+
+```{r echo = F}
+# Compare models
+print(anova(model_0, model_1), signif.stars=F)
+```
+
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+
 - `Df` and bottom value of `Res.Df` give us the degrees of freedom 
 
 ```{r}
 c(K, n - K - 1)
 ```
 
-by which `ess` and `rss` are divided for the F value (ratio).
+by which `ess` and `rss` are divided for F:
 
 ```{r}
 (f_stat <- (ess/K) / (rss/(n - K - 1)))
 ```
-- *p*-value gives the probability of getting a results greater than this F statistic in an F distribution with $K$ and $n - K - 1$ degrees of freedom.
 
+</div>
+
+
+## Model comparison {.smaller}
+
+- The results of the null hypothesis test that $R^2=0$ can be obtained in numerous ways, bu the easiest is to use the generic `anova` function where we compare `model_1` against `model_0`.  
+
+<div style="float: left; width: 47%;">
+
+```{r}
+# Specify models
+model_0 <- lm(log_rt ~ 1, data = blomkvist)
+model_1 <- lm(log_rt ~ sex, data = blomkvist)
+```
+
+```{r eval = F}
+# Compare models
+anova(model_0, model_1)
+```
+
+```{r echo = F}
+# Compare models
+print(anova(model_0, model_1), signif.stars=F)
+```
+
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+- *p*-value gives the probability of getting a results greater than this F statistic in an F distribution with $K$ and $n - K - 1$ degrees of freedom.
 - Cumulative distribution function of the F distribution `pf`
 
 ```{r}
 pf(f_stat, K, n-K-1, lower.tail = FALSE)
 ```
 
+</div>
 
-## F-ratio
+
+## F-ratio  {.smaller}
 
 $$
 \text{F} = \underbrace{\frac{\text{RSS}_0 - \text{RSS}_1}{\text{RSS}_1}}_\text{effect size} \cdot \underbrace{\frac{\text{df}_1}{\text{df}_0 -\text{df}_1}}_\text{sample size} = \frac{(\text{RSS}_0 - \text{RSS}_1)/(\text{df}_0 - \text{df}_1)}{\text{RSS}_1/\text{df}_1}
 $$
 
-where df$_1$ is $n - K_1 + 1$, where $K_1$ is the number of coefficients in $\mathcal{M}_1$ (predictors excluding intercept).
+where Df$_1$ is $n - K_1 + 1$, where $K_1$ is the number of coefficients in $\mathcal{M}_1$ (predictors excluding intercept).
 
-## F-ratio
+<div style="float: left; width: 45%;">
 
 ```{r}
 # Dfs
@@ -1124,6 +1335,9 @@ rss_0 <- sum(residuals(model_0)^2)
 rss_1 <- sum(residuals(model_1)^2)
 ```
 
+</div>
+
+<div style="float: right; width: 45%;">
 
 ```{r}
 (rss_0 - rss_1)/(df_0 - df_1)
@@ -1137,6 +1351,9 @@ rss_1 / df_1
 ((rss_0 - rss_1)/(df_0 - df_1))/(rss_1/df_1)
 ```
 
+Complete exercise `exercises/modelcomparison.R`
+
+</div>
 
 ## F distribution
 
@@ -1187,18 +1404,34 @@ p_values <- pf(q = F_grid, df1 = df1, df2 = df2, lower.tail = F)
 p_value <- pf(q = f_stat, df1 = df1, df2 = df2, lower.tail = F)
 label_2 <- deparse(bquote(paste("p" == .(round(p_value, 3)))))
 
-p2 + geom_hline(yintercept = p_value, colour = "red", linetype = "dashed") +
-  geom_label(aes(x = .65, y = 0.1, label = label_2), parse = T) 
+p3 <- p2 + geom_hline(yintercept = p_value, colour = "red", linetype = "dashed") +
+  geom_label(aes(x = .65, y = 0.1, label = label_2), parse = T);p3
 ```
 
-## F distribution for varying df
+
+## F distribution
+
+```{r}
+df1 <- K # Number of fixed effects
+df2 <- n - K - 1  
+F_grid <- seq(0, 10, .1) 
+p_values <- pf(q = F_grid, df1 = df1, df2 = df2, lower.tail = F)
+```
+
+```{r echo = F, fig.height=3}
+p3 + annotate("label", x = 8, y = .8, label = "Work through script\n exercise/f_distribution.R")
+
+```
+
+
+
+## F distribution for varying Df
 
 
 <div style="float: left; width: 45%;">
 ```{r}
-# df1 <- K # Number of fixed effects
 df1 <- seq(1, 21, 3)
-df2 <- n - K - 1  
+df2 <- 300  
 F_grid <- seq(0, 5, .1) 
 ```
 
@@ -1218,11 +1451,11 @@ ggplot(data = data_df1, aes(x = F_grid, y = p, colour = factor(df1))) +
 ```
 
 </div>
+
 <div style="float: right; width: 45%;">
 
 ```{r}
-df1 <- K # Number of fixed effects
-#df2 <- n - K - 1  
+df1 <- 5
 df2 <- seq(3, 300, 30)
 F_grid <- seq(0, 5, .1) 
 ```
@@ -1244,15 +1477,6 @@ ggplot(data = data_df2, aes(x = F_grid, y = p, colour = factor(df2))) +
 
 </div>
 
-## Model comparison {.smaller}
-
-```{r}
-anova(model_0, model_1)
-```
-
-```{r}
-drop1(model_1, scope = ~ sex, test = 'F')
-```
 
 
 ## Deviance information criterion (DIC)
@@ -1277,21 +1501,30 @@ rss_0
 
 
 
-## Akaike information criterion (AIC)
+## Akaike and Bayesian Information Criterion {.smaller}
 
-- Estimator of prediction error
-- Relative quality of statistical models for a given set of data
-- Similar to the decrease in $R^2$ when adding predictors, the log likelihood will always increase, even if the true value of the coefficient is zero.
+<div style="float: left; width: 55%;">
+
+- Estimators of prediction error.
+- Relative quality of statistical models for given data set.
+- Similar to $R^2$, log likelihood will always increase when adding predictors, even if the true value of the coefficient is zero.
+- Prevents overfitting by penalising models with more parameters.
+- Trade-off model fit (measured by $\hat{\mathcal{L}}$) and the number of parameters in the model.
+
 
 $$
-\text{AIC} = 2 \cdot K - 2 \cdot \text{log}(\hat{\mathcal{L}})
+\text{AIC} = 2 \cdot K - 2 \cdot \text{log}(\hat{\mathcal{L}})\\
+\text{BIC} = \text{log}(n) \cdot K - 2\cdot \text{log}(\hat{\mathcal{L}})\\
 $$
 
-where $K$ is the number of model parameters
+where $K$ is the number of model parameters.
+
+</div>
+<div style="float: right; width: 35%;">
 
 ```{r}
-ll <- logLik(model_0)
-k <- 2 # beta_0, sigma^2
+ll <- as.vector(logLik(model_0))
+K <- 2 # beta_0, sigma^2
 (2 * K) - 2 * ll
 ```
 
@@ -1299,12 +1532,34 @@ k <- 2 # beta_0, sigma^2
 AIC(model_0)
 ```
 
-- Penalises models with more parameters to prevent overfitting.
+```{r}
+n <- nrow(blomkvist) 
+log(n) * K - 2 * ll
+```
+
+```{r}
+BIC(model_0)
+```
+
+</div>
+
+
+```{r eval = F, echo=F}
+The AIC is designed to choose models with
+better predictive ability, thus it tends to favour bigger models as the sample size increases.
+BIC is an approximation to Bayesian model comparison by Bayes factors, and prefers models
+with higher posterior probability under an implicit weak prior (with an amount of information
+equivalent to one observation, see Kass and Wasserman 1995
+ If there is a “true” model, the
+BIC will tend to select it as the sample size increases. In many situations there may not be a
+true model, and collecting more data will uncover more complexity in the process generating
+the data, in which case AIC may be more suitable. 
+```
 
 
 ## Model comparison {.smaller}
 
-- What about the varying-intercepts and the varying-intercepts and varying-slopes model?
+What about the varying-intercepts and the varying-intercepts and varying-slopes model?
 
 ```{r}
 # Specify models
@@ -1314,27 +1569,76 @@ model_2 <- lm(log_rt ~ sex + age, data = blomkvist)
 model_3 <- lm(log_rt ~ sex * age, data = blomkvist)
 ```
 
-```{r}
+```{r eval = F}
 # Compare models
 anova(model_0, model_1, model_2, model_3)
 ```
 
-## Model comparison {.smaller}
+```{r echo = F}
+# Compare models
+print(anova(model_0, model_1, model_2, model_3), signif.stars=F)
+```
+
+
+## Model comparisons made easy {.smaller}
+
+
+```{r eval = F}
+# Drop highest level predictor 
+drop1(model_3, scope = ~ sex * age, test = 'F')
+```
+
+```{r echo = F}
+# Compare models
+print(drop1(model_3, scope = ~ sex * age, test = 'F'), signif.stars=F)
+```
+
+```{r}
+# All you ever need :)
+library(broom)
+#library(broom.mixed) # for multilevel models
+```
 
 
 ```{r}
-drop1(model_3, scope = ~ sex * age, test = 'F')
+tidy(model_3)
 ```
+
+```{r}
+glance(model_3) %>% glimpse()
+```
+
+```{r}
+augment(model_3)
+```
+
+
+
+
+## Watch out
+
+- Rejecting the null hypothesis in favour of an alternative model does not mean this model is the best (i.e. it is better than the baseline model).
+- Failing to reject the null hypothesis in favour of an alternative model does not mean that the null model is correct or that an additional coefficient is not theoretically relevant.
+
 
 
 ## The end
 
-- Nested models.
-- Comparing models with different predictors.
+- Comparing models with different predictors: nested models.
 - Evaluation is based one likelihood of data under the model.
 - Penalising more complex models by considering number of parameters.
-- Cross-validation to prevent overfitting.
+- Other comparison techniques for models that are not nested within each other.
+- Cross-validation to prevent overfitting (e.g. "LOO": Leave-one-out CV, k-fold CV, Monte Carlo CV).
 - Models with different probability models (e.g. Poisson vs negative biomial).
+- More about model comparisons for generalised linear models, see [https://cran.r-project.org/web/packages/fic/vignettes/fic.pdf](this manual). 
+
+
+
+```{r eval=FALSE, echo=FALSE}
+
+https://cran.r-project.org/doc/contrib/Faraway-PRA.pdf
+Chapter 3 Faraway 
+```
 
 
 ## References {.smaller}
