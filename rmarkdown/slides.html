@@ -551,62 +551,6 @@ Coefficients:
 (Intercept)      sexmale  
       664.8        -64.9  </pre>
 
-</article></slide><slide class=""><hgroup><h2>\(\LaTeX\) mathematical typesetting</h2></hgroup><article  id="latex-mathematical-typesetting">
-
-<ul>
-<li>Strings are parsed using \(\LaTeX\) and typeset accordingly when used between <code>&#39;$&#39;</code> symbols for inline mode.</li>
-<li>For example <code>$\beta$</code> is lower case \(\beta\).</li>
-<li>You can create subscripts using <code>&#39;_&#39;</code>: <code>$\beta_0$</code> is \(\beta_0\) and using <code>&#39;{}&#39;</code> for more than one symbol as in <code>$\beta_{01}$</code> which is \(\beta_{01}\)</li>
-<li>How would you write \(\beta_{0_1}\)?</li>
-<li>Superscript is <code>&#39;^&#39;</code> as in <code>$\sigma^2$</code> which is \(\sigma^2\).</li>
-<li>How would you write \(\sigma^{2^2}\)?</li>
-<li>How about \(\sigma_e^2\)</li>
-</ul>
-
-</article></slide><slide class=""><hgroup><h2>\(\LaTeX\) mathematical typesetting</h2></hgroup><article  id="latex-mathematical-typesetting-1" class="smaller">
-
-<ul>
-<li>Longer example</li>
-</ul>
-
-<p><code>If $\Phi = \phi_1, \phi_2 \ldots \phi_k \ldots \phi_k$, where each $0 \leq \phi_k \leq 1$, and $\sum_{k=1}^K \phi_k = 1$, then $\Phi$ is a probability mass function.</code></p>
-
-<p>Renders</p>
-
-<p>If \(\Phi = \phi_1, \phi_2 \ldots \phi_k \ldots \phi_k\), where each \(0 \leq \phi_k \leq 1\), and \(\sum_{k=1}^K \phi_k = 1\), then \(\Phi\) is a probability mass function.</p>
-
-<ul>
-<li>Try also <code>$\LaTeX$</code>.</li>
-<li>Task: Write Einstein’s famous formula for mass-energy equivalence.</li>
-<li>For a list of \(\LaTeX\) symboles <a href='https://now.ntu.ac.uk/d2l/le/content/887088/viewContent/9653013/View' title=''>see page 19</a>.</li>
-</ul>
-
-</article></slide><slide class=""><hgroup><h2>\(\LaTeX\) mathematical typesetting</h2></hgroup><article  id="latex-mathematical-typesetting-2" class="smaller">
-
-<div style="float: left; width: 50%;">
-<ul>
-<li><em>Display</em> mode using <code>&#39;$$&#39;</code> as delimiters.</li>
-</ul>
-
-<pre >The probability of the observed data is as follows:
-
-$$
-\mathrm{P}(x_i \ldots x_n \vert \mu, \sigma^2)
-= \prod_{i=1}^n \mathrm{P}(x_i \vert \mu, \sigma^2),
-$$
-
-where $\mu$ and $\sigma$ are parameters.</pre>
-
-<p>Renders the following</p>
-
-<p>The probability of the observed data is as follows: \[
-\mathrm{P}(x_i \ldots x_n \vert \mu, \sigma^2)
-= \prod_{i=1}^n \mathrm{P}(x_i \vert \mu, \sigma^2),
-\] where \(\mu\) and \(\sigma\) are parameters.</p></div>
-
-<div style="float: right; width: 40%;">
-<p>Top tip: you can literally copy \(\LaTeX\) code for formulas from straight Wikipedia: e.g. look for the formula for the Gaussian probability density function.</p></div>
-
 </article></slide><slide class=""><hgroup><h2>Figures</h2></hgroup><article  id="figures" class="smaller">
 
 <ul>
@@ -701,6 +645,86 @@ smoker_age %&gt;%
 <li>Also, label your chunk &ldquo;<code>smoker</code>&rdquo; and cross-reference the table in the text using <code>\ref{tab:smoker}</code>.</li>
 </ul>
 
+</article></slide><slide class=""><hgroup><h2>Bibliography and citations</h2></hgroup><article  id="bibliography-and-citations" class="smaller">
+
+<ul>
+<li>Add to the YAML preamble:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>bibliography: refs.bib
+biblio-style: apalike</pre>
+
+<ul>
+<li>Create a file called <code>refs.bib</code> (save in same working directory as your <code>.Rmd</code> file)</li>
+<li>Get the citation for <span class="cite">Blomkvist et al. (2017)</span> from Google Scholar and paste it into <code>refs.bib</code>:
+
+<ul>
+<li>Just copy the title &ldquo;Reference Data on Reaction Time and Aging Using the Nintendo Wii Balance Board: A Cross-Sectional Study of 354 Subjects from 20 to 99 Years of Age&rdquo; into Google Scholar</li>
+<li>Click <code>cite</code> and <code>BibTeX</code></li>
+<li>Copy the bib entry into <code>refs.bib</code></li>
+</ul></li>
+<li>Notice the citation <em>key</em> <code>blomkvist2017reference</code></li>
+<li>Cite <span class="cite">Blomkvist et al. (2017)</span> using <code>@blomkvist2017reference</code> and <code>[@blomkvist2017reference]</code>.</li>
+<li><code>.bib</code> entries have different types like <code>@book{}</code>, <code>@article{}</code>, <code>@incollection{}</code></li>
+<li>At the end of your document create a section &ldquo;<code># References</code>&rdquo;</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>\(\LaTeX\) mathematical typesetting</h2></hgroup><article  id="latex-mathematical-typesetting">
+
+<ul>
+<li>Strings are parsed using \(\LaTeX\) and typeset accordingly when used between <code>&#39;$&#39;</code> symbols for inline mode.</li>
+<li>For example <code>$\beta$</code> renders \(\beta\).</li>
+<li>You can create subscripts using <code>&#39;_&#39;</code>: <code>$\beta_0$</code> is \(\beta_0\) and using <code>&#39;{}&#39;</code> for more than one symbol as in <code>$\beta_{01}$</code> which is \(\beta_{01}\)</li>
+<li>How would you write \(\beta_{0_1}\)?</li>
+<li>Superscript is <code>&#39;^&#39;</code> as in <code>$\sigma^2$</code> which is \(\sigma^2\).</li>
+<li>How would you write \(\sigma^{2^2}\)?</li>
+<li>How about \(\sigma_e^2\)</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>\(\LaTeX\) mathematical typesetting</h2></hgroup><article  id="latex-mathematical-typesetting-1" class="smaller">
+
+<ul>
+<li>Longer example</li>
+</ul>
+
+<p><code>If $\Phi = \phi_1, \phi_2 \ldots \phi_k \ldots \phi_k$, where each $0 \leq \phi_k \leq 1$, and $\sum_{k=1}^K \phi_k = 1$, then $\Phi$ is a probability mass function.</code></p>
+
+<p>Renders</p>
+
+<p>If \(\Phi = \phi_1, \phi_2 \ldots \phi_k \ldots \phi_k\), where each \(0 \leq \phi_k \leq 1\), and \(\sum_{k=1}^K \phi_k = 1\), then \(\Phi\) is a probability mass function.</p>
+
+<ul>
+<li>Try also <code>$\LaTeX$</code>.</li>
+<li>Task: Write Einstein’s famous formula for mass-energy equivalence.</li>
+<li>For a list of \(\LaTeX\) symboles <a href='https://now.ntu.ac.uk/d2l/le/content/887088/viewContent/9653013/View' title=''>see page 19</a>.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>\(\LaTeX\) mathematical typesetting</h2></hgroup><article  id="latex-mathematical-typesetting-2" class="smaller">
+
+<div style="float: left; width: 50%;">
+<ul>
+<li><em>Display</em> mode using <code>&#39;$$&#39;</code> as delimiters.</li>
+</ul>
+
+<pre >The probability of the observed data is as follows:
+
+$$
+\mathrm{P}(x_i \ldots x_n \vert \mu, \sigma^2)
+= \prod_{i=1}^n \mathrm{P}(x_i \vert \mu, \sigma^2),
+$$
+
+where $\mu$ and $\sigma$ are parameters.</pre>
+
+<p>Renders the following</p>
+
+<p>The probability of the observed data is as follows: \[
+\mathrm{P}(x_i \ldots x_n \vert \mu, \sigma^2)
+= \prod_{i=1}^n \mathrm{P}(x_i \vert \mu, \sigma^2),
+\] where \(\mu\) and \(\sigma\) are parameters.</p></div>
+
+<div style="float: right; width: 40%;">
+<p>Top tip: you can literally copy \(\LaTeX\) code for formulas from straight Wikipedia: e.g. look for the formula for the Gaussian probability density function.</p></div>
+
 </article></slide><slide class=""><hgroup><h2>Display maths</h2></hgroup><article  id="display-maths" class="smaller">
 
 <ul>
@@ -756,30 +780,6 @@ p_value &lt;- pf(f_stat[1], f_stat[2], f_stat[3], lower.tail = FALSE)</pre>
 format.pval(p, eps = 0.01)</pre>
 
 <pre >[1] &quot;0.05&quot;  &quot;0.02&quot;  &quot;0.01&quot;  &quot;&lt;0.01&quot; &quot;&lt;0.01&quot;</pre>
-
-</article></slide><slide class=""><hgroup><h2>Bibliography and citations</h2></hgroup><article  id="bibliography-and-citations" class="smaller">
-
-<ul>
-<li>Add to the YAML preamble:</li>
-</ul>
-
-<pre class = 'prettyprint lang-r'>bibliography: refs.bib
-biblio-style: apalike</pre>
-
-<ul>
-<li>Create a file called <code>refs.bib</code> (save in same working directory as your <code>.Rmd</code> file)</li>
-<li>Get the citation for <span class="cite">Blomkvist et al. (2017)</span> from Google Scholar and paste it into <code>refs.bib</code>:
-
-<ul>
-<li>Just copy the title &ldquo;Reference Data on Reaction Time and Aging Using the Nintendo Wii Balance Board: A Cross-Sectional Study of 354 Subjects from 20 to 99 Years of Age&rdquo; into Google Scholar</li>
-<li>Click <code>cite</code> and <code>BibTeX</code></li>
-<li>Copy the bib entry into <code>refs.bib</code></li>
-</ul></li>
-<li>Notice the citation <em>key</em> <code>blomkvist2017reference</code></li>
-<li>Cite <span class="cite">Blomkvist et al. (2017)</span> using <code>@blomkvist2017reference</code> and <code>[@blomkvist2017reference]</code>.</li>
-<li><code>.bib</code> entries have different types like <code>@book{}</code>, <code>@article{}</code>, <code>@incollection{}</code></li>
-<li>At the end of your document create a section &ldquo;<code># References</code>&rdquo;</li>
-</ul>
 
 </article></slide><slide class=""><hgroup><h2>Some arithmetic operations and fractions</h2></hgroup><article  id="some-arithmetic-operations-and-fractions" class="smaller">
 
@@ -877,11 +877,10 @@ remotes::install_github(&quot;juba/rmdformats&quot;)</pre>
 
 <ul>
 <li>You will use RMarkdown for your class assignment.</li>
-<li>Check out the <a href='https://now.ntu.ac.uk/d2l/le/content/887088/viewContent/9653013/View' title=''>lecture notes</a> on RMarkdown.</li>
+<li>For help with RMarkdown, check out the <a href='https://now.ntu.ac.uk/d2l/le/content/887088/viewContent/9653013/View' title=''>lecture notes</a> on RMarkdown.</li>
 <li>For formatting tables using <code>kableExtra</code> check <a href='https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html' title=''>here</a></li>
 <li>Check the <a href='https://rmarkdown.rstudio.com/lesson-1.html' title=''><code>rmarkdown</code> website</a>.<br/></li>
-<li>And chapter 27 in <a href='https://r4ds.had.co.nz/r-markdown.html' title=''>&ldquo;R for Data Science&rdquo;</a> <span class="cite">(Wickham and Grolemund 2016)</span></li>
-<li>What questions have you got?</li>
+<li>And chapter 27 in <a href='https://r4ds.had.co.nz/r-markdown.html' title=''>&ldquo;R for Data Science&rdquo;</a> <span class="cite">(Wickham and Grolemund 2016)</span>.</li>
 </ul>
 
 </article></slide><slide class=""><hgroup><h2>References</h2></hgroup><article  id="references" class="smaller">

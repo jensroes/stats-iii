@@ -423,65 +423,7 @@ blomkvist <- read_csv("../data/blomkvist.csv") %>%
 ```
 
 
-## $\LaTeX$ mathematical typesetting 
 
-- Strings are parsed using $\LaTeX$ and typeset accordingly when used between `'$'` symbols for inline mode.
-- For example `$\beta$` is lower case $\beta$.
-- You can create subscripts using `'_'`: `$\beta_0$` is $\beta_0$ and using `'{}'` for more than one symbol as in `$\beta_{01}$` which is $\beta_{01}$
-- How would you write $\beta_{0_1}$?
-- Superscript is `'^'` as in `$\sigma^2$` which is $\sigma^2$.
-- How would you write $\sigma^{2^2}$?
-- How about $\sigma_e^2$
-
-## $\LaTeX$ mathematical typesetting {.smaller}
-
-- Longer example
-
-`If $\Phi = \phi_1, \phi_2 \ldots \phi_k \ldots \phi_k$, where each $0 \leq \phi_k \leq 1$,
-and $\sum_{k=1}^K \phi_k = 1$, then $\Phi$ is a probability mass function.`
-
-Renders
-
-If $\Phi = \phi_1, \phi_2 \ldots \phi_k \ldots \phi_k$, where each $0 \leq \phi_k \leq 1$,
-and $\sum_{k=1}^K \phi_k = 1$, then $\Phi$ is a probability mass function.
-
-- Try also `$\LaTeX$`.
-- Task: Write Einstein's famous formula for mass-energy equivalence.
-- For a list of $\LaTeX$ symboles [see page 19](https://now.ntu.ac.uk/d2l/le/content/887088/viewContent/9653013/View).
-
-## $\LaTeX$ mathematical typesetting {.smaller}
-
-<div style="float: left; width: 50%;">
-
-- *Display* mode using `'$$'` as delimiters.
-
-```
-The probability of the observed data is as follows:
-
-$$
-\mathrm{P}(x_i \ldots x_n \vert \mu, \sigma^2)
-= \prod_{i=1}^n \mathrm{P}(x_i \vert \mu, \sigma^2),
-$$
-
-where $\mu$ and $\sigma$ are parameters.
-```
-
-Renders the following
-
-The probability of the observed data is as follows:
-$$
-\mathrm{P}(x_i \ldots x_n \vert \mu, \sigma^2)
-= \prod_{i=1}^n \mathrm{P}(x_i \vert \mu, \sigma^2),
-$$
-where $\mu$ and $\sigma$ are parameters.
-
-</div>
-
-<div style="float: right; width: 40%;">
-
-Top tip: you can literally copy $\LaTeX$ code for formulas from straight Wikipedia: e.g. look for the formula for the Gaussian probability density function.
-
-</div>
 
 ## Figures {.smaller}
 
@@ -568,6 +510,89 @@ smoker_age %>%
 - Also, label your chunk "`smoker`" and cross-reference the table in the text using `\ref{tab:smoker}`.
 
 
+
+
+## Bibliography and citations {.smaller}
+
+- Add to the YAML preamble:
+
+```{r eval = F}
+bibliography: refs.bib
+biblio-style: apalike
+```
+
+- Create a file called `refs.bib` (save in same working directory as your `.Rmd` file)
+- Get the citation for @blomkvist2017reference from Google Scholar and paste it into `refs.bib`:
+  - Just copy the title "Reference Data on Reaction Time and Aging Using the Nintendo Wii Balance Board: A Cross-Sectional Study of 354 Subjects from 20 to 99 Years of Age" into Google Scholar
+  - Click `cite` and `BibTeX` 
+  - Copy the bib entry into `refs.bib`
+- Notice the citation *key* `blomkvist2017reference`
+- Cite @blomkvist2017reference using `@blomkvist2017reference` and `[@blomkvist2017reference]`.
+- `.bib` entries have different types like `@book{}`, `@article{}`, `@incollection{}`
+- At the end of your document create a section "`# References`"
+
+
+## $\LaTeX$ mathematical typesetting 
+
+- Strings are parsed using $\LaTeX$ and typeset accordingly when used between `'$'` symbols for inline mode.
+- For example `$\beta$` renders $\beta$.
+- You can create subscripts using `'_'`: `$\beta_0$` is $\beta_0$ and using `'{}'` for more than one symbol as in `$\beta_{01}$` which is $\beta_{01}$
+- How would you write $\beta_{0_1}$?
+- Superscript is `'^'` as in `$\sigma^2$` which is $\sigma^2$.
+- How would you write $\sigma^{2^2}$?
+- How about $\sigma_e^2$
+
+## $\LaTeX$ mathematical typesetting {.smaller}
+
+- Longer example
+
+`If $\Phi = \phi_1, \phi_2 \ldots \phi_k \ldots \phi_k$, where each $0 \leq \phi_k \leq 1$,
+and $\sum_{k=1}^K \phi_k = 1$, then $\Phi$ is a probability mass function.`
+
+Renders
+
+If $\Phi = \phi_1, \phi_2 \ldots \phi_k \ldots \phi_k$, where each $0 \leq \phi_k \leq 1$,
+and $\sum_{k=1}^K \phi_k = 1$, then $\Phi$ is a probability mass function.
+
+- Try also `$\LaTeX$`.
+- Task: Write Einstein's famous formula for mass-energy equivalence.
+- For a list of $\LaTeX$ symboles [see page 19](https://now.ntu.ac.uk/d2l/le/content/887088/viewContent/9653013/View).
+
+## $\LaTeX$ mathematical typesetting {.smaller}
+
+<div style="float: left; width: 50%;">
+
+- *Display* mode using `'$$'` as delimiters.
+
+```
+The probability of the observed data is as follows:
+
+$$
+\mathrm{P}(x_i \ldots x_n \vert \mu, \sigma^2)
+= \prod_{i=1}^n \mathrm{P}(x_i \vert \mu, \sigma^2),
+$$
+
+where $\mu$ and $\sigma$ are parameters.
+```
+
+Renders the following
+
+The probability of the observed data is as follows:
+$$
+\mathrm{P}(x_i \ldots x_n \vert \mu, \sigma^2)
+= \prod_{i=1}^n \mathrm{P}(x_i \vert \mu, \sigma^2),
+$$
+where $\mu$ and $\sigma$ are parameters.
+
+</div>
+
+<div style="float: right; width: 40%;">
+
+Top tip: you can literally copy $\LaTeX$ code for formulas from straight Wikipedia: e.g. look for the formula for the Gaussian probability density function.
+
+</div>
+
+
 ## Display maths {.smaller}
 
 - Using $\LaTeX$'s `aligned` environment to align multiple mathematical statements.
@@ -631,26 +656,6 @@ p <- c(0.05, 0.02, 0.011, 0.005, 0.001)
 format.pval(p, eps = 0.01)
 ```
 
-
-
-## Bibliography and citations {.smaller}
-
-- Add to the YAML preamble:
-
-```{r eval = F}
-bibliography: refs.bib
-biblio-style: apalike
-```
-
-- Create a file called `refs.bib` (save in same working directory as your `.Rmd` file)
-- Get the citation for @blomkvist2017reference from Google Scholar and paste it into `refs.bib`:
-  - Just copy the title "Reference Data on Reaction Time and Aging Using the Nintendo Wii Balance Board: A Cross-Sectional Study of 354 Subjects from 20 to 99 Years of Age" into Google Scholar
-  - Click `cite` and `BibTeX` 
-  - Copy the bib entry into `refs.bib`
-- Notice the citation *key* `blomkvist2017reference`
-- Cite @blomkvist2017reference using `@blomkvist2017reference` and `[@blomkvist2017reference]`.
-- `.bib` entries have different types like `@book{}`, `@article{}`, `@incollection{}`
-- At the end of your document create a section "`# References`"
 
 
 ## Some arithmetic operations and fractions {.smaller}
@@ -748,13 +753,10 @@ remotes::install_github("juba/rmdformats")
 ## The end
 
 - You will use RMarkdown for your class assignment.
-- Check out the [lecture notes](https://now.ntu.ac.uk/d2l/le/content/887088/viewContent/9653013/View) on RMarkdown.
+- For help with RMarkdown, check out the [lecture notes](https://now.ntu.ac.uk/d2l/le/content/887088/viewContent/9653013/View) on RMarkdown.
 - For formatting tables using `kableExtra` check [here](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html)
 - Check the [`rmarkdown` website](https://rmarkdown.rstudio.com/lesson-1.html).  
-- And chapter 27 in ["R for Data Science"](https://r4ds.had.co.nz/r-markdown.html) [@wickham2016r]
-- What questions have you got?
-
-
+- And chapter 27 in ["R for Data Science"](https://r4ds.had.co.nz/r-markdown.html) [@wickham2016r].
 
 
 ## References {.smaller}
