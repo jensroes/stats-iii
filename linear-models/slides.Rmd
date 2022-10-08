@@ -467,8 +467,6 @@ plot_sim / plot_spacer()
 
 <div style="float: left; width: 50%;">
 
-- Observed data are by-participant means, meaning the central limit theorem applies.
-- Yet, reaction times are notoriously skewed [cause they have lower but no upper bound; see @baa08book] 
 - Sometimes even simulated data don't appear normal distribution because the sample is too small.
 
 ```{r}
@@ -479,6 +477,10 @@ blomkvist <- read_csv("../data/blomkvist.csv") %>%
 ```{r echo = F}
 glimpse(blomkvist, width = 50)
 ```
+
+- Observed data are by-participant means, meaning the central limit theorem applies.
+- Yet, reaction times are notoriously skewed [cause they have lower but no upper bound; see @baa08book].
+
 
 
 </div>
@@ -509,10 +511,7 @@ plot_sim / plot_blomkvist
 
 <div style="float: left; width: 50%;">
 
-- Observed data are by-participant means, meaning the central limit theorem applies.
-- Yet, reaction times are notoriously skewed [cause they have lower but no upper bound; see @baa08book] 
 - Sometimes even simulated data don't appear normal distribution because the sample is too small.
-
 
 ```{r}
 blomkvist <- read_csv("../data/blomkvist.csv") %>% 
@@ -524,6 +523,8 @@ blomkvist <- read_csv("../data/blomkvist.csv") %>%
 glimpse(blomkvist, width = 50)
 ```
 
+- Observed data are by-participant means, meaning the central limit theorem applies.
+- Yet, reaction times are notoriously skewed [cause they have lower but no upper bound; see @baa08book].
 
 </div>
 
@@ -687,7 +688,7 @@ coef(model)
 
 <div style="float: left; width: 47%;">
 
-- Log transformation: slope is no longer additive (linear scale) but multiplicative (exponential scale)
+Log transformation: slope is no longer additive (linear scale) but multiplicative (exponential scale)
 
 ```{r}
 # Specify model
@@ -711,7 +712,7 @@ intercept <- coefs[1]
 slope <- coefs[2]
 ```
 
-- Exponentional function `exp` can be used to un-log coefficients.
+Exponentional function `exp` can be used to un-log coefficients.
 
 ```{r}
 exp(intercept) # female group in msecs
@@ -762,6 +763,8 @@ exactly $\beta_1\Delta_x$.
 ```{r}
 exp(intercept + slope) - exp(intercept) 
 ```
+
+Complete `exercises/interpreting_coefficients_1.R`
 
 
 
@@ -828,6 +831,9 @@ exp(intercept) # overall average
 exp(intercept + slope) - exp(intercept) # difference 
 
 ```
+
+Complete `exercises/interpreting_coefficients_2.R`
+
 
 </div>
 
@@ -1023,21 +1029,11 @@ summarise(sum_of_squres = sum(squared_diffs),
           sigma_2 = 1 / (N-K-1) * sum_of_squres,
           sigma = sqrt(sigma_2))
 ```
+Complete `exercises/calculating_sigma.R`
+
+
 
 </div>
-
-## Fitting a normal linear model using `lm`: exercise 
-
-- Work through scripts:
-  - `exercises/calculating_sigma.R`
-  - `exercises/interpreting_coefficients_1.R`
-  - `exercises/interpreting_coefficients_2.R`
-
-- For the first script (exercise), you will need this:
-
-$$
-\hat\sigma = \sqrt{\frac{1}{n-K-1}\sum_{i=1}^n\mid y_i-\hat\mu_i\mid^2}
-$$
 
 
 ## Hypothesis testing and confidence intervals
@@ -1390,25 +1386,24 @@ count(sims, mu_in_ci) %>%
 
 <div style="float: left; width: 40%;">
 
-- Using $\hat\beta_0,\hat\beta_1\dots\hat\beta_K$ and $\hat\sigma^2$, then for any new vector of predictor variables $\overrightarrow{x}_{i'}$, the corresponding $y_i$ is now
+Using $\hat\beta_0,\hat\beta_1\dots\hat\beta_K$ and $\hat\sigma^2$, then for any new vector of predictor variables $\overrightarrow{x}_{i'}$, the corresponding $y_i$ is now
 
 $$
 y_{i'} \sim N(\hat\mu_{i'}, \sigma^2)\\ 
 \hat\mu_{i'} = \hat\beta_0 + \sum_{k=1}^K \hat\beta_k \cdot x_{i'k}
 $$
 
-- To calculate $\hat\mu_{i'}$ for any given new vector of predictor variables $\overrightarrow{x}_{i'}$ use `predict` and related functions.
-
 ```{r}
 coef(model)
 ```
+
 
 </div>
 
 <div style="float: right; width: 50%;">
 
 
-- As $K$ is 2 we can rewrite, then simplify, and predict rts for females age 95.
+As $K$ is 2 we can rewrite, then simplify, and predict rts for females age 95.
 
 $$
 \begin{aligned}
@@ -1419,6 +1414,8 @@ $$
 &=885
 \end{aligned}
 $$
+
+To calculate $\hat\mu_{i'}$ for any given new vector of predictor variables $\overrightarrow{x}_{i'}$ use `predict`.
 
 ```{r}
 newdata <- tibble(sex = "female", age = 95)
@@ -1456,13 +1453,13 @@ predict(model, interval = 'confidence', newdata = newdata)
 
 ## Interactions and varying intercepts model {.smaller}
 
-- When we include `sex` as an explanatory variable in additional to a continuous predictor variable, the is as follows. 
+When we include `sex` as an explanatory variable in additional to a continuous predictor variable, the is as follows. 
 
 $$
 y_i \sim N(\mu_i, \sigma^2), \mu_i = \beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i}, \text{ for } i \in 1\dots n.
 $$
 
-- To implement this model using `lm` we would do the following.
+To implement this model using `lm` we would do the following.
 
 
 ```{r}
@@ -1472,7 +1469,7 @@ coef(model_2)
 
 ## Interactions and varying intercepts model {.smaller}
 
-- Given that $x_{2i}$ takes that value of 0 when the gender is female and 1 when gender is male, this model can be written as follows.
+Given that $x_{2i}$ takes that value of 0 when the gender is female and 1 when gender is male, this model can be written as follows.
 
 
 $$
@@ -1484,8 +1481,7 @@ y_i \sim N(\mu_i, \sigma^2) \\
 \end{array}
 \right.
 $$
-
-- This is a *varying intercepts* model.
+This is a *varying intercepts* model.
 
 ## Interactions and varying intercepts model {.smaller}
 
@@ -1526,30 +1522,30 @@ plot <- ggplot(blomkvist, aes(x = age, y = pred, colour = sex) ) +
 ## Interactions and varying-slopes model {.smaller}
 
 
-- The varying-intercepts model is written as follows:
+The varying-intercepts model is written as follows:
 
 $$
 y_i \sim N(\mu_i, \sigma^2), \mu_i = \beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i}, \text{ for } i \in 1\dots n.
 $$
 
-- The following is a varying intercepts and varying slopes model:
+The following is a varying intercepts and varying slopes model:
 
 $$
 y_i \sim N(\mu_i, \sigma^2),\\ 
 \mu_i = \beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i} + \underbrace{\beta_3 \cdot x_{1i} \cdot x_{2i}}_\text{interaction}
 $$
-- We effectively have a third predictor $x_{1i} \cdot x_{2i}$ that is the product of $x_{1i}$ and $x_{2i}$.
+We effectively have a third predictor $x_{1i} \cdot x_{2i}$ that is the product of $x_{1i}$ and $x_{2i}$.
 
 
 ## Interactions and varying-slopes model {.smaller}
 
-- Using `sex` and `age` as predictors, we can do the following to perform a varying-intercepts and varying-slopes model:
+Using `sex` and `age` as predictors, we can do the following to perform a varying-intercepts and varying-slopes model:
 
 ```{r}
 model_3 <- lm(log_rt ~ sex + age + sex:age, data = blomkvist)
 ```
 
-- Or slightly shorter:
+Or slightly shorter:
 
 ```{r}
 model_3 <- lm(log_rt ~ sex * age, data = blomkvist)
@@ -1609,13 +1605,13 @@ plot <- ggplot(blomkvist, aes(x = age, y = pred, colour = sex) ) +
 
 <div style="float: left; width: 50%;">
 
-- For simplicity, lets start with untransformed rts.
+For simplicity, lets start with untransformed rts.
 
 ```{r}
 model_3 <- lm(rt ~ sex * age, data = blomkvist)
 ```
 
-- From the varying-intercepts and varying-slopes model, the intercept terms for `female` and `male` are
+From the varying-intercepts and varying-slopes model, the intercept terms for `female` and `male` are
 
 ```{r}
 (betas <- coef(model_3))
@@ -1646,7 +1642,7 @@ betas[1] + betas[2]
 ```
 
 
-- The slope terms are as follows:
+The slope terms are as follows:
 
 ```{r}
 # females
@@ -1667,7 +1663,7 @@ betas[3] + betas[4]
 model_3 <- lm(log_rt ~ sex * age, data = blomkvist)
 ```
 
-- From the varying-intercepts and varying-slopes model, the intercept terms for `female` and `male` are
+From the varying-intercepts and varying-slopes model, the intercept terms for `female` and `male` are
 
 <div style="float: left; width: 45%;">
 
@@ -1695,7 +1691,7 @@ exp(betas[1] + betas[2])
 
 <div style="float: right; width: 45%;">
 
-- The slope terms are as follows:
+The slope terms are as follows:
 
 ```{r}
 # females
@@ -1722,7 +1718,7 @@ exp(betas[1] + betas[3] + betas[4]) -
 
 ## Polychotomous predictors {.smaller}
 
-- We can also use categorical predictor variables that have more than two levels (i.e. dichotomous like `sex`), which can be referred to as polychotomous predictor variables.
+We can also use categorical predictor variables that have more than two levels (i.e. dichotomous like `sex`), which can be referred to as polychotomous predictor variables.
 
 
 <div style="float: left; width: 55%;">
@@ -1750,7 +1746,7 @@ unique(blomkvist$smoker)
 
 <div style="float: left; width: 100%;">
 
-- Using `smoker` as out single categorical predictor variable, the linear model would be as follows.
+Using `smoker` as out single categorical predictor variable, the linear model would be as follows.
 
 $$
 y_i \sim N(\mu_i, \sigma^2), \mu_i = \beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i}, \text{ for } i \in 1\dots n.
@@ -1774,7 +1770,7 @@ $$
 ## Polychotomous predictors {.smaller}
 
 
-- Using `lm`, we would simply do as follows.
+Using `lm`, we would simply do as follows.
 
 ```{r}
 model_smoker <- lm(log_rt ~ smoker, data = blomkvist)
@@ -1787,7 +1783,7 @@ betas <- as.vector(coef(model_smoker))
 ```
 
 
-- The intercept term is the predicted average of the distribution of rt when `smoker` is `former`.
+The intercept term is the predicted average of the distribution of rt when `smoker` is `former`.
 
 ```{r}
 exp(betas[1])
@@ -1798,7 +1794,7 @@ exp(betas[1])
 ## Polychotomous predictors {.smaller}
 
 
-- Using `lm`, we would simply do as follows.
+Using `lm`, we would simply do as follows.
 
 ```{r}
 model_smoker <- lm(log_rt ~ smoker, data = blomkvist)
@@ -1812,7 +1808,7 @@ betas <- as.vector(coef(model_smoker))
 ```
 
 
-- The predicted mean of the weight distribution for `no`
+The predicted mean of the weight distribution for `no`
 
 $$
 \hat\beta_0 + \hat\beta_1 \cdot 1 + \hat\beta_2 \cdot 0 
@@ -1830,7 +1826,7 @@ exp(betas[1] + betas[2] * 1 + betas[3] * 0)
 ## Polychotomous predictors {.smaller}
 
 
-- Using `lm`, we would simply do as follows.
+Using `lm`, we would simply do as follows.
 
 ```{r}
 model_smoker <- lm(log_rt ~ smoker, data = blomkvist)
@@ -1841,7 +1837,7 @@ model_smoker <- lm(log_rt ~ smoker, data = blomkvist)
 betas <- as.vector(coef(model_smoker))
 ```
 
-- When `smoker` is `yes`, the predicted mean of the rt distribution for smokers is 
+When `smoker` is `yes`, the predicted mean of the rt distribution for smokers is 
 
 
 $$
@@ -1852,15 +1848,15 @@ $$
 exp(betas[1] + betas[2] * 0 + betas[3] * 1)
 ```
 
-- Exercise: work through script `exercises/polychotomous_predictor.R`
+Exercise: work through script `exercises/polychotomous_predictor.R`
 
 </div>
 
 ## Recap
 
-- Normal model assumes that data come from a single process that renders normal distributed data.
-- Estimate unknown population parameters using MLE.
+- Normal model assumes that data come from a single process that generates normal distributed data.
 - Log-normal transformation is often used to correct positive skew.
+- MLE provides estimates for unknown population parameters.
 - We can specify models with continues and categorical predictors and combinations of them.
 - Model specifications using varying intercepts and varying slopes.
 - Read lecture notes on NOW [@andrews2021doing].

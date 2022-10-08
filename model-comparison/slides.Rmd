@@ -62,13 +62,6 @@ theme_set(theme_bw(base_size = 18) +
                   panel.grid = element_blank()))
 ```
 
-## Aims for today
-
-- Recap on linear models.
-- Evaluating models based on likelihood.
-- Evaluating models based on residuals.
-- Comparing models based on fit to data.
-- Penalising more complex models.
 
 ## Normal linear model {.smaller}
 
@@ -119,67 +112,91 @@ blomkvist <- read_csv("../data/blomkvist.csv") %>%
 model <- lm(log_rt ~ sex + age, data = blomkvist)
 ```
 
-```{r}
-# Model coefficients
-coef(model)
-```
-
-
 </div>
 
 
-<div style="float: left; width: 42%;">
 
 ## Maximum likelihood estimates {.smaller}
 
-- The maximum likelihood values of the $K+1$ coefficients, $\hat\beta_0,\hat\beta_1\dots\hat\beta_K$, are those values of the $\beta_0,\beta_1\dots\beta_K$ variables that minimize the *residual sum of squares*
+The maximum likelihood values of the $K+1$ coefficients, $\hat\beta_0,\hat\beta_1\dots\hat\beta_K$, are those values of the $\beta_0,\beta_1\dots\beta_K$ variables that minimize the *residual sum of squares*
+
+<div style="float: left; width: 45%;">
 
 $$
 \text{RSS} = \sum_{i=1}^n \mid y_i - \mu_i\mid^2
 $$
+</div>
 
-- Once we have $\hat\beta$, then the maximum likelihood estimate of $\sigma$, denoted as $\hat\sigma$ is:
+<div style="float: right; width: 45%;">
 
+```{r}
+coef(model)
+```
+
+</div>
+
+<div style="float: left; width: 100%;">
+
+Once we have $\hat\beta$, then the maximum likelihood estimate of $\sigma$, denoted as $\hat\sigma$ is:
+
+</div>
+
+<div style="float: left; width: 45%;">
 
 $$
 \hat\sigma = \sqrt{\frac{1}{n-K-1}\sum_{i=1}^n\mid y_i-\hat\mu_i\mid^2}
 $$
+</div>
+
+<div style="float: right; width: 45%;">
 
 ```{r}
 sigma(model)
 ```
 
-
-</div>
-
-<div style="float: right; width: 52%;">
-
-
 </div>
 
 
-## Why do we need model comparions 
+## Update your workshop repository
+
+- Go to [github.com/jensroes/stats-iii](https://github.com/jensroes/stats-iii)
+- Download the repository
+- Extract the `model-comparison` folder
+
+
+## Why do we need model comparion? {.smaller}
+
+<div style="float: left; width: 35%;">
 
 > "All models are wrong, but some are useful"
 >
 > George E.P. Box
 
+</div>
 
-- How useful is my model?
-- How useful is my model compared to other models?
-- Can my model fit the data accurately?
-- Are my model's predictions useful for new observations?
-- Fitting the observed data is good but even better would be if it can accurately predict unobserved data.
+<div style="float: right; width: 55%;">
+
+- Models are statistical representations of a hypothesis.
+- We want to compare hypotheses.
+- How useful is my model compared to other alternative models?
+- Can my model fit the data (more) accurately?
+- Are my model's predictions useful?
+- Can the model accurately predict future outcomes?
+
+</div>
 
 ## Ockham's razor: the principle of parsimony {.smaller}
 
 <div style="float: left; width: 45%;">
 
 - Is it worth assuming a more complex model?
-- Philosopher William of Ockham (1285-1347/49): "pluralitas non est ponenda sine necessitate"
+- Philosopher William of Ockham (1285-1347/49): 
+
+"pluralitas non est ponenda sine necessitate"
+
 - "Plurality should not be posited without necessity."
 - Precedence to simplicity: of two competing theories, the simpler explanation of an entity is to be preferred. 
-- The principle is also expressed as "Entities are not to be multiplied beyond necessity."
+- We don't assume more complex theories, if there is not sufficient evidence.
 
 </div>
 
@@ -189,6 +206,14 @@ include_graphics("../gfx/ockham.jpg")
 ```
 
 </div>
+
+## Overview
+
+- Likelihood of the data.
+- Explained and unexplained variance.
+- Fit to data.
+- Penalising more complex models.
+
 
 ## Overview {.smaller}
 
@@ -214,30 +239,31 @@ read_csv("overview.csv") %>%
 
 ## Probabilistic generative models 
 
-- In any statistical analysis, we assume out data are drawn from some probability distribution.
-- This is that we mean by *statistical model*, a *probabilistic generative model*.
-- A model of the *statistical population*, which could also be described as the true generative model.
+- In any statistical analysis, we assume our data are drawn from some probability distribution.
+- This is that we mean by *statistical model*, a *probabilistic generative model* like
+
+$$
+y_i \sim \mathcal{N}(\mu_i, \sigma^2), \mu_i = \beta_0 + \beta_1 \cdot x_i
+$$
+
+
+- A model of the *statistical population* could also be described as the true generative model.
 - In our analysis, we aim to find a good, or good enough, model of the population.
 
 
 ## Model evaluation
 
-- One way to evaluate a model is by asking if the data are compatible with the model.
+- Are the data compatible with the model?
 - Calculate the probability of the data according to the model.
-- If the probability of observing the data is higher in model $\mathcal{M}_0$ than in another $\mathcal{M}_1$, which model are the data more compatible with?
+- If the probability of observing the data is higher in model $\mathcal{M}_0$ than in another $\mathcal{M}_1$, which model is more compatible with the data?
 - The probability of the data according to the model is the model's *likelihood*.
 
 
-## Distribution of log rts from @blomkvist2017reference
+## Probabilistic model of log rts {.smaller}
 
-```{r echo=F, out.width="80%", fig.height=4}
-ggplot(blomkvist, aes(x = log_rt)) +
-  geom_histogram()
-```
+<div style="float: left; width: 45%;">
 
-## Probabilistic model
-
-- A possible model of log rt is the following
+A possible model of log rt is the following
 
 $$
 y_i \sim N(\mu, \sigma^2)\\
@@ -245,23 +271,35 @@ y_i \sim N(\mu, \sigma^2)\\
 $$
 where $y_i$ is the log rt of observation $i$.
 
-- This means we are modelling log rt as normally distributed with a mean $\mu$ and standard deviation $\sigma$, but we don't know the value of either of these parameters.
+We are modelling log rt as normally distributed with a mean $\mu$ and standard deviation $\sigma$, but we don't know the value of either of these parameters.
+
+</div>
+<div style="float: right; width: 45%;">
+
+```{r echo=F, out.width="80%", fig.height=6}
+ggplot(blomkvist, aes(x = log_rt)) +
+  geom_histogram()
+```
+
+</div>
+
 
 ## Model likelihood {.smaller}
 
-- Assuming values for $\mu$ and $\sigma$, what is the probability of the observed values of the log rt variable, $y_1, y_2, y_3\dots y_n$? 
+What is the probability of the observed values of the log rt variable, $y_1, y_2, y_3\dots y_n$, assuming values for $\mu$ and $\sigma$ (based on a particular model).
+
 
 $$
 P(y_1\dots y_n\mid\mu, \sigma)
 $$
 
-- In this model, all $y$'s are conditionally independent of one another, so the joint probability is as follows:
+We assume that all $y$'s are conditionally independent of one another, so the joint probability is 
 
 $$
 P(y_1\dots y_n\mid\mu, \sigma) = \prod_\text{i=1}^n P(y_i\mid \mu, \sigma).
 $$
 
-- We don't know the values of $\mu$ and $\sigma$, so we use their *maximum likelihood estimates*: $\hat\mu$ and $\hat\sigma$:
+We don't know the values of $\mu$ and $\sigma$, so we use their *maximum likelihood estimates*: $\hat\mu$ and $\hat\sigma$:
 
 $$
 P(y_1\dots y_n\mid\hat\mu, \hat\sigma) = \prod_\text{i=1}^n P(y_i\mid \hat\mu, \hat\sigma).
@@ -269,25 +307,22 @@ $$
 
 ## Model log likelihood {.smaller}
 
-- The join probability
+The join probability (the product of probabilities)
 
 $$
 P(y_1\dots y_n\mid\mu, \sigma) = \prod_\text{i=1}^n P(y_i\mid \mu, \sigma).
 $$
 
 
-will be a very small number (as product of probabilities; called numeric underflow), so we usually calculate its logarithm:
+will be a very small number (called numeric underflow), so we use its logarithm:
 
 
 $$
 \text{log} \left( P(y_1\dots y_n\mid\mu, \sigma) \right) = \sum_\text{i=1}^n \text{log } P(y_i\mid \mu, \sigma),
 $$
 
-and with maximum likelihood estimators for the unknowns:
+and with maximum likelihood estimators $\hat\mu, \hat\sigma$ for the unknowns.
 
-$$
-\text{log } P(y_1\mid \hat\mu, \hat\sigma).
-$$
 
 ## Model log likelihood: calculation
 
@@ -309,9 +344,9 @@ logLik(model_0)
 Work through exercise script: `exercises/log_likelihood_1.R`
 
 
-## Stepping it up a notch {.smaller}
+## Adding a predictor {.smaller}
 
-<div style="float: left; width: 45%;">
+<div style="float: left; width: 40%;">
 
 ```{r}
 select(blomkvist, id, log_rt, sex)
@@ -319,8 +354,8 @@ select(blomkvist, id, log_rt, sex)
 
 </div>
 
-<div style="float: right; width: 45%;">
-- Using the `sex` variable, the potential model of the log rt data is
+<div style="float: right; width: 50%;">
+Using the `sex` variable, the potential model of the log rt data is
 
 $$
 \begin{aligned}
@@ -330,22 +365,25 @@ y_i &\sim N(\mu_i, \sigma^2)\text{ for } i \in 1\dots n,\\
 $$
 where $y_i$ is the log rt and $x_i$ is `sex` on observation $i$.
 
-- We are modelling log rt as normally distributed around a mean that is a function of `sex`, and with a fixed variance $\sigma^2$.
-- Unknowns are $\beta_0,\beta_1,\sigma^2$.
+We are modelling log rt as normally distributed as a function of `sex`, and with an equal variance $\sigma^2$.
+
+Unknowns are $\beta_0,\beta_1,\sigma^2$.
 
 ## Regression model likelihood {.smaller}
 
-- Assuming values for $\beta_0,\beta_1,\sigma$, what is the probability of the observed values of the log rt, $y_1, y_2, y_3\dots y_n$? 
+Assuming values for $\beta_0,\beta_1,\sigma$, what is the probability of the observed values of log rt, $y_1, y_2, y_3\dots y_n$? 
 
 $$
 P(y_1\dots y_n\mid x_1\dots x_n,\beta_0,\beta_1,\sigma) = \prod_\text{i=1}^n P(y_i\mid x_i,\beta_0,\beta_1,\sigma).
 $$
-- The log likelihood of the model is
+
+The log likelihood of the model is
 
 $$
 \sum_\text{i=1}^n\text{ log} P(y_i\mid x_i,\beta_0,\beta_1,\sigma).
 $$
-- Again, we don't know $\beta_0,\beta_1,\sigma$, so we use their MLEs, $\hat\beta_0,\hat\beta_1,\hat\sigma$.
+
+Again, we don't know $\beta_0,\beta_1,\sigma$, so we use their MLEs, $\hat\beta_0,\hat\beta_1,\hat\sigma$.
 
 </div>
 
@@ -392,16 +430,15 @@ logLik(model_1) # L_1
 
 <div style="float: left; width: 100%;">
 
-<div style="float: left; width: 60%;">
+<div style="float: left; width: 45%;">
 
-- Let's denote these log likelihoods as log $\mathcal{L}_0$ and log $\mathcal{L}_1$; their ratio is:
+- Let's denote these log likelihoods as log $\mathcal{L}_0$ and log $\mathcal{L}_1$:
 
 $$
 \begin{aligned}
 \text{log} \left(\frac{\mathcal{L}_1}{\mathcal{L}_0}\right)&=\text{log}\mathcal{L}_1-\text{log}\mathcal{L}_0\\
 &=-13.3--17.6\\
-&=4.3\\
-\frac{\mathcal{L}_1}{\mathcal{L}_0}&= \text{e}^{4.3} \approx 73.7
+&=4.3
 \end{aligned}
 $$
 
@@ -410,7 +447,7 @@ $$
 
 </div>
 
-<div style="float: right; width: 35%;">
+<div style="float: right; width: 45%;">
 
 - Including `sex` appears to increase the log likelihood.
 - Work through exercise script: `exercises/compare_log_lik.R`
@@ -480,8 +517,7 @@ ggplot(data = sim, aes(x = x, y = predict(fake_model))) +
 <div style="float: left; width: 100%;">
 
 - Which model is better and why?
-- Is the reason in the data or in the model of the data?
-- How can we reduce the residual deviation?
+- How can we reduce the residual error?
 
 </div>
 
@@ -551,8 +587,7 @@ ggplot(data = sim, aes(x = x, y = predict(fake_model))) +
 <div style="float: left; width: 100%;">
 
 - Which model is better and why?
-- Is the reason in the data or in the model of the data?
-- How can we reduce the residual deviation?
+- How can we reduce the residual error?
 
 </div>
 
@@ -591,7 +626,12 @@ plot <- plot + geom_segment(
 
 <div style="float: right; width: 50%;">
 - Residuals are the unexplained (residual) variance: error in the modelling results.
-- Distance between observed ($y$) and predicted rt ($\hat{y}$): $\epsilon = y - \hat{y}$
+- Distance between observed ($y$) and predicted rt ($\hat{\mu}$)
+
+$$
+\epsilon = y - \hat{\mu}
+$$
+
 - The closer the residuals are to 0, the lower the prediction error.
 
 </div>
@@ -626,18 +666,24 @@ Work through exercise script: `exercises/residuals.R`
 
 ## RSS: Residual sum of squares {.smaller}
 
-- The sum of squared residuals in normal linear models when using the maximum likelihood estimators is
+The sum of squared residuals in normal linear models when using the maximum likelihood estimators is
 
 $$
 \begin{aligned}
 \text{RSS}&=\sum_\text{i=1}^n \mid y_i - (\hat\beta_0+\hat\beta_1\cdot x_i)\mid^2,\\
-&=\sum_\text{i=1}^n\mid y_i-\hat{y}_i\mid
+&=\sum_\text{i=1}^n\mid y_i-\hat{\mu}_i\mid
 \end{aligned}
 $$
+
+<div style="float: left; width: 45%;">
 
 ```{r}
 residuals(model)[1:5]
 ```
+
+</div>
+
+<div style="float: right; width: 45%;">
 
 ```{r}
 y <- blomkvist$log_rt
@@ -645,6 +691,7 @@ mu_hat <- predict(model)
 (y - mu_hat)[1:5]
 ```
 
+</div>
 
 
 ## RSS: Residual sum of squares {.smaller}
@@ -685,49 +732,64 @@ y_plot + resid_plot + resid_sqrt_plot
 
 
 
-## Residual sum of squares and log likelihood
+## Residual sum of squares and log likelihood {.smaller}
 
-- RSS is a measure of the model's lack of fit.
-- Log likelihood and RSS are related as follows:
-
-$$
-\text{log}\mathcal{L}=-\frac{n}{2}\left( \text{log}(2\pi)-\text{log}(n) + \text{log(RSS)}+1 \right)
-$$
+RSS is a measure of the model's lack of fit.
 
 ```{r}
-rss <- sum(residuals(model)^2)
+(rss <- sum(residuals(model)^2))
+```
+
+Log likelihood and RSS are related as follows:
+
+$$
+\text{log}(\mathcal{L})=-\frac{n}{2}\left( \text{log}(2\pi)-\text{log}(n) + \text{log(RSS)}+1 \right)
+$$
+<div style="float: left; width: 45%;">
+```{r}
 n <- nrow(blomkvist)
 -(n/2) * (log(2*pi) - log(n) + log(rss) + 1)
 ```
+</div>
 
+<div style="float: right; width: 45%;">
 ```{r}
 logLik(model)
 ```
+</div>
 
-- In two normal linear models of the same data, the differences in likelihood is determined only by differences in RSS.
-
+<div style="float: left; width: 100%;">
+The differences in likelihood is determined only by differences in RSS.
+</div>
 
 ## ESS: Explained sum of squares {.smaller}
 
-<div style="float: left; width: 45%;">
 
-$\mu_i = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}$
+<div style="float: left; width: 50%;">
+
+Predicted mean value $\hat\mu_i$ for each observation $i$:
+
+$\mu_i = \beta_0 + \beta_1 \cdot x_{i}$
 
 ```{r}
 (mu <- predict(model))[1:10]
 ```
 
-
-</div>
-
-<div style="float: right; width: 45%;">
-
-$\bar{y}$ is the sample mean.
+$\bar{y}$ is the mean of the sample.
 
 ```{r}
 (y_bar <- mean(blomkvist$log_rt))
 ```
 
+</div>
+
+<div style="float: right; width: 40%;">
+
+ESS is sum of squared differences of predicted data and sample mean.
+
+$$
+\text{ESS} = \sum_{i=1}^n(\hat\mu_i-\bar{y})^2
+$$
 
 ```{r}
 # ESS: explained sum of squares
@@ -738,9 +800,9 @@ $\bar{y}$ is the sample mean.
 
 
 
-## $R^2$ {.smaller}
+## $R^2$: coefficient of determination {.smaller}
 
-- Coefficient of determination: ability of a model to predict the outcome variable.
+Ability of a model to predict the outcome variable.
 
 $$
 \underbrace{\sum_{i=1}^n(y_i-\bar{y})^2}_\text{TSS} = \underbrace{\sum_{i=1}^n(\hat\mu_i-\bar{y})^2}_\text{ESS} + \underbrace{\sum_{i=1}^n(y_i-\hat\mu_i)^2}_\text{RSS}
@@ -750,7 +812,7 @@ $$
 
 <div style="float: left; width: 45%;">
 
-- $R^2$: proportion of total variation explained by the variation in the predictor variable(s).
+- Proportion of total variation explained by the variation in the predictor variable(s).
 - Proportion of the variability in the outcome variable due to changes in the predictor(s).
 - Routinely used as measure of model fit.
 
@@ -1318,7 +1380,7 @@ $$
 \text{F} = \underbrace{\frac{\text{RSS}_0 - \text{RSS}_1}{\text{RSS}_1}}_\text{effect size} \cdot \underbrace{\frac{\text{df}_1}{\text{df}_0 -\text{df}_1}}_\text{sample size} = \frac{(\text{RSS}_0 - \text{RSS}_1)/(\text{df}_0 - \text{df}_1)}{\text{RSS}_1/\text{df}_1}
 $$
 
-where Df$_1$ is $n - K_1 + 1$, where $K_1$ is the number of coefficients in $\mathcal{M}_1$ (predictors excluding intercept).
+where Df$_1$ is $n - K_1 + 1$, where $K_1$ is the number of coefficients (predictors) in $\mathcal{M}_1$.
 
 <div style="float: left; width: 45%;">
 
@@ -1343,7 +1405,7 @@ rss_1 <- sum(residuals(model_1)^2)
 (rss_0 - rss_1)/(df_0 - df_1)
 ```
 
-```{r}
+```{r echo = F, eval = F}
 rss_1 / df_1
 ```
 
@@ -1491,12 +1553,12 @@ where $\hat{\mathcal{L}}$ is the likelihood of the model using the MLEs.
 - Equivalent to RSS for generalised linear models.
 
 ```{r}
-deviance(model_0)
+deviance(model_1)
 ```
 
 
 ```{r}
-rss_0
+rss_1
 ```
 
 
@@ -1523,13 +1585,13 @@ where $K$ is the number of model parameters.
 <div style="float: right; width: 35%;">
 
 ```{r}
-ll <- as.vector(logLik(model_0))
+ll <- as.vector(logLik(model_1))
 K <- 2 # beta_0, sigma^2
 (2 * K) - 2 * ll
 ```
 
 ```{r}
-AIC(model_0)
+AIC(model_1)
 ```
 
 ```{r}
@@ -1538,7 +1600,7 @@ log(n) * K - 2 * ll
 ```
 
 ```{r}
-BIC(model_0)
+BIC(model_1)
 ```
 
 </div>
@@ -1557,9 +1619,11 @@ the data, in which case AIC may be more suitable.
 ```
 
 
-## Model comparison {.smaller}
+## Comparing multiple nested models {.smaller}
 
 What about the varying-intercepts and the varying-intercepts and varying-slopes model?
+
+<div style="float: left; width: 52%;">
 
 ```{r}
 # Specify models
@@ -1568,6 +1632,10 @@ model_1 <- lm(log_rt ~ sex, data = blomkvist)
 model_2 <- lm(log_rt ~ sex + age, data = blomkvist)
 model_3 <- lm(log_rt ~ sex * age, data = blomkvist)
 ```
+
+</div>
+
+<div style="float: right; width: 43%;">
 
 ```{r eval = F}
 # Compare models
@@ -1578,9 +1646,10 @@ anova(model_0, model_1, model_2, model_3)
 # Compare models
 print(anova(model_0, model_1, model_2, model_3), signif.stars=F)
 ```
+</div>
 
 
-## Model comparisons made easy {.smaller}
+## Model evaluation made easy {.smaller}
 
 
 ```{r eval = F}
@@ -1612,7 +1681,7 @@ glance(model_3) %>% glimpse()
 augment(model_3)
 ```
 
-
+Check `exercises/comparing_multiple_nested_models.R`
 
 
 ## Watch out
@@ -1629,8 +1698,7 @@ augment(model_3)
 - Penalising more complex models by considering number of parameters.
 - Other comparison techniques for models that are not nested within each other.
 - Cross-validation to prevent overfitting (e.g. "LOO": Leave-one-out CV, k-fold CV, Monte Carlo CV).
-- Models with different probability models (e.g. Poisson vs negative biomial).
-- More about model comparisons for generalised linear models, see [https://cran.r-project.org/web/packages/fic/vignettes/fic.pdf](this manual). 
+- Models with different probability models (e.g. Poisson vs negative binomial).
 
 
 
