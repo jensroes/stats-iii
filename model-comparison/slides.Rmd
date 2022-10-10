@@ -63,7 +63,7 @@ theme_set(theme_bw(base_size = 18) +
 ```
 
 
-## Normal linear model {.smaller}
+## Recap: Normal linear model {.smaller}
 
 <div style="float: left; width: 35%;">
 
@@ -77,7 +77,7 @@ $$
 <div style="float: left; width: 65%;">
 
 - Outcome variable is normally distributed.
-- Distribution can be characterised with an unknown mean $\mu_i$ and variance $\sigma^2$.
+- Distribution can be characterised by an unknown mean $\mu_i$ and variance $\sigma^2$.
 - The mean $\mu_i$ is composed of the intercept $\beta_0$ and the sum of a vector of predictor coefficients $\beta_k$.
 - The values of the unknown parameters can be estimated from the outcome variable $y_i$ and the vector of predictors $x_{ki}$.
 
@@ -86,7 +86,7 @@ $$
 
 
 
-## Normal linear model {.smaller}
+## Recap: Normal linear model {.smaller}
 
 <div style="float: left; width: 35%;">
 
@@ -116,7 +116,7 @@ model <- lm(log_rt ~ sex + age, data = blomkvist)
 
 
 
-## Maximum likelihood estimates {.smaller}
+## Recap: Maximum likelihood estimates {.smaller}
 
 The maximum likelihood values of the $K+1$ coefficients, $\hat\beta_0,\hat\beta_1\dots\hat\beta_K$, are those values of the $\beta_0,\beta_1\dots\beta_K$ variables that minimize the *residual sum of squares*
 
@@ -182,7 +182,7 @@ sigma(model)
 - Can my model fit the data (more) accurately?
 - Are my model's predictions useful?
 - Can the model accurately predict future outcomes?
-
+- As complex as necessary, as simple as possible.
 </div>
 
 ## Ockham's razor: the principle of parsimony {.smaller}
@@ -209,11 +209,11 @@ include_graphics("../gfx/ockham.jpg")
 
 ## Overview
 
-- Likelihood of the data.
-- Explained and unexplained variance.
-- Fit to data.
-- Penalising more complex models.
-
+- Likelihood of the data under a model
+- Explained and unexplained variance in the data
+- Fit to data
+- Penalising more complex models
+- Comparing multiple nested models
 
 ## Overview {.smaller}
 
@@ -240,7 +240,7 @@ read_csv("overview.csv") %>%
 ## Probabilistic generative models 
 
 - In any statistical analysis, we assume our data are drawn from some probability distribution.
-- This is that we mean by *statistical model*, a *probabilistic generative model* like
+- This is what we mean by *statistical model*, a *probabilistic generative model* like
 
 $$
 y_i \sim \mathcal{N}(\mu_i, \sigma^2), \mu_i = \beta_0 + \beta_1 \cdot x_i
@@ -251,9 +251,9 @@ $$
 - In our analysis, we aim to find a good, or good enough, model of the population.
 
 
-## Model evaluation
+## Model evaluation via likelihood
 
-- Are the data compatible with the model?
+- Tests if the data are compatible with the model?
 - Calculate the probability of the data according to the model.
 - If the probability of observing the data is higher in model $\mathcal{M}_0$ than in another $\mathcal{M}_1$, which model is more compatible with the data?
 - The probability of the data according to the model is the model's *likelihood*.
@@ -650,10 +650,10 @@ plot
 
 ```{r}
 mutate(blomkvist, 
-       predicted = predict(model),
-       resid_1 = log_rt - predicted,
+       mu_hat = predict(model),
+       resid_1 = log_rt - mu_hat,
        resid_2 = residuals(model)) %>% 
-  select(log_rt, pred, resid_1, resid_2)  
+  select(log_rt, mu_hat, resid_1, resid_2)  
 ```
 
 Work through exercise script: `exercises/residuals.R`
@@ -666,32 +666,16 @@ Work through exercise script: `exercises/residuals.R`
 
 ## RSS: Residual sum of squares {.smaller}
 
-The sum of squared residuals in normal linear models when using the maximum likelihood estimators is
+The sum of squared residuals in normal models when using the maximum likelihood estimators is
 
 $$
 \begin{aligned}
 \text{RSS}&=\sum_\text{i=1}^n \mid y_i - (\hat\beta_0+\hat\beta_1\cdot x_i)\mid^2,\\
-&=\sum_\text{i=1}^n\mid y_i-\hat{\mu}_i\mid
+&=\sum_\text{i=1}^n\mid y_i-\hat{\mu}_i\mid^2
 \end{aligned}
 $$
 
-<div style="float: left; width: 45%;">
-
-```{r}
-residuals(model)[1:5]
-```
-
-</div>
-
-<div style="float: right; width: 45%;">
-
-```{r}
-y <- blomkvist$log_rt
-mu_hat <- predict(model)
-(y - mu_hat)[1:5]
-```
-
-</div>
+is a measure of how much variance in the data is not explained by the model; or the model's lack of fit.
 
 
 ## RSS: Residual sum of squares {.smaller}
@@ -718,7 +702,7 @@ y_plot <- ggplot(data = NULL, aes(x = y)) +
 resid_plot <- ggplot(data = NULL, aes(x = resid)) +
   geom_histogram() +
   theme_bw(base_size = 11) +
-  labs(x = bquote("residuals" == "y" - tilde("y"))) +
+  labs(x = bquote("residuals" == "y" - hat(mu))) +
   theme(axis.title.y = element_blank())
 
 resid_sqrt_plot <- ggplot(data = NULL, aes(x = resid^2)) +
@@ -734,33 +718,25 @@ y_plot + resid_plot + resid_sqrt_plot
 
 ## Residual sum of squares and log likelihood {.smaller}
 
-RSS is a measure of the model's lack of fit.
 
-```{r}
-(rss <- sum(residuals(model)^2))
-```
-
-Log likelihood and RSS are related as follows:
+Log likelihood is calculated on the basis of RSS and the number of observations $n$ using the following relationship:
 
 $$
 \text{log}(\mathcal{L})=-\frac{n}{2}\left( \text{log}(2\pi)-\text{log}(n) + \text{log(RSS)}+1 \right)
 $$
-<div style="float: left; width: 45%;">
+<div style="float: left; width: 55%;">
 ```{r}
 n <- nrow(blomkvist)
 -(n/2) * (log(2*pi) - log(n) + log(rss) + 1)
 ```
 </div>
 
-<div style="float: right; width: 45%;">
+<div style="float: right; width: 40%;">
 ```{r}
 logLik(model)
 ```
 </div>
 
-<div style="float: left; width: 100%;">
-The differences in likelihood is determined only by differences in RSS.
-</div>
 
 ## ESS: Explained sum of squares {.smaller}
 
@@ -769,10 +745,10 @@ The differences in likelihood is determined only by differences in RSS.
 
 Predicted mean value $\hat\mu_i$ for each observation $i$:
 
-$\mu_i = \beta_0 + \beta_1 \cdot x_{i}$
+$\hat\mu_i = \hat\beta_0 + \hat\beta_1 \cdot x_{i}$
 
 ```{r}
-(mu <- predict(model))[1:10]
+(mu_hat <- predict(model))[1:10]
 ```
 
 $\bar{y}$ is the mean of the sample.
@@ -783,7 +759,7 @@ $\bar{y}$ is the mean of the sample.
 
 </div>
 
-<div style="float: right; width: 40%;">
+<div style="float: right; width: 45%;">
 
 ESS is sum of squared differences of predicted data and sample mean.
 
@@ -793,7 +769,7 @@ $$
 
 ```{r}
 # ESS: explained sum of squares
-(ess <- sum( (mu - y_bar)^2 ))
+(ess <- sum( (mu_hat - y_bar)^2 ))
 ```
 
 </div>
@@ -802,7 +778,7 @@ $$
 
 ## $R^2$: coefficient of determination {.smaller}
 
-Ability of a model to predict the outcome variable.
+calculated on the basis of TSS which is the sum of ESS and RSS
 
 $$
 \underbrace{\sum_{i=1}^n(y_i-\bar{y})^2}_\text{TSS} = \underbrace{\sum_{i=1}^n(\hat\mu_i-\bar{y})^2}_\text{ESS} + \underbrace{\sum_{i=1}^n(y_i-\hat\mu_i)^2}_\text{RSS}
@@ -811,31 +787,38 @@ $$
 <div style="float: left; width: 100%;">
 
 <div style="float: left; width: 45%;">
+```{r}
+(tss <- ess + rss)
+```
 
+- Ability of a model to predict the outcome variable.
 - Proportion of total variation explained by the variation in the predictor variable(s).
 - Proportion of the variability in the outcome variable due to changes in the predictor(s).
 - Routinely used as measure of model fit.
+
+</div>
+<div style="float: right; width: 45%;">
 
 $$
 R^2 = \frac{\text{ESS}}{\text{TSS}}
 $$
 
-```{r}
-(tss <- ess + rss)
-```
 
-</div>
-<div style="float: right; width: 45%;">
-
+<div style="float: left; width: 40%;">
 
 ```{r}
 ess / tss
 ```
 
+</div>
+
+<div style="float: right; width: 53%;">
+
 ```{r}
 summary(model)$r.sq
 ```
 
+</div>
 
 Work through script: `exercises/rsquared.R`
 
@@ -889,12 +872,12 @@ sigma(model)
 </div>
 
 
-## Mean absolute error
+## Mean absolute error {.smaller}
 
-- Related to the root mean squared error is the mean absolute error (MAE), which is the mean of the absolute values of the residuals.
+Related to the root mean squared error is the mean absolute error (MAE), which is the mean of the absolute values of the residuals.
 
 $$
-\text{MAE} = \frac{\sum_\text{i=1}^n\mid y_i-\hat{y}_1\mid}{n}
+\text{MAE} = \frac{\sum_\text{i=1}^n\mid y_i-\hat{\mu}_1\mid}{n}
 $$
 
 ```{r}
@@ -1033,7 +1016,6 @@ To overcome this spurious increase in $R^2$, the following adjustment is applied
 
 $$
 \begin{aligned}
-R^2_\text{Adj} &= \frac{\text{ESS}}{\text{TSS}} \cdot \frac{n-1}{n-K-1}\\
 R^2_\text{Adj} &= R^2 \cdot \underbrace{\frac{n-1}{n-K-1}}_{\text{penalty}}\\
 \end{aligned}
 $$
@@ -1101,108 +1083,50 @@ gridExtra::grid.arrange(gt, left = "Brain volume (cc)", bottom = "Body mass (kg)
 
 ## $R^2$ and Adjusted $R^2$ with `lm` {.smaller}
 
-```{r}
-# Specify models
-model_0 <- lm(log_rt ~ 1, data = blomkvist)
-model_1 <- lm(log_rt ~ sex, data = blomkvist)
-# Calculate residual sum of squares
-RSS_0 <- sum(residuals(model_0)^2)
-RSS_1 <- sum(residuals(model_1)^2)
-# Compare
-c(RSS_0, RSS_1)
-```
-
-```{r}
-(RSS_0 - RSS_1)/RSS_1
-```
-
-
-## $R^2$ and Adjusted $R^2$ with `lm` {.smaller}
-
 
 <div style="float: left; width: 55%;">
 
 ```{r}
 # Specify models
-model_0 <- lm(log_rt ~ 1, data = blomkvist)
 model_1 <- lm(log_rt ~ sex, data = blomkvist)
+model_2 <- lm(log_rt ~ sex + age, data = blomkvist)
 ```
 
 From the `lm` objects, $R^2$ and $R_\text{Adj}^2$ can be obtained using `summary`
 
 ```{r}
 # Generate model summary
-summary_model_0 <- summary(model_0)
 summary_model_1 <- summary(model_1)
+summary_model_2 <- summary(model_2)
 ```
+
+Because $n \gg K$, the penalty term is (very) close to 1.0 and the adjustment is minimal.
+
+Do exercise `exercises/adjrsquared.R`
+
 
 </div>
 
 <div style="float: right; width: 35%;">
 
 ```{r}
-summary_model_0$r.squared
-```
-
-```{r}
 summary_model_1$r.squared
 ```
 
 ```{r}
-summary_model_0$adj.r.squared
+summary_model_2$r.squared
 ```
 
 ```{r}
 summary_model_1$adj.r.squared
 ```
 
-</div>
-
-
-## Calculating $R^2$ and $R_\text{Adj}^2$ {.smaller}
- 
-<div style="float: left; width: 45%;">
-
 ```{r}
-y <- blomkvist %>% pull(log_rt)
-mu <- predict(model_1)
-tss <- sum( (y - mean(y) )^2)
-ess <- sum( (mu - mean(y))^2)
-rss <- sum( residuals(model_1)^2)
-(rsq <- ess/tss) # R^2
-```
-
-```{r}
-summary_model_1$r.squared
-```
-
-
-```{r}
-summary_model_1$adj.r.squared
+summary_model_2$adj.r.squared
 ```
 
 </div>
 
-<div style="float: right; width: 45%;">
-
-```{r}
-n <- length(y)
-K <- 1 # number of predictors
-(adj_rsq <- rsq * (n-1)/(n-K-1))
-```
-
-
-Because $n \gg K$, the penalty term is (very) close to 1.0 and the adjustment is minimal.
-
-```{r}
-(n - 1) / (n - K - 1)
-```
-
-
-Do exercise `exercises/adjrsquared.R`
-
-
-</div>
 
 
 
@@ -1230,34 +1154,32 @@ $$
 $$
 
 - Under the null hypothesis, the *F*-statistic is distributed as an *F*-distribution with $K$ and $N-K-1$ degrees of freedom.
+- Nested normal linear models can be compared using F test.
 
 
-## Model comparison {.smaller}
+## Nested models {.smaller}
 
-- We can extend the above result to test whether any subset of the $K$ predictors have coefficients that are simultaneously zero.
-- In general, we can compare two models $\mathcal{M}_1$ and $\mathcal{M}_0$ with $K_1$ and $K_0$ predictors, respectively, and where $K_0 < K$ and all the $K_0$ predictors in $\mathcal{M}_0$ are also presented in $\mathcal{M}_1$ 
-- I.e. $\mathcal{M}_0$ is *nested* in $\mathcal{M}_1$.
-- Under the null hypothesis that the $K_1-K_0$ predictors in $\mathcal{M}_1$ and not in $\mathcal{M}_0$ are simultanously zero, we have
-
-
-$$
-\begin{aligned}
-\text{proportional increase in error} &= \frac{\text{change in error (from } \mathcal{M}_0\text{ to }\mathcal{M}_1)}{\text{minimal error}}\\
-&= \frac{\text{RSS}_0-\text{RSS}_1}{\text{RSS}_1}
-\end{aligned}
-$$
+- We can test whether any subset of the $K$ predictors have coefficients that are simultaneously zero.
+- In general, we can compare two models $\mathcal{M}_1$ and $\mathcal{M}_0$ with $K_1$ and $K_0$ predictors, respectively, and where $K_0 < K$ and all the $K_0$ predictors in $\mathcal{M}_0$ are also presented in $\mathcal{M}_1$, i.e. $\mathcal{M}_0$ is *nested* in $\mathcal{M}_1$.
+- Under the null hypothesis that the $K_1-K_0$ predictors in $\mathcal{M}_1$ and not in $\mathcal{M}_0$ are simultaneously zero, we have
 
 $$
 \frac{(\text{RSS}_0-\text{RSS}_1)/(K_1-K_0)}{\text{RSS}_1/(n - K_1 - 1)} \sim F(K_1 - K_0, n-K_1-1).
 $$
 
-- Nested normal linear models can be compared using F test.
 
+where 
 
+$$
+\begin{aligned}
+\text{proportional increase in error} &= \frac{\text{RSS}_0-\text{RSS}_1}{\text{RSS}_1}\\
+&= \frac{\text{change in error (from } \mathcal{M}_0\text{ to }\mathcal{M}_1)}{\text{minimal error}}\\
+\end{aligned}
+$$
 
 ## Model comparison {.smaller}
 
-- The results of the null hypothesis test that $R^2=0$ can be obtained in numerous ways, bu the easiest is to use the generic `anova` function where we compare `model_1` against `model_0`.  
+The results of the null hypothesis test that $R^2=0$ can be obtained in numerous ways, but the easiest is to use the generic `anova` function where we compare `model_1` against `model_0`.  
 
 <div style="float: left; width: 47%;">
 
@@ -1280,14 +1202,17 @@ print(anova(model_0, model_1), signif.stars=F)
 
 </div>
 
-<div style="float: right; width: 45%;">
+<div style="float: right; width: 50%;">
 
 - `RSS` column are TSS and RSS of model `model_1`.
 - TSS is RSS of `model_0` because in model with no predictors the variance of the outcome variable and the variance of the residuals are necessarily identical. 
 - ESS is the `Sum of Sq` and the difference of the `RSS` values.
 
 ```{r}
-(ess <- tss - rss)
+mu_hat <- predict(model_1)
+y_bar <- mean(blomkvist$log_rt)
+sumdiff <- mu_hat - y_bar
+(ess <- sum(sumdiff^2))
 ```
 
 
@@ -1296,7 +1221,7 @@ print(anova(model_0, model_1), signif.stars=F)
 
 ## Model comparison {.smaller}
 
-- The results of the null hypothesis test that $R^2=0$ can be obtained in numerous ways, bu the easiest is to use the generic `anova` function where we compare `model_1` against `model_0`.  
+The results of the null hypothesis test that $R^2=0$ can be obtained in numerous ways, bu the easiest is to use the generic `anova` function where we compare `model_1` against `model_0`.  
 
 <div style="float: left; width: 47%;">
 
@@ -1322,15 +1247,17 @@ print(anova(model_0, model_1), signif.stars=F)
 <div style="float: right; width: 45%;">
 
 
-- `Df` and bottom value of `Res.Df` give us the degrees of freedom 
+`Df` and bottom value of `Res.Df` give us the degrees of freedom 
 
 ```{r}
+K <- 1
 c(K, n - K - 1)
 ```
 
 by which `ess` and `rss` are divided for F:
 
 ```{r}
+rss <- sum(residuals(model_1)^2)
 (f_stat <- (ess/K) / (rss/(n - K - 1)))
 ```
 

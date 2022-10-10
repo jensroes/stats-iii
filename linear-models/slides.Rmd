@@ -511,7 +511,7 @@ plot_sim / plot_blomkvist
 
 <div style="float: left; width: 50%;">
 
-- Sometimes even simulated data don't appear normal distribution because the sample is too small.
+Sometimes even simulated data don't appear normal distribution because the sample is too small.
 
 ```{r}
 blomkvist <- read_csv("../data/blomkvist.csv") %>% 
@@ -581,14 +581,14 @@ log_blomkvist +
 
 <div style="float: left; width: 50%;">
 
-- Predictor variable sex is denoted as $x_1, x_2, \dots x_n$.
+Predictor variable sex is denoted as $x_1, x_2, \dots x_n$.
 
 
 $$
 \mu_i = \beta_0 + \beta_1 \cdot x_i
 $$
 
-- where $x_i$ takes on $0$ for females and $1$ for males (because "f" is before "m" in the alphabet).
+where $x_i$ takes on $0$ for females and $1$ for males (because "f" is before "m" in the alphabet).
 
 
 $$
@@ -601,7 +601,7 @@ x_i = \left\{
 $$
 
 
-- For females $\mu_i = \beta_0 + \beta_1 \cdot 0 = \beta_0$ and for males $\mu_i = \beta_0 + \beta_1 \cdot 1 = \beta_0 + \beta_1$, so $\beta_1$ gives the difference in the averages of the distribution of rts.
+For females $\mu_i = \beta_0 + \beta_1 \cdot 0 = \beta_0$ and for males $\mu_i = \beta_0 + \beta_1 \cdot 1 = \beta_0 + \beta_1$, so $\beta_1$ gives the difference in the averages of the distribution of rts.
 
 
 
@@ -739,7 +739,7 @@ exp(intercept + slope) - exp(intercept)
 
 <div style="float: left; width: 47%;">
 
-- According to the model, for any given sex $x'$, the corresponding distribution of rts is normally distributed with a mean $\mu' = \beta_0 + \beta_1 \cdot x'$ and standard deviation $\sigma$.
+According to the model, for any given sex $x'$, the corresponding distribution of rts is normally distributed with a mean $\mu' = \beta_0 + \beta_1 \cdot x'$ and standard deviation $\sigma$.
 
 ```{r}
 coef(model)
@@ -775,7 +775,7 @@ Complete `exercises/interpreting_coefficients_1.R`
 
 ## Contrast coding {.smaller}
 
-- Change contrast coding so intercept represents population average and slope shows difference between groups.
+Change contrast coding so intercept represents population average and slope shows difference between groups.
 
 
 <div style="float: left; width: 35%;">
@@ -910,7 +910,7 @@ ggplot(blomkvist, aes(x = log_rt, colour = sex, fill = sex)) +
 
 ## Model fitting {.smaller}
 
-- If we assume the model
+If we assume the model
 
 
 $$
@@ -1038,16 +1038,16 @@ Complete `exercises/calculating_sigma.R`
 
 ## Hypothesis testing and confidence intervals
 
-- If $\beta_k$ is the *hypothesized* true value of the coefficient, then
+If $\beta_k$ is the *hypothesized* true value of the coefficient, then
 
 $$
 \frac{\hat\beta_k - \beta_k}{\hat{\text{se}}_k} \sim t_{n-K-1}, 
 $$
-- which tells us that if the true value of the coefficient was some hypothesized value $\beta_k$, then we expect the *t*-statistic to have a certain range of values with high probability.
+which tells us that if the true value of the coefficient was some hypothesized value $\beta_k$, then we expect the *t*-statistic to have a certain range of values with high probability.
 
 ## Hypothesis testing and confidence intervals {.smaller}
 
-- We will test a hypothesis about the coefficient for sex in the model above.
+We will test a hypothesis about the coefficient for sex in the model above.
 
 <div style="float: left; width: 47%;">
 
@@ -1067,7 +1067,7 @@ coefs <- summary(model)$coefficients
 
 <div style="float: right; width: 47%;">
 
-- If we hypothesize the true value of the coefficient is exactly 1.0,
+If we hypothesize the true value of the coefficient is exactly 1.0,
 then our *t*-statistic is
 
 ```{r}
@@ -1096,7 +1096,7 @@ pt(abs(t), df = n - K - 1, lower.tail = FALSE) * 2
 
 ## Hypothesis testing and confidence intervals {.smaller}
 
-- *Null hypothesis significance testing*: we hypothesize the true value of the coefficient is exactly 0.0, then our *t*-statistic is
+*Null hypothesis significance testing*: we hypothesize the true value of the coefficient is exactly 0.0, then our *t*-statistic is
 
 $$
 \frac{\hat\beta_k - \beta_k}{\hat{\text{se}}_k} = \frac{-58.9 - 0.0}{18.5} = \frac{-58.9}{18.5} = -3.19
@@ -1453,7 +1453,7 @@ predict(model, interval = 'confidence', newdata = newdata)
 
 ## Interactions and varying intercepts model {.smaller}
 
-When we include `sex` as an explanatory variable in additional to a continuous predictor variable, the is as follows. 
+When we include `sex` as an explanatory variable in additional to a continuous predictor variable, the model is as follows. 
 
 $$
 y_i \sim N(\mu_i, \sigma^2), \mu_i = \beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i}, \text{ for } i \in 1\dots n.
@@ -1522,17 +1522,22 @@ plot <- ggplot(blomkvist, aes(x = age, y = pred, colour = sex) ) +
 ## Interactions and varying-slopes model {.smaller}
 
 
-The varying-intercepts model is written as follows:
+The varying-intercepts model is written as follows. For $i \in 1\dots n$
 
 $$
-y_i \sim N(\mu_i, \sigma^2), \mu_i = \beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i}, \text{ for } i \in 1\dots n.
+\begin{aligned}
+y_i &\sim N(\mu_i, \sigma^2)\\
+\mu_i &= \beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i}\\
+\end{aligned}
 $$
 
 The following is a varying intercepts and varying slopes model:
 
 $$
-y_i \sim N(\mu_i, \sigma^2),\\ 
-\mu_i = \beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i} + \underbrace{\beta_3 \cdot x_{1i} \cdot x_{2i}}_\text{interaction}
+\begin{aligned}
+y_i &\sim N(\mu_i, \sigma^2)\\ 
+\mu_i &= \beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i} + \underbrace{\beta_3 \cdot x_{1i} \cdot x_{2i}}_\text{interaction}
+\end{aligned}
 $$
 We effectively have a third predictor $x_{1i} \cdot x_{2i}$ that is the product of $x_{1i}$ and $x_{2i}$.
 
@@ -1860,7 +1865,7 @@ Exercise: work through script `exercises/polychotomous_predictor.R`
 - We can specify models with continues and categorical predictors and combinations of them.
 - Model specifications using varying intercepts and varying slopes.
 - Read lecture notes on NOW [@andrews2021doing].
-- Next workshop: model comparisons
+- Model comparisons: has age a stronger effect for females than for males?
 
 ## Homework
 
