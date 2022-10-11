@@ -63,43 +63,8 @@ theme_set(theme_bw(base_size = 18) +
 ```
 
 
-## Recap: Normal linear model {.smaller}
 
-<div style="float: left; width: 35%;">
-
-$$
-y_i \sim N(\mu_i, \sigma^2)\\
-\mu_i = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}\\
-\text{for } i \in 1\dots n
-$$
-</div>
-
-<div style="float: left; width: 65%;">
-
-- Outcome variable is normally distributed.
-- Distribution can be characterised by an unknown mean $\mu_i$ and variance $\sigma^2$.
-- The mean $\mu_i$ is composed of the intercept $\beta_0$ and the sum of a vector of predictor coefficients $\beta_k$.
-- The values of the unknown parameters can be estimated from the outcome variable $y_i$ and the vector of predictors $x_{ki}$.
-
-
-</div>
-
-
-
-## Recap: Normal linear model {.smaller}
-
-<div style="float: left; width: 35%;">
-
-$$
-y_i \sim N(\mu_i, \sigma^2)\\
-\mu_i = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}\\
-\text{for } i \in 1\dots n
-$$
-</div>
-
-<div style="float: right; width: 55%;">
-
-```{r}
+```{r echo = F}
 # Load and transform data
 blomkvist <- read_csv("../data/blomkvist.csv") %>% 
   select(id, sex, age, rt = rt_hand_d) %>% 
@@ -107,54 +72,7 @@ blomkvist <- read_csv("../data/blomkvist.csv") %>%
   drop_na()
 ```
 
-```{r}
-# Specify model
-model <- lm(log_rt ~ sex + age, data = blomkvist)
-```
 
-</div>
-
-
-
-## Recap: Maximum likelihood estimates {.smaller}
-
-The maximum likelihood values of the $K+1$ coefficients, $\hat\beta_0,\hat\beta_1\dots\hat\beta_K$, are those values of the $\beta_0,\beta_1\dots\beta_K$ variables that minimize the *residual sum of squares*
-
-<div style="float: left; width: 45%;">
-
-$$
-\text{RSS} = \sum_{i=1}^n \mid y_i - \mu_i\mid^2
-$$
-</div>
-
-<div style="float: right; width: 45%;">
-
-```{r}
-coef(model)
-```
-
-</div>
-
-<div style="float: left; width: 100%;">
-
-Once we have $\hat\beta$, then the maximum likelihood estimate of $\sigma$, denoted as $\hat\sigma$ is:
-
-</div>
-
-<div style="float: left; width: 45%;">
-
-$$
-\hat\sigma = \sqrt{\frac{1}{n-K-1}\sum_{i=1}^n\mid y_i-\hat\mu_i\mid^2}
-$$
-</div>
-
-<div style="float: right; width: 45%;">
-
-```{r}
-sigma(model)
-```
-
-</div>
 
 
 ## Update your workshop repository
@@ -207,18 +125,8 @@ include_graphics("../gfx/ockham.jpg")
 
 </div>
 
-## Overview
 
-- Likelihood of the data under a model
-- Explained and unexplained variance in the data
-- Fit to data
-- Penalising more complex models
-- Comparing multiple nested models
-
-## Overview {.smaller}
-
-
-```{r overview, echo = F}
+```{r overview, echo = F, eval = F}
 read_csv("overview.csv") %>% 
   kable(caption = "Popular model evaluation techniques") %>% 
   kable_styling(full_width = T, bootstrap_options = c("responsive", "hover", "striped"))
@@ -592,14 +500,17 @@ ggplot(data = sim, aes(x = x, y = predict(fake_model))) +
 </div>
 
 
-## Residuals: assessing the unexplained variance
+## Residuals: assessing the unexplained variance {.smaller}
 
 
-<div style="float: left; width: 45%;">
+<div style="float: left; width: 50%;">
 
 
+```{r}
+model <- lm(log_rt ~ age + sex, data = blomkvist)
+```
 
-```{r out.width="100%", fig.height=6.5, echo = F}
+```{r out.width="100%", fig.height=5.5, echo = F}
 blomkvist$pred <- predict(model)
 blomkvist$resid <- residuals(model)
 
@@ -613,9 +524,13 @@ plot <- ggplot(blomkvist, aes(x = age, y = pred, colour = sex) ) +
 
 ## Residuals: assessing the unexplained variance {.smaller}
 
-<div style="float: left; width: 45%;">
+<div style="float: left; width: 50%;">
 
-```{r out.width="100%", fig.height=6.5, echo = F}
+```{r}
+model <- lm(log_rt ~ age + sex, data = blomkvist)
+```
+
+```{r out.width="100%", fig.height=5.5, echo = F}
 
 plot <- plot + geom_segment(
       aes(xend = age, yend = log(rt)),
@@ -624,7 +539,7 @@ plot <- plot + geom_segment(
 ```
 </div>
 
-<div style="float: right; width: 50%;">
+<div style="float: right; width: 45%;">
 - Residuals are the unexplained (residual) variance: error in the modelling results.
 - Distance between observed ($y$) and predicted rt ($\hat{\mu}$)
 
@@ -1266,7 +1181,8 @@ rss <- sum(residuals(model_1)^2)
 
 ## Model comparison {.smaller}
 
-- The results of the null hypothesis test that $R^2=0$ can be obtained in numerous ways, bu the easiest is to use the generic `anova` function where we compare `model_1` against `model_0`.  
+The results of the null hypothesis test that $R^2=0$ can be obtained in numerous ways, bu the easiest is to use the generic `anova` function where we compare `model_1` against `model_0`.  
+
 
 <div style="float: left; width: 47%;">
 
@@ -1513,7 +1429,7 @@ where $K$ is the number of model parameters.
 
 ```{r}
 ll <- as.vector(logLik(model_1))
-K <- 2 # beta_0, sigma^2
+K <- 3 # beta_0, beta_1, sigma^2
 (2 * K) - 2 * ll
 ```
 
@@ -1597,7 +1513,7 @@ library(broom)
 
 
 ```{r}
-tidy(model_3)
+tidy(model_3, conf.int = TRUE)
 ```
 
 ```{r}

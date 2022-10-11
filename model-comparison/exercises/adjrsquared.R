@@ -51,11 +51,6 @@ summary(---)$r.squared
 # Extract adjusted R^2
 summary(---)$adj.r.squared
 
-# Confirm the extracted adjusted R^2 by doing the adjustment manually as above:
-K <- --- # number of predictors
-n <- nrow(---) # number of observations
---- * (--- - 1) / (--- - --- - 1)
-
 # add age to the model above (varying intercepts model)
 model_2 <- lm(log_rt ~ --- + ---, data = blomkvist)
 

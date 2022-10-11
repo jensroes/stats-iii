@@ -29,7 +29,9 @@ map_dfr(list(model_0, ---, ---, ---), glance)
 
 # Get coefficients of best fitting model
 summary(---)
-tidy(---)
+confint(---)
+# or better
+tidy(---, conf.int = TRUE)
 
 # Model evaluation stats per observation of best fitting model
 augment(---)
