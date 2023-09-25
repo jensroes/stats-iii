@@ -3,50 +3,14 @@ title: 'Normal linear models'
 author: "Jens Roeser"
 output: 
   ioslides_presentation:
-    incremental: false
+    incremental: true
     transition: slower
     widescreen: true
-    css: ../slides.css
+    css: slides.css
     logo: ../gfx/ntu.png
 bibliography      : ["../references.bib"]
 
 ---
-
-```{=html}
-<style>
-
-slides > slide.backdrop {
-  background: white;
-}
-
-.gdbar img {
-  width: 240px !important;
-  height: 54px !important;
-  margin: 8px 8px;
-  position: absolute;
-}
-
-.gdbar {
-  width: 350px !important;
-  height: 70px !important;
-}
-
-slides > slide:not(.nobackground):before {
-  width: 128px;
-  height: 33px;
-  background-size: 100px 30px;
-}
-
-.smalltable .table{
-  font-size: 18px;
-}
-
-pre {
-  font-size: 15px;
-}
-</style>
-```
-
 
 
 ```{r setup, include=FALSE}

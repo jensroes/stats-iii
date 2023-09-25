@@ -129,17 +129,17 @@ include_graphics("../gfx/markdown.png")
 
 What is RMarkdown?
 
-- Text file format, a script not unlike an R script.
+- Text file format, a script like an R script.
 - Open, edit, run in RStudio like scripts.
 - RMarkdown are a mixture of *markdown* code and normal R code (and your data).
-- R code in RMarkdown documents occurs in R *chunks*, i.e. blocks of code or *inline* R code inside of Markdown code
+- R code in RMarkdown documents occurs in R *chunks*, i.e. blocks of code, or *inline* R code inside of markdown code
 
 What is Markdown?
 
 - Minimal markup language.
 - Normal text and minimal syntax that instructs how text should be formatted.
-- Rendering into output documents in `.pdf`, `.html`, `.docx`, `.doc`
-- Rending is supported by **Knitr** and **Pandoc**
+- Rendering into `.pdf`, `.html`, `.docx`, `.doc`
+- Supported by **Knitr** and **Pandoc**
 
 </div>
 
@@ -167,12 +167,13 @@ include_graphics("../gfx/latex.png")
 
 ## Download repository
 
-- Download: [github.com/jensroes/stats-iii](https://github.com/jensroes/stats-iii)
+- Go to [github.com/jensroes/stats-iii](https://github.com/jensroes/stats-iii)
 - Click on: `Code` \> `Download ZIP` \> unzip directory on your machine.
 - Open project by double clicking on `stats-iii.Rproj`
-- `data/`: my scripts will read in data from here
-- `xxx/slides.Rmd`: slides in RMarkdown format
-- `xxx/exercises`: R scripts that you need to complete.
+- Note that this is an R-project file with sub-directories:
+  - `data/`: my scripts will read in data from here
+  - `xxx/slides.Rmd`: slides in RMarkdown format
+  - `xxx/exercises`: R scripts that we will work with
 
 
 
@@ -187,27 +188,24 @@ include_graphics("../gfx/latex.png")
 
 </div>
 
-<div style="float: right; width: 50%;">
+<div style="float: right; width: 53%;">
 
 ```{r eval = F}
 # Is tidyverse installed?
 'tidyverse' %in% rownames(installed.packages())
-# Should return TRUE
-```
-
-```{r eval = F}
-# If not, run
+# Should return TRUE but if not run
 install.packages('tidyverse')
 ```
 
 ```{r eval = F}
 install.packages('tinytex')
-tinytex::install_tinytex() # and restart RStudio
+tinytex::install_tinytex()
+# then restart RStudio
 ```
 
-```{r}
+```{r eval = F}
 # Then, try
-tinytex:::is_tinytex()
+tinytex:::is_tinytex() # should return TRUE
 ```
 
 </div>
@@ -253,11 +251,11 @@ rmarkdown::render('test.Rmd', output_format = 'pdf_document')
 >- Add this code to the setup chunk:
 
 ```{r eval = F}
-knitr::opts_chunk$set(message = F, # don't return messages
-                      warning = F, # don't return warnings
+knitr::opts_chunk$set(message = FALSE, # don't return messages
+                      warning = FALSE, # don't return warnings
                       comment = NA, # don't comment output
-                      echo = T, # display chunk (is default)
-                      eval = T, # evaluate chunk (is default)
+                      echo = TRUE, # display chunk (is default)
+                      eval = TRUE, # evaluate chunk (is default)
                       out.width = '45%',  # figure width
                       fig.align='center') # figure alignment
 ```
@@ -282,7 +280,7 @@ knitr::opts_chunk$set(message = F, # don't return messages
 
 ## Load data
 
->- Create a new *R chunk*: try `CTRL+ALT+I` or `CMD+ALT+I` (upper case "i")
+>- Create a new *R chunk*: try `CTRL+ALT+I` or `CMD+ALT+I` (i.e. the letter "i")
 >- Create a chunk called `packages` and load libraries needed: 
 
 ```{r eval = F}
@@ -306,7 +304,7 @@ blomkvist <- read_csv("../data/blomkvist.csv") %>%
 
 ## R chunk outputs
 
->- Create a new *R chunk*: try `CTRL+ALT+I` or `CMD+ALT+I` (upper case "i")
+>- Create a new *R chunk*: try `CTRL+ALT+I` or `CMD+ALT+I` (i.e. the letter "i")
 >- Label the chunk `analysis`.
 >- Fit the following model:
 
@@ -356,7 +354,6 @@ ggplot(blomkvist, aes(x = age, y = rt)) +
 
 
 ```
-output: pdf_document
 header-includes:
 - \usepackage{booktabs}
 ```
@@ -423,8 +420,8 @@ biblio-style: apalike
 - How would you write $\beta_{0_1}$?
 - Superscripts: `'^'` as in `$\sigma^2$` which is $\sigma^2$.
 - How would you write $\sigma^{2^2}$?
-- How about $\sigma_e^2$
-- For a list of $\LaTeX$ symbols **see page 19 in lecture notes**.
+- How about $\sigma_e^2$?
+- For a list of $\LaTeX$ symbols [see page 19 in lecture notes](https://now.ntu.ac.uk/d2l/le/content/961441/viewContent/12100893/View).
 
 
 <!-- ## $\LaTeX$ mathematical typesetting  -->
@@ -506,9 +503,7 @@ r2 <- model_summary$r.sq
 The $R^2$ for this model is `r round(r2, 2)`.
 ```
 
-Renders
-
-> "The $R^2$ for this model is `r round(r2, 2)`."
+> Renders "The $R^2$ for this model is `r round(r2, 2)`."
 
 
 ## Formatted inline R output 
@@ -525,9 +520,7 @@ The model summary can be summarised like so: $F(`r round(f_stat[2])`, `r round(f
 `r round(f_stat[1],2)`$, $p `r format.pval(p_value, eps = 0.01)`$.
 ```
 
-Renders 
-
-> "The model summary can be summarised like so: $F(`r round(f_stat[2])`, `r round(f_stat[3])`) = `r round(f_stat[1],2)`$, $p `r format.pval(p_value, eps = 0.01)`$."
+> Renders "The model summary can be summarised like so: $F(`r round(f_stat[2])`, `r round(f_stat[3])`) = `r round(f_stat[1],2)`$, $p `r format.pval(p_value, eps = 0.01)`$."
 
 
 ```{r}
@@ -616,26 +609,26 @@ install.packages("remotes")
 remotes::install_github("juba/rmdformats")
 ```
 
->- Create from template:
->  - `File` > `New File` > `R Markdown`
->  - e.g. `readthedown` or `robobook` for documents
->  - `rmdshower::shower_presentations` for slides
->- Example: <https://rpubs.com/jensroes/765467>
->- Online sharing on RPubs ("Publish")
+- Create from template:
+  - `File` > `New File` > `R Markdown`
+  - e.g. `readthedown` or `robobook` for documents
+  - `rmdshower::shower_presentations` for slides
+  - these slides are `ioslides_presentation`
+- [Rmarkdown example](https://rpubs.com/jensroes/765467)
+- Online sharing on RPubs ("Publish")
 
 
 ## APA manuscripts using `papaja`
 
 >- Example: <https://osf.io/vayhq/> published in @roeser2021modelling
 >- Installation: <https://github.com/crsh/papaja>
->  - `File` > `New File` > `R Markdown`
->  - "APA article (6th edition)" using `papaja`
->- Template for APA article (7th edition)
+>- "APA article (6th edition)" template using `papaja`
+>- APA 7 edition available too
 
 ## The end
 
->- You will use RMarkdown for your class assignment.
->- For help with RMarkdown, check out the [lecture notes](https://now.ntu.ac.uk/d2l/le/content/887088/viewContent/9653013/View) on RMarkdown.
+>- You will use RMarkdown for your class assignment (get started now).
+>- Read the [lecture notes](https://now.ntu.ac.uk/d2l/le/content/961441/viewContent/12100893/View) on rmarkdown.
 >- For formatting tables using `kableExtra` check [here](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html)
 >- Check the [`rmarkdown` website](https://rmarkdown.rstudio.com/lesson-1.html).  
 >- And chapter 27 in ["R for Data Science"](https://r4ds.had.co.nz/r-markdown.html) [@wickham2016r].

@@ -33,7 +33,7 @@ library(kableExtra)
 
 </div>
 
-<div style="float: right; width: 30%;">
+<div style="float: right; width: 39%;">
 
 ```{r fig.align='right', out.width="110%", echo = F, eval = T}
 knitr::include_graphics("../gfx/me2.jpg")
@@ -53,7 +53,7 @@ knitr::include_graphics("../gfx/me2.jpg")
 
 </div>
 
-<div style="float: right; width: 30%;">
+<div style="float: right; width: 39%;">
 
 ```{r fig.align='right', out.width="100%", echo = F, eval = T}
 knitr::include_graphics("../gfx/tsb.jpg")
@@ -78,7 +78,7 @@ knitr::include_graphics("../gfx/tsb.jpg")
 
 </div>
 
-<div style="float: right; width: 30%;">
+<div style="float: right; width: 39%;">
 
 ```{r fig.align='right', out.width="100%", echo = F, eval = T}
 knitr::include_graphics("../gfx/ma.jpeg")
@@ -86,9 +86,17 @@ knitr::include_graphics("../gfx/ma.jpeg")
 </div>
 
 
+
+## Who are you?
+
+> Say hi to everyone on your table and discuss ...
+
+>- Which statistical tests do you know?
+>- What do you know about when do you use them?
+
 ## Module Aims
 
->- Provide a unified set of advanced statistical techniques that can cover an exceptionally wider range of data-analysis problems; aka multilevel generalised linear models
+- Provide a unified set of advanced statistical techniques that can cover an exceptionally wider range of data-analysis problems; aka multilevel generalised linear models
 - General data-analytical framework encapsulating a range of widely used techniques including linear regression, ANOVA, ANCOVA, MANCOVA, logistic regression, Poisson regression, log-linear analysis, random effects / mixed-effects models etc. 
 - Describe how these models arise as special cases of a single underlying general principle.
 - Demonstrate how we can apply this general principle to a wider range of data analysis problems.
@@ -96,7 +104,7 @@ knitr::include_graphics("../gfx/ma.jpeg")
 
 ## Module Aims
 
->- **Multilevel generalized linear models** will be introduce as sequence of consecutively more general models, all of which build on the familiar principle of linear regression.
+- **Multilevel generalized linear models** will be introduce as sequence of consecutively more general models, all of which build on the familiar principle of linear regression.
 - **Linear regression**: review of multiple linear regression and factorial ANOVA. 
 - **General linear models**: certain problems, which are poorly handled by standard ANOVA, can be easily accommodated (e.g. varying slope models).
 - **Generalized linear models**: transformations can be applied to linear models to apply them to data-types including categorical, ordinal, discrete frequency data.
@@ -123,9 +131,7 @@ knitr::include_graphics("../gfx/ma.jpeg")
 4. Demonstrate a range of transferable skills, including data-analysis, data-preparation, computer programming, graphical presentation of quantitative evidence, reporting of data-analysis results.
 
 
-## Who are you?
-
-> Say hi to everyone on your table and discuss ...
+## Why was it a good idea to choose this module?
 
 >- Why did you choose *Statistics III*?
 >- What do you expect to learn or to get out off this module?
@@ -161,13 +167,12 @@ readODS::read_ods("schedule.ods") %>%
 
 ## Engaging with this module 
 
->- Each week in this module, we will have 2 workshops. 
-- Mixture of theory and practical exercises.
-- You will be working along on your computer. 
-- Together, we will work through statistics problems using R. 
-- For each topic, there will be detail accompanying lecture notes.
-- To engage successfully with this module, you should attend each workshop each week, and read the lecture notes for each topic.
-- For *excellent* results, you will also need to demonstrate independent learning that goes beyond what we cover in class.
+>- 2 workshops each week. 
+>- Mixture of theory and practical exercises.
+>- Together, we will work through statistics problems using R. 
+>- For each topic, there will be detail accompanying lecture notes.
+>- To engage successfully with this module, you should attend each workshop each week, and read the lecture notes for each topic.
+>- For *excellent* results, you will also need to demonstrate independent learning that goes beyond what we cover in class.
 
 
 ## Assessment
@@ -193,8 +198,7 @@ readODS::read_ods("schedule.ods") %>%
 
 ## Assessment
 
-
->- Deadline for submission via Dropbox: **Jan 8th 2024**
+- Deadline for submission via Dropbox: **Jan 8th 2024**
 - Individual written feedback
 - Feedback will help you how to best carry out and report the types of statistical analyses that are at the core of this course.
 - We wish to see evidence of 
@@ -202,8 +206,7 @@ readODS::read_ods("schedule.ods") %>%
   - how and why to apply certain statistical models.
   - practical skills in data manipulation and analysis. 
 - For high or exceptional grades it is vital that you display learning that goes beyond the content explicitly taught in class. 
-- See Grading Matrix on NOW for details.
-
+- See [Grading Matrix](https://now.ntu.ac.uk/d2l/le/content/961441/viewContent/12100887/View) on NOW for details.
 
 ## Assessment 
 
@@ -252,7 +255,7 @@ readODS::read_ods("schedule.ods") %>%
 
 >- Y3 modules require you to go beyond the class contents for high grades.
 - Talk to your supervisor / us re analyses relevant for your project.
-- 6 months free access to DataCamp (until March 20, 2024).
+- 6 months free access to [DataCamp](https://app.datacamp.com/learn/courses) (until March 20, 2024).
 - Introductory text books and online tutorials, e.g. [my tutorial for mixture models](https://rpubs.com/jensroes/765467).
 - Examples: time series, structural equation modelling (SEM), auto-regression models, non-linear regression, signal detection theory, mixture models, categorical models, multi-nomial models, multi-variate models, diffusion models, Bayesian models ...
 
@@ -271,27 +274,27 @@ readODS::read_ods("schedule.ods") %>%
 
 >- Follow the same procedure as for the final assessment (discussed before).
 - Submit your work as a single zip archive.
-- There is just one data analysis to do for the formative assessment (hence, 4 pages max).
+- Just one data analysis hence 4 pages max.
 - Data set of your own choice; report a **linear regression** analysis to address a theoretical question of your own choice.
 
-## Assessment
+## Task: In your groups ...
 
->- Talk about the assessment on your tables.
+>- Discuss the assessment brief: how do you feel about this particular assessment format?
 >- Is there anything that you don't find clear?
 >- What concerns have you got with the task?
+>- What opportunities do you see? Have you got ideas you want to share?
 
 
 ## Support 
 
->- **Teams** for discussing R, stats, assessment-related questions, and useful resources because all of this might be of interest to others.
->- We might refer certain emails to Teams so everyone can benefit from our answer.
->- Make sure you have access to our Teams channel!
->- Ask on Teams because you will receive an answer faster.
->- Do help each other out!
->- Obviously lecturers like seeing engagement with their module :)
->- Online support will stop at **Dec 15 2023**.
->- **Email** us for questions that are less general
->- For sensitive information contact the ML Mark Andrews: `mark.andrews@ntu.ac.uk`
+- [Discussion forum](https://ntur.ntupsychology.net/) for R, stats, assessment-related questions, and useful resources.
+- Because answer should be of interest to everyone, better place to write maths, share code, tagging.
+- Also you will receive an answer faster.
+- We might refer emails to the forum so everyone can benefit from our answer.
+- Do help each other!
+- Obviously lecturers like seeing engagement with their module :)
+- Online support will stop at **Dec 15 2023**.
+- **Email** us for questions that are less general; for sensitive information contact the ML Mark Andrews: `mark.andrews@ntu.ac.uk`
 
 ## Tech requirements
 
@@ -309,10 +312,10 @@ install.packages("tidyverse")
 
 <div style="float: left; width: 45%;">
 
->- Lecture notes on NOW.
+- See weekly lecture notes on NOW.
 - Also Mark's book published [here](https://us.sagepub.com/en-us/nam/author/mark-andrews) [@andrews2021doing] with data sets and R code available here [here](https://www.mjandrews.org/book/ddsr).
 - ["R for Data Science"](https://r4ds.had.co.nz/) by Wickham and Grolemund for data wrangling, visualisation and modelling [@wickham2016r].
-- Advanced linear models: ["Regression and other Stories"](https://avehtari.github.io/ROS-Examples/) by @gelman2020regression.
+- Advanced regression analysis: ["Regression and other Stories"](https://avehtari.github.io/ROS-Examples/) by @gelman2020regression.
 
 </div>
 
