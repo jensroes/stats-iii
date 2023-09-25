@@ -65,75 +65,104 @@ ggplot(data =sim, aes(x = x, y = y)) +
 
 </div>
 
-## Regression models {.smaller}
+## Regression models
 
-- Simply put, a regression model is a model of how the probability distribution of one variable, known as the *outcome variable* varies as a function of other variables, known as the *explanatory* or *predictor variables*.
-- The most common or basic type of regression models is the normal linear model.
+- A model of how the probability distribution of one variable, known as the *outcome variable*, varies as a function of other variables, known as the *explanatory* or *predictor variables*.
+- The most basic type of regression models is the normal linear model.
 - In normal linear models, we assume that the outcome variable is normally distributed and that its mean varies linearly with changes in a set of predictor variables.
 - By understanding the normal linear model thoroughly, we can see how it can be extended to deal with data and problems beyond those that it is designed for.
 
 
-## Normal linear model
-
-Univariate distribution with $n$ independent observations of pairs
-
-$$
-(y_1,  \overrightarrow{x_1}), (y_2,  \overrightarrow{x_2}) \dots (y_i,  \overrightarrow{x_i}) \dots (y_n,  \overrightarrow{x_n}).
-$$
-
-
-$y_i$ is the observed value of a univariate *outcome* variable.
-
-We use probabilistic models to predict / explain / understand the outcome variable. 
-
-
-
-$$
-\overrightarrow{x_1} = [x_{1i}, x_{2i} \dots x_{ki}, \dots x_{Ki}]
-$$
-are a set of $K$ values used to explain $y_i$. $\overrightarrow{x_i}$ are a set of $K$ *predictor* / *explanatory* variables. 
-
 
 ## Normal linear model
-
-Introducing $K$ in $x_{Ki}$ allows us to abbreviate the model equation.
-
-$$
-\begin{aligned}
-\mu_i &= \beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i} \dots \beta_k \cdot x_{ki} \dots \beta_K \cdot x_{Ki}\\
-&= \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}
-\end{aligned}
-$$
-
-## Normal linear model {.smaller}
 
 <div style="float: left; width: 35%;">
 
 $$
-\mu_i = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}\\
-y_i \sim N(\mu_i, \sigma^2)\\
-\text{for } i \in 1\dots n
+\begin{aligned}
+y_i &\sim N(\mu_i, \sigma^2), \text{ for } i \in 1\dots n\\
+\end{aligned}
 $$
 </div>
 
 <div style="float: right; width: 60%;">
-
-- $N$ is a univariate normal distribution with mean $\mu$ and variance $\sigma^2$.
+- $y_i$ is the observed value of a univariate *outcome* variable.
+- $N$ is a univariate normal distributed probability model with mean $\mu$ and variance $\sigma^2$.
+- Greek letters represent placeholders / variables for population parameter value; i.e. unknown values we want to estimate on the basis of assumptions represented as statistical model.
 - Each observation $y_i$ is a sample from a normal distribution with an unknown mean $\mu$ and standard deviation $\sigma$
-- Value of $\mu_i$ is a deterministic (i.e. "$=$") linear function of the values of the $K$ predictor variables.
-- Probabilistic model (i.e. "$\sim$") of $y_1 \dots y_n$ conditional on $\overrightarrow{x_1}\dots\overrightarrow{x_n}$, $\overrightarrow{\beta} = \beta_0, \beta_1\dots\beta_K$, and $\sigma$
-- Which ones do we know and which ones must be inferred using statistical inference?  
 </div>
 
 
-## Normal linear model {.smaller}
+
+## Normal linear model
 
 <div style="float: left; width: 35%;">
 
 $$
-\mu_i = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}\\
-y_i \sim N(\mu_i, \sigma^2)\\
-\text{for } i \in 1\dots n
+\begin{aligned}
+y_i &\sim N(\mu_i, \sigma^2), \text{ for } i \in 1\dots n\\
+\mu_i &= \beta_0 + \beta_1 \cdot x_{1i} \\
+\end{aligned}
+$$
+</div>
+
+<div style="float: right; width: 60%;">
+>- $y_i$ is the observed value of a univariate *outcome* variable.
+>- $N$ is a univariate normal distributed probability model with mean $\mu$ and variance $\sigma^2$.
+>- Greek letters represent placeholders / variables for population parameter value; i.e. unknown values we want to estimate on the basis of assumptions represented as statistical model.
+>- Each observation $y_i$ is a sample from a normal distribution with an unknown mean $\mu$ and standard deviation $\sigma$
+>- Value of $\mu_i$ is a deterministic (i.e. "$=$") linear function of the values of the $K$ predictor variables.
+</div>
+
+
+
+## Normal linear model
+
+<div style="float: left; width: 35%;">
+$$
+\begin{aligned}
+y_i &\sim N(\mu_i, \sigma^2), \text{ for } i \in 1\dots n\\
+\mu_i &= \beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i} \dots \beta_k \cdot x_{ki} \dots \beta_K \cdot x_{Ki}
+\end{aligned}
+$$
+
+</div>
+
+
+## Normal linear model
+
+<div style="float: left; width: 35%;">
+
+$$
+\begin{aligned}
+y_i &\sim N(\mu_i, \sigma^2), \text{ for } i \in 1\dots n\\
+\mu_i &= \beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i} \dots \beta_k \cdot x_{ki} \dots \beta_K \cdot x_{Ki}\\
+      & = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}\\
+\end{aligned}
+$$
+
+</div>
+
+
+- Probabilistic model (i.e. "$\sim$") of $y_1 \dots y_n$ conditional on $\overrightarrow{x_1}\dots\overrightarrow{x_n}$, $\overrightarrow{\beta} = \beta_0, \beta_1\dots\beta_K$, and $\sigma$
+- We use probabilistic models to predict / explain / understand the outcome variable. 
+- $K$ values used to explain $y_i$. $\overrightarrow{x_i}$ are a set of $K$ *predictor* / *explanatory* variables. 
+- Introducing $K$ in $x_{Ki}$ allows us to abbreviate the model equation.
+- Which ones do we know and which ones must be inferred using statistical inference?  
+
+
+
+
+## Normal linear model
+
+<div style="float: left; width: 35%;">
+
+$$
+\begin{align}
+y_i &\sim N(\mu_i, \sigma^2)\\
+\mu_i &= \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}\\
+&\text{for } i \in 1\dots n
+\end{align}
 $$
 </div>
 

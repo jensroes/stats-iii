@@ -215,7 +215,7 @@ readODS::read_ods("schedule.ods") %>%
   - PDF document generated from RMarkdown
   - RStudio project file
   - Data and supplementary files (e.g. bibliography, custom R function)
-  - for an example of how to use different features of RMarkdown see Demo answer on NOW
+  - for an example of how to use different features of RMarkdown see [Demo answer on NOW](https://now.ntu.ac.uk/d2l/le/content/961441/viewContent/12102010/View).
 - Work must be reproducible as per requirement of the assignment using RMarkdown file.
 - Your work, analysis, plots, descriptions, for each question will be contained in the RMarkdown file, and this will reference all relevant data files.
 
