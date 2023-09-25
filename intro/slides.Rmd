@@ -89,26 +89,27 @@ knitr::include_graphics("../gfx/ma.jpeg")
 
 ## Who are you?
 
-> Say hi to everyone on your table and discuss ...
+> Say hi to everyone on your table and brainstorm ...
 
->- Which statistical tests do you know?
->- What do you know about when do you use them?
+>- Which statistical tests do you know / remember from previous years?
+>- What do you know about when to use them?
+
 
 ## Module Aims
 
-- Provide a unified set of advanced statistical techniques that can cover an exceptionally wider range of data-analysis problems; aka multilevel generalised linear models
-- General data-analytical framework encapsulating a range of widely used techniques including linear regression, ANOVA, ANCOVA, MANCOVA, logistic regression, Poisson regression, log-linear analysis, random effects / mixed-effects models etc. 
+- Provide a unified set of advanced statistical techniques that covers a wider range of data-analysis problems: multilevel generalised linear models
+- General data-analytical framework encapsulating a range of widely used techniques including linear regression, ANOVA, ANCOVA, MANCOVA, logistic regression, Poisson regression, log-linear, random effects / mixed-effects models etc. 
 - Describe how these models arise as special cases of a single underlying general principle.
 - Demonstrate how we can apply this general principle to a wider range of data analysis problems.
 
 
 ## Module Aims
 
-- **Multilevel generalized linear models** will be introduce as sequence of consecutively more general models, all of which build on the familiar principle of linear regression.
+- **Multilevel generalised linear models** will be introduce as sequence of consecutively more general models, all of which build on the familiar principle of linear regression.
 - **Linear regression**: review of multiple linear regression and factorial ANOVA. 
 - **General linear models**: certain problems, which are poorly handled by standard ANOVA, can be easily accommodated (e.g. varying slope models).
-- **Generalized linear models**: transformations can be applied to linear models to apply them to data-types including categorical, ordinal, discrete frequency data.
-- **Multi-level models**: data with inherently hierarchical structure, yet have often been inadequately dealt with in data analysis.
+- **Generalised linear models**: transformations applied to linear models allows modelling of data-types including categorical, ordinal, discrete frequency data.
+- **Multi-level models**: data with inherently hierarchical structure, which have often been inadequately dealt with in data analysis.
 
 
 ## Learning outcomes
@@ -193,15 +194,14 @@ readODS::read_ods("schedule.ods") %>%
 >- Theoretical model (assumed process that generates the outcome variable) needs to be motivated.
 >- By *theoretical question*, we mean some non-trivial question. 
 
-> E.g. if your data set concerns rates of extra-marital affairs and properties of people who do and do not have affairs, a theoretical question could simply be what variables (such as age, gender, religiousness, etc) explain why people have affairs and how often they do so.
+> E.g. what variables (such as age, gender, religiousness, etc) explain why people have affairs and how often they do so.
 
 
 ## Assessment
 
 - Deadline for submission via Dropbox: **Jan 8th 2024**
-- Individual written feedback
-- Feedback will help you how to best carry out and report the types of statistical analyses that are at the core of this course.
-- We wish to see evidence of 
+- Individual written feedback to help you how to best carry out and report the types of statistical analyses that are at the core of this course.
+- We are looking for evidence of 
   - understanding and knowledge of the theoretical basis.
   - how and why to apply certain statistical models.
   - practical skills in data manipulation and analysis. 
@@ -283,18 +283,18 @@ readODS::read_ods("schedule.ods") %>%
 >- Is there anything that you don't find clear?
 >- What concerns have you got with the task?
 >- What opportunities do you see? Have you got ideas you want to share?
+>- Have a look at the [Grading Matrix](https://now.ntu.ac.uk/d2l/le/content/961441/viewContent/12100887/View) on NOW.
 
 
 ## Support 
 
-- [Discussion forum](https://ntur.ntupsychology.net/) for R, stats, assessment-related questions, and useful resources.
-- Because answer should be of interest to everyone, better place to write maths, share code, tagging.
-- Also you will receive an answer faster.
-- We might refer emails to the forum so everyone can benefit from our answer.
-- Do help each other!
-- Obviously lecturers like seeing engagement with their module :)
-- Online support will stop at **Dec 15 2023**.
-- **Email** us for questions that are less general; for sensitive information contact the ML Mark Andrews: `mark.andrews@ntu.ac.uk`
+>- Discussion forum for R, stats, assessment-related questions, and useful resources.
+>- Because answer should be of interest to everyone, better place to write maths, share code, tagging.
+>- Also you will receive an answer faster.
+>- We might refer emails to the forum so everyone can benefit from our answer.
+>- Do help each other!
+>- Online support will stop at **Dec 15 2023**.
+>- **Email** us for questions that are less general; for sensitive information contact the ML Mark Andrews: `mark.andrews@ntu.ac.uk`
 
 ## Tech requirements
 

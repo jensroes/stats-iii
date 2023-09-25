@@ -1,6 +1,6 @@
 ---
 title: 'Normal linear models'
-author: "Jens Roeser"
+author: '<span style="font-size: 40px; font-face: bold">Jens Roeser</span>'
 output: 
   ioslides_presentation:
     incremental: true
@@ -76,52 +76,55 @@ ggplot(data =sim, aes(x = x, y = y)) +
 
 ## Normal linear model
 
-<div style="float: left; width: 35%;">
+<div style="float: left; width: 40%;">
 
 $$
 \begin{aligned}
-y_i &\sim N(\mu_i, \sigma^2), \text{ for } i \in 1\dots n\\
+y_i &\sim \mathcal{N}(\mu_i, \sigma^2), \text{ for } i \in 1\dots n\\
 \end{aligned}
 $$
 </div>
 
-<div style="float: right; width: 60%;">
+<div style="float: right; width: 55%;">
 - $y_i$ is the observed value of a univariate *outcome* variable.
-- $N$ is a univariate normal distributed probability model with mean $\mu$ and variance $\sigma^2$.
+- $N$ is a univariate normal distributed probability model with mean $\mu$ and variance $\sigma^2$ (or standard deviation $\sigma$)
+- Each observation $y_i$ is a sample from such a normal distribution.
+- Read "$\sim$" as "is proportional to" or "is a function of".
 - Greek letters represent placeholders / variables for population parameter value; i.e. unknown values we want to estimate on the basis of assumptions represented as statistical model.
-- Each observation $y_i$ is a sample from a normal distribution with an unknown mean $\mu$ and standard deviation $\sigma$
 </div>
 
 
 
 ## Normal linear model
 
-<div style="float: left; width: 35%;">
+<div style="float: left; width: 40%;">
 
 $$
 \begin{aligned}
-y_i &\sim N(\mu_i, \sigma^2), \text{ for } i \in 1\dots n\\
+y_i &\sim \mathcal{N}(\mu_i, \sigma^2), \text{ for } i \in 1\dots n\\
 \mu_i &= \beta_0 + \beta_1 \cdot x_{1i} \\
 \end{aligned}
 $$
 </div>
 
-<div style="float: right; width: 60%;">
->- $y_i$ is the observed value of a univariate *outcome* variable.
->- $N$ is a univariate normal distributed probability model with mean $\mu$ and variance $\sigma^2$.
->- Greek letters represent placeholders / variables for population parameter value; i.e. unknown values we want to estimate on the basis of assumptions represented as statistical model.
->- Each observation $y_i$ is a sample from a normal distribution with an unknown mean $\mu$ and standard deviation $\sigma$
->- Value of $\mu_i$ is a deterministic (i.e. "$=$") linear function of the values of the $K$ predictor variables.
+<div style="float: right; width: 55%;">
+- Value of $\mu_i$ is a deterministic (i.e. "$=$") linear function of the values of the predictor variables for each observation $i$.
+- $\beta_0$ (intercept) and $\beta_1$ (slope) are unknown.
+  - $\beta_1$ depends on $x_{1i}$.
+  - $\beta_0$ is "constant" (i.e. does not depend on the value that a predictor $x$ takes on).
+  - If $x_{1i}$ takes on 0 $\mu_i = \beta_0$.
+  - If $x_{1i}$ takes on 1 $\mu_i = \beta_0 + \beta_1$.
+  - Hence, $\beta_1$ is the difference between $x_{1i}=1$ and $x_{1i}=0$. 
 </div>
 
 
 
 ## Normal linear model
 
-<div style="float: left; width: 35%;">
+<div style="float: left; width: 40%;">
 $$
 \begin{aligned}
-y_i &\sim N(\mu_i, \sigma^2), \text{ for } i \in 1\dots n\\
+y_i &\sim \mathcal{N}(\mu_i, \sigma^2), \text{ for } i \in 1\dots n\\
 \mu_i &= \beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i} \dots \beta_k \cdot x_{ki} \dots \beta_K \cdot x_{Ki}
 \end{aligned}
 $$
@@ -131,17 +134,15 @@ $$
 
 ## Normal linear model
 
-<div style="float: left; width: 35%;">
 
 $$
 \begin{aligned}
-y_i &\sim N(\mu_i, \sigma^2), \text{ for } i \in 1\dots n\\
+y_i &\sim \mathcal{N}(\mu_i, \sigma^2), \text{ for } i \in 1\dots n\\
 \mu_i &= \beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i} \dots \beta_k \cdot x_{ki} \dots \beta_K \cdot x_{Ki}\\
       & = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}\\
 \end{aligned}
 $$
 
-</div>
 
 
 - Probabilistic model (i.e. "$\sim$") of $y_1 \dots y_n$ conditional on $\overrightarrow{x_1}\dots\overrightarrow{x_n}$, $\overrightarrow{\beta} = \beta_0, \beta_1\dots\beta_K$, and $\sigma$
@@ -155,18 +156,18 @@ $$
 
 ## Normal linear model
 
-<div style="float: left; width: 35%;">
+<div style="float: left; width: 40%;">
 
 $$
 \begin{align}
-y_i &\sim N(\mu_i, \sigma^2)\\
+y_i &\sim \mathcal{N}(\mu_i, \sigma^2)\\
 \mu_i &= \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}\\
 &\text{for } i \in 1\dots n
 \end{align}
 $$
 </div>
 
-<div style="float: right; width: 60%;">
+<div style="float: right; width: 55%;">
 
 - For every hypothetically possible value of the $K$ predictor variables, i.e. $\overrightarrow{x_{i'}}$,
 there is a corresponding mean $\mu_{i'}$, i.e. $\mu_{i'} = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki'}$
@@ -551,7 +552,7 @@ plot_blomkvist / log_blomkvist + plot_layout(guides = "collect")
 
 
 $$
-y_i \sim N(\mu_i, \sigma^2), \text{ for } i \in 1\dots n.
+y_i \sim \mathcal{N}(\mu_i, \sigma^2), \text{ for } i \in 1\dots n.
 $$
 
 
@@ -839,7 +840,7 @@ Complete `exercises/interpreting_coefficients_2.R`
 - Denoting sexes by $x_{11},x_{12}\dots x_{1i}\dots x_{1n}$ and age by $x_{21},x_{22}\dots x_{2i}\dots x_{2n}$ the model is now
 
 $$
-y_i \sim N(\mu_i, \sigma^2)\\
+y_i \sim \mathcal{N}(\mu_i, \sigma^2)\\
 \mu_i = \beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i}.
 $$
 
@@ -875,7 +876,7 @@ ggplot(blomkvist, aes(x = log_rt, colour = sex, fill = sex)) +
 
 
 $$
-y_i \sim N(\mu_i, \sigma^2)\\
+y_i \sim \mathcal{N}(\mu_i, \sigma^2)\\
 \mu_i = \beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i}.
 $$
 
@@ -907,7 +908,7 @@ If we assume the model
 
 
 $$
-y_i \sim N(\mu_i, \sigma^2) \text{, for } i \in 1\dots n\\ 
+y_i \sim \mathcal{N}(\mu_i, \sigma^2) \text{, for } i \in 1\dots n\\ 
 \mu_i = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}
 $$
 
@@ -1382,7 +1383,7 @@ count(sims, mu_in_ci) %>%
 Using $\hat\beta_0,\hat\beta_1\dots\hat\beta_K$ and $\hat\sigma^2$, then for any new vector of predictor variables $\overrightarrow{x}_{i'}$, the corresponding $y_i$ is now
 
 $$
-y_{i'} \sim N(\hat\mu_{i'}, \sigma^2)\\ 
+y_{i'} \sim \mathcal{N}(\hat\mu_{i'}, \sigma^2)\\ 
 \hat\mu_{i'} = \hat\beta_0 + \sum_{k=1}^K \hat\beta_k \cdot x_{i'k}
 $$
 
@@ -1449,7 +1450,7 @@ predict(model, interval = 'confidence', newdata = newdata)
 When we include `sex` as an explanatory variable in additional to a continuous predictor variable, the model is as follows. 
 
 $$
-y_i \sim N(\mu_i, \sigma^2), \mu_i = \beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i}, \text{ for } i \in 1\dots n.
+y_i \sim \mathcal{N}(\mu_i, \sigma^2), \mu_i = \beta_0 + \beta_1 \cdot x_{1i} + \beta_2 \cdot x_{2i}, \text{ for } i \in 1\dots n.
 $$
 
 To implement this model using `lm` we would do the following.
@@ -1466,7 +1467,7 @@ Given that $x_{2i}$ takes that value of 0 when the gender is female and 1 when g
 
 
 $$
-y_i \sim N(\mu_i, \sigma^2) \\
+y_i \sim \mathcal{N}(\mu_i, \sigma^2) \\
 \mu_i =  \left\{ 
 \begin{array}{ll}
 \beta_0 + \beta_2 \cdot x_{2i}, \text{ if sex}_i = \texttt{female}\\
