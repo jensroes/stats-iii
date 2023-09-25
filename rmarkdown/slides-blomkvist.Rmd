@@ -1,0 +1,95 @@
+---
+title: 'Example data set'
+author: '<span style="font-size: 40px; font-face: bold">Jens Roeser</span>'
+output: 
+  ioslides_presentation:
+    incremental: false
+    transition: slower
+    widescreen: true
+    css: slides.css
+    logo: ../gfx/ntu.png
+bibliography      : ["../references.bib"]
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, eval = TRUE, message = FALSE, comment=NA)
+options("kableExtra.html.bsTable" = T, digits = 2)
+options(pillar.print_min = 5, pillar.print_max = 6)
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+```
+
+
+## Example data set: @blomkvist2017reference 
+
+```{r fig.align='center', out.width="80%", echo = F}
+knitr::include_graphics("../gfx/plos.png")
+```
+
+- Age-related changes in cognitive performance through adolescence and adulthood in a real-world task.
+
+## Real-world task: StarCraft 2
+
+<div style="float: left; width: 45%;">
+
+```{r fig.align='left', out.width="80%", echo = F}
+knitr::include_graphics("../gfx/sc2b.jpeg")
+```
+
+- Real-time strategy video game
+- Nintendo Wii Balance Board
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+```{r fig.align='right', out.width="80%", echo = F}
+knitr::include_graphics("../gfx/sc2.jpeg")
+```
+
+```{r fig.align='right', out.width="80%", echo = F}
+knitr::include_graphics("../gfx/sc2c.jpeg")
+```
+
+</div>
+
+
+
+
+
+## Example data set: @blomkvist2017reference 
+
+<div style="float: left; width: 50%;">
+
+```{r eval = F}
+blomkvist <- read_csv("../data/blomkvist.csv")
+glimpse(blomkvist)
+```
+
+```{r echo = F}
+blomkvist <- read_csv("../data/blomkvist.csv")
+glimpse(blomkvist, width = 60)
+```
+</div>
+
+<div style="float: right; width: 45%;">
+
+- Average reaction time (`rt`) of dominant (`_d`) or non-dominant (`_nd`) `hand` or `foot` in msecs
+- `medicine`: number of drugs used daily
+
+</div>
+
+
+
+## References {.smaller}
+
+<style>
+slides > slide { overflow: scroll; }
+slides > slide:not(.nobackground):after {
+  content: '';
+}
+</style>
+
+
