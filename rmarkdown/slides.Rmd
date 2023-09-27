@@ -24,7 +24,7 @@ library(kableExtra)
 
 ## Aims for today
 
->- Sorting out our RStudio working environment.
+>- Sorting out your RStudio working environment.
 >- Getting you ready to write reproducible reports in RMarkdown.
 
 ## How do you trust someone's results?

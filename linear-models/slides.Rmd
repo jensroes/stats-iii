@@ -108,20 +108,18 @@ $$
 </div>
 
 <div style="float: right; width: 55%;">
-- Value of $\mu_i$ is a deterministic (i.e. "$=$") linear function of the values of the predictor variables for each observation $i$.
-- $\beta_0$ (intercept) and $\beta_1$ (slope) are unknown.
-  - $\beta_1$ depends on $x_{1i}$.
-  - $\beta_0$ is "constant" (i.e. does not depend on the value that a predictor $x$ takes on).
+- Value of $\mu_i$ is deterministic ("$=$") linear function of values of predictor variables $x$ for each observation $i$ and the unknowns $\beta_0$ (intercept) and $\beta_1$ (slope):
+  - $\beta_1$ directly depends on $x_{1i}$.
+  - $\beta_0$ is "constant".
   - If $x_{1i}$ takes on 0 $\mu_i = \beta_0$.
   - If $x_{1i}$ takes on 1 $\mu_i = \beta_0 + \beta_1$.
-  - Hence, $\beta_1$ is the difference between $x_{1i}=1$ and $x_{1i}=0$. 
+  - Hence, $\beta_1$ is the difference between $x_{1i}=1$ and $x_{1i}=0$: what do we need to add to $\beta_0$ when $x_{1i}=1$ instead of $x_{1i}=0$.
 </div>
 
 
 
-## Normal linear model
+## Normal linear model (general form)
 
-<div style="float: left; width: 40%;">
 $$
 \begin{aligned}
 y_i &\sim \mathcal{N}(\mu_i, \sigma^2), \text{ for } i \in 1\dots n\\
@@ -129,10 +127,8 @@ y_i &\sim \mathcal{N}(\mu_i, \sigma^2), \text{ for } i \in 1\dots n\\
 \end{aligned}
 $$
 
-</div>
 
-
-## Normal linear model
+## Normal linear model (general form)
 
 
 $$
@@ -152,9 +148,7 @@ $$
 - Which ones do we know and which ones must be inferred using statistical inference?  
 
 
-
-
-## Normal linear model
+## Normal linear model (general form)
 
 <div style="float: left; width: 40%;">
 
@@ -174,6 +168,21 @@ there is a corresponding mean $\mu_{i'}$, i.e. $\mu_{i'} = \beta_0 + \sum_{k=1}^
 - If we change $x_{ki'}$ by $\Delta_{k'}$, then $\mu_{i'}$ changes by $\beta_k\Delta_k$.
 
 </div>
+
+
+
+## Normal linear model (example)
+
+$$
+\begin{align}
+\text{rt}_i &\sim \mathcal{N}(\mu_i, \sigma^2)\\
+\mu_i &= \beta_0 + \beta_\text{age} \cdot x_{\text{age}[i]} + \beta_\text{sex} \cdot x_{\text{sex}[i]}\\
+&\text{for } i \in 1\dots n
+\end{align}
+$$
+
+
+
 
 ## Simulation of normal distributed data
 
