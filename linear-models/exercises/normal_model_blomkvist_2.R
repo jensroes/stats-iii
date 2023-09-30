@@ -21,7 +21,7 @@ ggplot(---, aes(x = ---, y = ---)) +
 
 # Fit an normal linear model on not-log transformed data with sex as predictor
 lm(--- ~ ---, data = blomkvist)
-# Find the coefficients in the boxplot above.
+# How do the model coefficients relate to the boxplot above?
 
 # Create a boxplot for the log transformed rts
 ggplot(---, aes(x = ---, y = ---)) +
@@ -29,4 +29,4 @@ ggplot(---, aes(x = ---, y = ---)) +
 
 # Fit an normal linear model on log transformed data with sex as predictor
 lm(--- ~ ---, data = blomkvist)
-# Find the coefficient in the histogram above.
+# How do the model coefficients relate to the histogram above?

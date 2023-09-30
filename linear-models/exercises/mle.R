@@ -32,4 +32,6 @@ idx <- which.min(rss)
 # Find corresponding mu value
 mu_grid[idx]
 
+# Task: change mu above to 250 and observe what happens to the 
+# visualisation above.
 

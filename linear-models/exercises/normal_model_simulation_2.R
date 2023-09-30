@@ -15,10 +15,10 @@ beta_1 <- 30   # population change in the outcome variable
 sigma <- 50    # population standard deviation
 
 # Generate data
-sim_data <- tibble(beta_0 = rnorm(n = n/2, 
+sim_data <- tibble(group_1 = rnorm(n = n/2, 
                                   mean = ---, 
                                   sd = sigma),
-                   beta_1 = rnorm(n = n/2, 
+                   group_2 = rnorm(n = n/2, 
                                   mean = beta_0 + beta_1, 
                                   sd = ---)) 
 
@@ -26,7 +26,7 @@ sim_data <- tibble(beta_0 = rnorm(n = n/2,
 glimpse(---)
 
 # Transform data
-sim_data <- pivot_longer(sim_data, cols = c(beta_0, beta_1), names_to = "mu", values_to = "outcome")
+sim_data <- pivot_longer(sim_data, cols = c(group_1, group_2), names_to = "x", values_to = "y")
 
 # Preview data
 glimpse(---)

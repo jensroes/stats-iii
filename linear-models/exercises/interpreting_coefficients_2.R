@@ -47,29 +47,3 @@ exp(coef_log_rt[1] * coef_log_rt[2])
 exp(coef_log_rt[1]) * exp(coef_log_rt[2])
 # Delete the incorrect ones.
 
-# We can change how sex is being contrasted in the model.
-# The default contrast is
-contrast(blomkvist$sex)
-# This is called a treatment contrast.
-# Hence, female is intercept and slope is the difference for male.
-
-# We can change the contrast, so that the intercept is the grand mean
-# and the slope is the difference between female and males.
-
-# This can be achieved with a sum contrast (centres the predictor variable).
-# Assign a sum contrast to sex
-contrasts(---$---) <- c(-.5, .5)
-# Change the name of the contrast:
-colnames(contrasts(---$---)) <- ": female vs male"
-
-# Refit the log rt model (same as above)
-model_sum <- lm(--- ~ ---, data = blomkvist)
-
-# Compare the new coefficients
-coef(---)
-
-# to the ones from before
-coef_log_rt
-
-# Also compare the coefficients of the two models (treatment contrast vs sum contrast)
-# using the back transformed to msecs values, because they are more intuitive to many people.
