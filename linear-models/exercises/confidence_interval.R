@@ -21,3 +21,12 @@ confint(---, parm = ---, level = ---)
 
 # Get the 89% CI for all fixed effects
 confint(---, parm = ---, level = ---)
+
+# Or even easier (instead of using summary() and confint()):
+library(broom) # <- you probably need to install this first
+
+# Add the model to the function call:
+tidy(---, conf.int = TRUE, conf.level = 0.95)
+
+# Task: get the 99% CI.
+tidy(---, conf.int = TRUE, conf.level = ---)

@@ -48,7 +48,7 @@ contr.helmert(3) / 2
 
 # Just some cosmetics to make the row names and the columns names easier to
 # interpret:
-(row.names(contrasts(blomkvist$smoker)) <- levels(blomkvist$smoker))
+(rownames(contrasts(blomkvist$smoker)) <- levels(blomkvist$smoker))
 (colnames(contrasts(blomkvist$smoker)) <- c("former vs yes", "no vs yes"))
 contrasts(blomkvist$smoker)
 

@@ -1769,6 +1769,8 @@ coef(model_smoker) # model with treatment contrasts
 - Read lecture notes on NOW [also @andrews2021doing].
 - Model comparisons: has age a stronger effect for females than for males?
 
+
+
 ## Homework
 
 >- We will start preparing your formative assessment next week.

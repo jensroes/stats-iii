@@ -26,7 +26,10 @@ sim_data <- tibble(group_1 = rnorm(n = n/2,
 glimpse(---)
 
 # Transform data
-sim_data <- pivot_longer(sim_data, cols = c(group_1, group_2), names_to = "x", values_to = "y")
+sim_data <- pivot_longer(sim_data, 
+                         cols = c(group_1, group_2), 
+                         names_to = "x", 
+                         values_to = "y")
 
 # Preview data
 glimpse(---)
