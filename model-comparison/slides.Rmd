@@ -1,50 +1,15 @@
 ---
 title: 'Model comparison'
-author: "Jens Roeser"
+author: '<span style="font-size: 40px; font-face: bold">Jens Roeser</span>'
 output: 
   ioslides_presentation:
-    incremental: false
+    incremental: true
     transition: slower
     widescreen: true
-    css: ../slides.css
+    css: slides.css
     logo: ../gfx/ntu.png
 bibliography      : ["../references.bib"]
 ---
-
-```{=html}
-<style>
-
-slides > slide.backdrop {
-  background: white;
-}
-
-.gdbar img {
-  width: 240px !important;
-  height: 54px !important;
-  margin: 8px 8px;
-  position: absolute;
-}
-
-.gdbar {
-  width: 350px !important;
-  height: 70px !important;
-}
-
-slides > slide:not(.nobackground):before {
-  width: 128px;
-  height: 33px;
-  background-size: 100px 30px;
-}
-
-.smalltable .table{
-  font-size: 18px;
-}
-
-pre {
-  font-size: 15px;
-}
-</style>
-```
 
 
 ```{r setup, include=FALSE}
@@ -74,15 +39,18 @@ blomkvist <- read_csv("../data/blomkvist.csv") %>%
 
 
 
+## Overview
 
-## Update your workshop repository
+> By the end of these workshops and your own studies, you should be able to
 
-- Go to [github.com/jensroes/stats-iii](https://github.com/jensroes/stats-iii)
-- Download the repository
-- Extract the `model-comparison` folder
+- Understand the concept of parsimony
+- Describe the meaning of and calculate likelihood
+- Using unexplained variance to assess model fit
+- Describe the limitations of $R^2$ as model fit statistic
+- Use likelihood ratio test (*F*-test) and information criteria to compare nested models
 
 
-## Why do we need model comparion? {.smaller}
+## Why do we need model comparion? 
 
 <div style="float: left; width: 35%;">
 
@@ -95,35 +63,33 @@ blomkvist <- read_csv("../data/blomkvist.csv") %>%
 <div style="float: right; width: 55%;">
 
 - Models are statistical representations of a hypothesis.
-- We want to compare hypotheses.
-- How useful is my model compared to other alternative models?
-- Can my model fit the data (more) accurately?
-- Are my model's predictions useful?
-- Can the model accurately predict future outcomes?
-- As complex as necessary, as simple as possible.
+- We want to compare the usefulness of alternative models.
+- Can my model accurately predict future outcomes?
+- Parsimony: As complex as necessary, as simple as possible.
 </div>
 
-## Ockham's razor: the principle of parsimony {.smaller}
+## Ockham's razor: the principle of parsimony 
 
-<div style="float: left; width: 45%;">
+<div style="float: left; width: 55%;">
 
-- Is it worth assuming a more complex model?
-- Philosopher William of Ockham (1285-1347/49): 
+>- Is it worth assuming a more complex model?
+>- Philosopher William of Ockham (1285-1347/49): 
 
-"pluralitas non est ponenda sine necessitate"
-
-- "Plurality should not be posited without necessity."
-- Precedence to simplicity: of two competing theories, the simpler explanation of an entity is to be preferred. 
-- We don't assume more complex theories, if there is not sufficient evidence.
+> "Plurality should not be posited without necessity."
 
 </div>
 
-<div style="float: right; width: 50%;">
+<div style="float: right; width: 40%;">
 ```{r echo=F, out.width="100%"}
 include_graphics("../gfx/ockham.jpg")
 ```
 
 </div>
+
+
+- Precedence to simplicity: of two competing theories, the simpler explanation of an entity is to be preferred. 
+- We don't assume more complex theories, if there is not sufficient evidence.
+
 
 
 ```{r overview, echo = F, eval = F}
@@ -147,8 +113,8 @@ read_csv("overview.csv") %>%
 
 ## Probabilistic generative models 
 
-- In any statistical analysis, we assume our data are drawn from some probability distribution.
-- This is what we mean by *statistical model*, a *probabilistic generative model* like
+>- In any statistical analysis, we assume our data are drawn from some probability distribution.
+>- This is what we mean by *statistical model*, a *probabilistic generative model* like
 
 $$
 y_i \sim \mathcal{N}(\mu_i, \sigma^2), \mu_i = \beta_0 + \beta_1 \cdot x_i
@@ -167,72 +133,52 @@ $$
 - The probability of the data according to the model is the model's *likelihood*.
 
 
-## Probabilistic model of log rts {.smaller}
+## Probabilistic model 
 
-<div style="float: left; width: 45%;">
-
-A possible model of log rt is the following
+> A possible model of each observed outcome $y_i$ is 
 
 $$
 y_i \sim N(\mu, \sigma^2)\\
 \text{for } i \in 1\dots n,
 $$
-where $y_i$ is the log rt of observation $i$.
 
-We are modelling log rt as normally distributed with a mean $\mu$ and standard deviation $\sigma$, but we don't know the value of either of these parameters.
-
-</div>
-<div style="float: right; width: 45%;">
-
-```{r echo=F, out.width="80%", fig.height=6}
-ggplot(blomkvist, aes(x = log_rt)) +
-  geom_histogram()
-```
-
-</div>
+> We are modelling $y$ as normally distributed with two unknowns, the mean $\mu$ and standard deviation $\sigma$.
 
 
-## Model likelihood {.smaller}
+## Likelihood 
 
-What is the probability of the observed values of the log rt variable, $y_1, y_2, y_3\dots y_n$, assuming values for $\mu$ and $\sigma$ (based on a particular model).
+> Probability of the observed values, $y_1, y_2, y_3\dots y_n$, assuming values for $\mu$ and $\sigma$ (based on a particular model).
 
 
 $$
 P(y_1\dots y_n\mid\mu, \sigma)
 $$
 
-We assume that all $y$'s are conditionally independent of one another, so the joint probability is 
+> We assume that all $y$s are conditionally independent of one another, so the joint probability is their product:
 
 $$
 P(y_1\dots y_n\mid\mu, \sigma) = \prod_\text{i=1}^n P(y_i\mid \mu, \sigma).
 $$
 
-We don't know the values of $\mu$ and $\sigma$, so we use their *maximum likelihood estimates*: $\hat\mu$ and $\hat\sigma$:
+## Likelihood
+
+> Replace $\mu$ and $\sigma$ with their *maximum likelihood estimates* $\hat\mu$ and $\hat\sigma$:
 
 $$
 P(y_1\dots y_n\mid\hat\mu, \hat\sigma) = \prod_\text{i=1}^n P(y_i\mid \hat\mu, \hat\sigma).
 $$
 
-## Model log likelihood {.smaller}
-
-The join probability (the product of probabilities)
-
-$$
-P(y_1\dots y_n\mid\mu, \sigma) = \prod_\text{i=1}^n P(y_i\mid \mu, \sigma).
-$$
-
-
-will be a very small number (called numeric underflow), so we use its logarithm:
+> Product will be a very small number (i.e. numeric underflow) cause probabilities are $0 > p < 1$, so we use logarithm:
 
 
 $$
-\text{log} \left( P(y_1\dots y_n\mid\mu, \sigma) \right) = \sum_\text{i=1}^n \text{log } P(y_i\mid \mu, \sigma),
+\text{log} \left( P(y_1\dots y_n\mid\hat\mu, \hat\sigma) \right) = \sum_\text{i=1}^n \text{log } P(y_i\mid \hat\mu, \hat\sigma),
 $$
 
-and with maximum likelihood estimators $\hat\mu, \hat\sigma$ for the unknowns.
+> Logarithm is turning product $\prod$ into sum $\sum$.
 
 
-## Model log likelihood: calculation
+## Likelihood
 
 ```{r}
 model_0 <- lm(log_rt ~ 1, data = blomkvist)
@@ -241,20 +187,21 @@ sigma_hat <- sigma(model_0) # MLE of sigma
 ```
 
 ```{r}
+# log probability of an observed outcome for given MLEs.
 logp <- dnorm(blomkvist$log_rt, mean = mu_hat, sd = sigma_hat, log = TRUE)
-sum(logp)
+sum(logp) # sum of log probabilities is the log likelihood
 ```
 
 ```{r}
 logLik(model_0)
 ```
 
-Work through exercise script: `exercises/log_likelihood_1.R`
+> Work through exercise script: `exercises/log_likelihood_1.R`
 
 
-## Adding a predictor {.smaller}
+## Likelihood
 
-<div style="float: left; width: 40%;">
+<div style="float: left; width: 35%;">
 
 ```{r}
 select(blomkvist, id, log_rt, sex)
@@ -262,45 +209,41 @@ select(blomkvist, id, log_rt, sex)
 
 </div>
 
-<div style="float: right; width: 50%;">
-Using the `sex` variable, the potential model of the log rt data is
+<div style="float: right; width: 60%;">
+
+> Using the `sex` variable, the potential model of the log rt data is
 
 $$
 \begin{aligned}
-y_i &\sim N(\mu_i, \sigma^2)\text{ for } i \in 1\dots n,\\
-\mu_i&= \beta_0 + \beta_1 \cdot x_i,
+\text{logrt}_i &\sim N(\mu_i, \sigma^2),\text{ for } i \in 1\dots n,\\
+\mu_i&= \beta_0 + \beta_\text{sex} \cdot \text{sex}_i,
 \end{aligned}
 $$
-where $y_i$ is the log rt and $x_i$ is `sex` on observation $i$.
+> We are modelling log rt as normally distributed as a function of `sex`, and with an equal variance $\sigma^2$.
 
-We are modelling log rt as normally distributed as a function of `sex`, and with an equal variance $\sigma^2$.
 
-Unknowns are $\beta_0,\beta_1,\sigma^2$.
+## Likelihood
 
-## Regression model likelihood {.smaller}
-
-Assuming values for $\beta_0,\beta_1,\sigma$, what is the probability of the observed values of log rt, $y_1, y_2, y_3\dots y_n$? 
+> Give $\hat\beta_0,\hat\beta_\text{sex},\hat\sigma$, we can calculate the probability of the observed values: 
 
 $$
-P(y_1\dots y_n\mid x_1\dots x_n,\beta_0,\beta_1,\sigma) = \prod_\text{i=1}^n P(y_i\mid x_i,\beta_0,\beta_1,\sigma).
+P(\text{logrt}_1\dots \text{logrt}_n\mid \text{sex}_1\dots \text{sex}_n,\beta_0,\beta_\text{sex},\sigma) = \prod_\text{i=1}^n P(\text{logrt}_i\mid \text{sex}_i,\beta_0,\beta_\text{sex},\sigma)
 $$
 
-The log likelihood of the model is
+> The log likelihood of the model is
+
 
 $$
-\sum_\text{i=1}^n\text{ log} P(y_i\mid x_i,\beta_0,\beta_1,\sigma).
+\sum_\text{i=1}^n\text{ log} P(\text{logrt}_i\mid \text{sex}_i,\beta_0,\beta_\text{sex},\sigma).
 $$
 
-Again, we don't know $\beta_0,\beta_1,\sigma$, so we use their MLEs, $\hat\beta_0,\hat\beta_1,\hat\sigma$.
 
-</div>
-
-## Regression model log likelihood: calculation {.smaller}
+## Likelihood
 
 
 ```{r}
 model_1 <- lm(log_rt ~ sex, data = blomkvist)
-mu_hat <- predict(model_1) # mu_hat = beta_0 + beta_1 * x
+mu_hat <- predict(model_1) # mu_hat = beta_0 + beta_sex * sex
 sigma_hat <- sigma(model_1)
 ```
 
@@ -313,12 +256,12 @@ sum(logp)
 logLik(model_1)
 ```
 
-Work through exercise script: `exercises/log_likelihood_2.R`
+> Work through exercise script: `exercises/log_likelihood_2.R`
 
 
-## Compare log likelihoods {.smaller}
+## Compare log likelihoods 
 
-- Which model are the data more compatible with?
+> Which model are the data more compatible with?
 
 <div style="float: left; width: 45%;">
 
@@ -340,7 +283,7 @@ logLik(model_1) # L_1
 
 <div style="float: left; width: 45%;">
 
-- Let's denote these log likelihoods as log $\mathcal{L}_0$ and log $\mathcal{L}_1$:
+> Let's denote these log likelihoods as log $\mathcal{L}_0$ and log $\mathcal{L}_1$:
 
 $$
 \begin{aligned}
@@ -357,14 +300,15 @@ $$
 
 <div style="float: right; width: 45%;">
 
-- Including `sex` appears to increase the log likelihood.
-- Work through exercise script: `exercises/compare_log_lik.R`
+> Including `sex` appears to increase the log likelihood.
+
+> Work through exercise script: `exercises/compare_log_lik.R`
 
 </div>
 </div>
 
 
-## Residuals: assessing the unexplained variance
+## Residuals
 
 <div style="float: left; width: 45%;">
 
@@ -430,7 +374,7 @@ ggplot(data = sim, aes(x = x, y = predict(fake_model))) +
 </div>
 
 
-## Residuals: assessing the unexplained variance
+## Residuals
 
 <div style="float: left; width: 45%;">
 
@@ -494,13 +438,13 @@ ggplot(data = sim, aes(x = x, y = predict(fake_model))) +
 
 <div style="float: left; width: 100%;">
 
-- Which model is better and why?
-- How can we reduce the residual error?
+>- Which model is better and why?
+>- How can we reduce the residual error?
 
 </div>
 
 
-## Residuals: assessing the unexplained variance {.smaller}
+## Residuals
 
 
 <div style="float: left; width: 50%;">
@@ -522,7 +466,7 @@ plot <- ggplot(blomkvist, aes(x = age, y = pred, colour = sex) ) +
 </div>
 
 
-## Residuals: assessing the unexplained variance {.smaller}
+## Residuals
 
 <div style="float: left; width: 50%;">
 
@@ -552,7 +496,7 @@ $$
 </div>
 
 
-## Residuals: assessing the unexplained variance {.smaller}
+## Residuals
 
 <div style="float: left; width: 45%;">
 
@@ -579,7 +523,7 @@ Work through exercise script: `exercises/residuals.R`
 
 
 
-## RSS: Residual sum of squares {.smaller}
+## Residual sum of squares 
 
 The sum of squared residuals in normal models when using the maximum likelihood estimators is
 
@@ -593,7 +537,7 @@ $$
 is a measure of how much variance in the data is not explained by the model; or the model's lack of fit.
 
 
-## RSS: Residual sum of squares {.smaller}
+## Residual sum of squares
 
 
 
@@ -631,10 +575,10 @@ y_plot + resid_plot + resid_sqrt_plot
 
 
 
-## Residual sum of squares and log likelihood {.smaller}
+## Residual sum of squares and log likelihood 
 
 
-Log likelihood is calculated on the basis of RSS and the number of observations $n$ using the following relationship:
+> Log likelihood is calculated on the basis of RSS and the number of observations $n$ using the following relationship:
 
 $$
 \text{log}(\mathcal{L})=-\frac{n}{2}\left( \text{log}(2\pi)-\text{log}(n) + \text{log(RSS)}+1 \right)
@@ -652,8 +596,11 @@ logLik(model)
 ```
 </div>
 
+> In other words, knowing the RSS allows you to calculae the log-likelihood.
 
-## ESS: Explained sum of squares {.smaller}
+
+
+## Explained sum of squares
 
 
 <div style="float: left; width: 50%;">
@@ -691,7 +638,7 @@ $$
 
 
 
-## $R^2$: coefficient of determination {.smaller}
+## $R^2$: coefficient of determination 
 
 calculated on the basis of TSS which is the sum of ESS and RSS
 
@@ -699,35 +646,33 @@ $$
 \underbrace{\sum_{i=1}^n(y_i-\bar{y})^2}_\text{TSS} = \underbrace{\sum_{i=1}^n(\hat\mu_i-\bar{y})^2}_\text{ESS} + \underbrace{\sum_{i=1}^n(y_i-\hat\mu_i)^2}_\text{RSS}
 $$
 
-<div style="float: left; width: 100%;">
-
-<div style="float: left; width: 45%;">
 ```{r}
 (tss <- ess + rss)
 ```
 
-- Ability of a model to predict the outcome variable.
-- Proportion of total variation explained by the variation in the predictor variable(s).
-- Proportion of the variability in the outcome variable due to changes in the predictor(s).
-- Routinely used as measure of model fit.
+## $R^2$: coefficient of determination 
 
-</div>
-<div style="float: right; width: 45%;">
+>- Ability of a model to predict the outcome variable.
+>- Proportion of the variability in the outcome attributed to the predictor(s).
+>- Routinely used as measure of model fit.
+
+
+<div style="float: left; width: 60%;">
 
 $$
 R^2 = \frac{\text{ESS}}{\text{TSS}}
 $$
 
+> Work through script: `exercises/rsquared.R`
 
-<div style="float: left; width: 40%;">
+</div>
+
+<div style="float: right; width: 30%;">
 
 ```{r}
 ess / tss
 ```
 
-</div>
-
-<div style="float: right; width: 53%;">
 
 ```{r}
 summary(model)$r.sq
@@ -735,26 +680,26 @@ summary(model)$r.sq
 
 </div>
 
-Work through script: `exercises/rsquared.R`
 
 
-</div>
-</div>
 
-
-## Root mean square error {.smaller}
+## Root mean square error 
 
 <div style="float: left; width: 45%;">
 
-- In contrast to highlighting variance explained.
-- The larger the sample, the larger the RSS.
-- Alternative to RSS is the square root of the mean squared residuals.
-- Summaring average distance between model fit and data, while taking into account sample size.
+$$
+\text{RMSE} = \sqrt{\frac{\text{RSS}}{n}}
+$$
+
+>- Alternative to RSS is the square root of the mean squared residuals.
+>- Doesn't highlight explained but unexplained variance.
+>- Larger the sample, larger RSS.
+>- Average distance between model fit and data, while taking into account sample size.
 
 
-$$
-\text{RMSE} = \sqrt{\frac{\text{RSS}}{n}},
-$$
+</div>
+
+<div style="float: right; width: 45%;">
 
 ```{r}
 n <- nrow(blomkvist)
@@ -762,23 +707,13 @@ rss <- sum(residuals(model)^2)
 sqrt(rss/n)
 ```
 
-</div>
-
-<div style="float: right; width: 45%;">
-
-
 ```{r}
 sqrt(mean(residuals(model)^2))
 ```
 
-- Standard deviation of the prediction error.
-
 ```{r}
 sd(residuals(model))
 ```
-
-
-which is $\hat\sigma$
 
 ```{r}
 sigma(model)
@@ -787,29 +722,29 @@ sigma(model)
 </div>
 
 
-## Mean absolute error {.smaller}
+<!-- ## Mean absolute error  -->
 
-Related to the root mean squared error is the mean absolute error (MAE), which is the mean of the absolute values of the residuals.
+<!-- Related to the root mean squared error is the mean absolute error (MAE), which is the mean of the absolute values of the residuals. -->
 
-$$
-\text{MAE} = \frac{\sum_\text{i=1}^n\mid y_i-\hat{\mu}_1\mid}{n}
-$$
+<!-- $$ -->
+<!-- \text{MAE} = \frac{\sum_\text{i=1}^n\mid y_i-\hat{\mu}_1\mid}{n} -->
+<!-- $$ -->
 
-```{r}
-sum(abs(residuals(model))) / n
-```
-
-
-```{r}
-mean(abs(residuals(model)))
-```
+<!-- ```{r} -->
+<!-- sum(abs(residuals(model))) / n -->
+<!-- ``` -->
 
 
-Check out exercise `exercises/rmse_mae.R`
+<!-- ```{r} -->
+<!-- mean(abs(residuals(model))) -->
+<!-- ``` -->
+
+
+<!-- Check out exercise `exercises/rmse_mae.R` -->
 
 
 
-## Adjusted $R^2$ {.smaller}
+## Adjusted $R^2$ 
 
 <div style="float: left; width: 45%;">
 
@@ -996,7 +931,7 @@ gridExtra::grid.arrange(gt, left = "Brain volume (cc)", bottom = "Body mass (kg)
 
 
 
-## $R^2$ and Adjusted $R^2$ with `lm` {.smaller}
+## $R^2$ and Adjusted $R^2$ with `lm` 
 
 
 <div style="float: left; width: 55%;">
@@ -1045,56 +980,78 @@ summary_model_2$adj.r.squared
 
 
 
-## Model comparison {.smaller}
+## Model comparison
 
 - $R^2=0$ is only true if $\beta_1=\beta_2=\dots\beta_k=0$.
 - When all coefficients are simultaneously zero, we are essentially saying that the following two models are identical.
 
 $$
 \begin{aligned}
-\mathcal{M}_0:& y_i \sim N(\hat\mu, \sigma^2), \hat\mu_i = \beta_0, \text{ for } i \in 1\dots n,\\
-\mathcal{M}_1:& y_i \sim N(\hat\mu, \sigma^2), \hat\mu_i = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}, \text{ for } i \in 1\dots n,
+\mathcal{M}_0:& y_i \sim N(\hat\mu, \sigma^2), \hat\mu_i = \beta_0\\
+\mathcal{M}_1:& y_i \sim N(\hat\mu, \sigma^2), \hat\mu_i = \beta_0 + \sum_{k=1}^K \beta_k \cdot x_{ki}
 \end{aligned}
 $$
 
+> $\text{ for } i \in 1\dots n$
 
-## Model comparison {.smaller}
+## Model comparison
 
-- The residual sums of squares for these two models can be denoted RSS$_0$ and RSS$_1$.
-- Under the null hypothesis that these two models are identical, and so the coefficients for all predictors are simultaneously zero, we have the following result:
+>- Null hypothesis is that the following two models are identical:
+
+$$
+\begin{aligned}
+\mathcal{M}_0:& \text{logrt}_i \sim N(\hat\mu, \sigma^2), \hat\mu_i = \beta_0\\
+\mathcal{M}_1:& \text{logrt}_i \sim N(\hat\mu, \sigma^2), \hat\mu_i = \beta_0 + \beta_\text{sex} \cdot \text{sex}_{i}
+\end{aligned}
+$$
+
+> $\text{ for } i \in 1\dots n$
+
+
+>- Adding the predictor $\text{sex}$ in $\mathcal{M}_1$ does not contribute to the variance in the data explained by model $\mathcal{M}_0$.
+
+
+## Model comparison 
+
+>- Under the null hypothesis that these two models are identical, and so the coefficients for all predictors are simultaneously zero, we have 
 
 
 $$
 \underbrace{\frac{(\text{RSS}_0-\text{RSS}_1)/K}{\text{RSS}_1/(n - K - 1)}}_\text{F-statistic} \sim F(K, n-K-1)
 $$
 
-- Under the null hypothesis, the *F*-statistic is distributed as an *F*-distribution with $K$ and $N-K-1$ degrees of freedom.
+- with the *F*-statistic being distributed with $K$ and $N-K-1$ degrees of freedom.
+- We can compare two models $\mathcal{M}_1$ and $\mathcal{M}_0$ with $K_1$ and $K_0$ predictors, respectively, and where $K_0 < K_1$ and all the $K_0$ predictors in $\mathcal{M}_0$ are also presented in $\mathcal{M}_1$, i.e. $\mathcal{M}_0$ is *nested* in $\mathcal{M}_1$.
 - Nested normal linear models can be compared using F test.
 
+<!-- ## Nested models  -->
 
-## Nested models {.smaller}
+<!-- - We can test whether any subset of the $K$ predictors have coefficients that are simultaneously zero. -->
+<!-- - Under the null hypothesis that the $K_1-K_0$ predictors in $\mathcal{M}_1$ and not in $\mathcal{M}_0$ are simultaneously zero, we have -->
 
-- We can test whether any subset of the $K$ predictors have coefficients that are simultaneously zero.
-- In general, we can compare two models $\mathcal{M}_1$ and $\mathcal{M}_0$ with $K_1$ and $K_0$ predictors, respectively, and where $K_0 < K$ and all the $K_0$ predictors in $\mathcal{M}_0$ are also presented in $\mathcal{M}_1$, i.e. $\mathcal{M}_0$ is *nested* in $\mathcal{M}_1$.
-- Under the null hypothesis that the $K_1-K_0$ predictors in $\mathcal{M}_1$ and not in $\mathcal{M}_0$ are simultaneously zero, we have
-
-$$
-\frac{(\text{RSS}_0-\text{RSS}_1)/(K_1-K_0)}{\text{RSS}_1/(n - K_1 - 1)} \sim F(K_1 - K_0, n-K_1-1).
-$$
+<!-- $$ -->
+<!-- \frac{(\text{RSS}_0-\text{RSS}_1)/(K_1-K_0)}{\text{RSS}_1/(n - K_1 - 1)} \sim F(K_1 - K_0, n-K_1-1). -->
+<!-- $$ -->
+<!-- - For a $\mathcal{M}_0$ with $K_0=1$ nested within $\mathcal{M}_1$ with $K_1=2$ (for example the predictor $\text{sex}$) this renders: -->
 
 
-where 
+<!-- $$ -->
+<!-- \frac{(\text{RSS}_0-\text{RSS}_1)}{\text{RSS}_1/n-1} \sim F(1, n-1). -->
+<!-- $$ -->
 
-$$
-\begin{aligned}
-\text{proportional increase in error} &= \frac{\text{RSS}_0-\text{RSS}_1}{\text{RSS}_1}\\
-&= \frac{\text{change in error (from } \mathcal{M}_0\text{ to }\mathcal{M}_1)}{\text{minimal error}}\\
-\end{aligned}
-$$
 
-## Model comparison {.smaller}
+<!-- where  -->
 
-The results of the null hypothesis test that $R^2=0$ can be obtained in numerous ways, but the easiest is to use the generic `anova` function where we compare `model_1` against `model_0`.  
+<!-- $$ -->
+<!-- \begin{aligned} -->
+<!-- \text{proportional increase in error} &= \frac{\text{RSS}_0-\text{RSS}_1}{\text{RSS}_1}\\ -->
+<!-- &= \frac{\text{change in error (from } \mathcal{M}_0\text{ to }\mathcal{M}_1)}{\text{minimal error}}\\ -->
+<!-- \end{aligned} -->
+<!-- $$ -->
+
+## Model comparison 
+
+> The null hypothesis that $R^2=0$ can be obtained using `anova` to compare `model_1` against `model_0`.  
 
 <div style="float: left; width: 47%;">
 
@@ -1119,9 +1076,9 @@ print(anova(model_0, model_1), signif.stars=F)
 
 <div style="float: right; width: 50%;">
 
-- `RSS` column are TSS and RSS of model `model_1`.
-- TSS is RSS of `model_0` because in model with no predictors the variance of the outcome variable and the variance of the residuals are necessarily identical. 
-- ESS is the `Sum of Sq` and the difference of the `RSS` values.
+>- `RSS` are TSS and RSS of `model_1`.
+>- TSS of `model_0`: in model with no predictors, variance of outcome and residuals are identical. 
+>- ESS is `Sum of Sq` / difference of `RSS`s:
 
 ```{r}
 mu_hat <- predict(model_1)
@@ -1134,9 +1091,9 @@ sumdiff <- mu_hat - y_bar
 </div>
 
 
-## Model comparison {.smaller}
+## Model comparison
 
-The results of the null hypothesis test that $R^2=0$ can be obtained in numerous ways, bu the easiest is to use the generic `anova` function where we compare `model_1` against `model_0`.  
+> The null hypothesis that $R^2=0$ can be obtained using `anova` to compare `model_1` against `model_0`.  
 
 <div style="float: left; width: 47%;">
 
@@ -1159,17 +1116,16 @@ print(anova(model_0, model_1), signif.stars=F)
 
 </div>
 
-<div style="float: right; width: 45%;">
+<div style="float: right; width: 50%;">
 
-
-`Df` and bottom value of `Res.Df` give us the degrees of freedom 
+>- `Df` and bottom value of `Res.Df` are degrees of freedom 
 
 ```{r}
 K <- 1
 c(K, n - K - 1)
 ```
 
-by which `ess` and `rss` are divided for F:
+>- `ess` and `rss` are divided for F:
 
 ```{r}
 rss <- sum(residuals(model_1)^2)
@@ -1179,10 +1135,9 @@ rss <- sum(residuals(model_1)^2)
 </div>
 
 
-## Model comparison {.smaller}
+## Model comparison 
 
-The results of the null hypothesis test that $R^2=0$ can be obtained in numerous ways, bu the easiest is to use the generic `anova` function where we compare `model_1` against `model_0`.  
-
+> The null hypothesis that $R^2=0$ can be obtained using `anova` to compare `model_1` against `model_0`.  
 
 <div style="float: left; width: 47%;">
 
@@ -1205,10 +1160,10 @@ print(anova(model_0, model_1), signif.stars=F)
 
 </div>
 
-<div style="float: right; width: 45%;">
+<div style="float: right; width: 50%;">
 
-- *p*-value gives the probability of getting a results greater than this F statistic in an F distribution with $K$ and $n - K - 1$ degrees of freedom.
-- Cumulative distribution function of the F distribution `pf`
+>- *p*-value is the probability of getting a greater / or equal F statistic in an F distribution with $K$ and $n - K - 1$ degrees of freedom.
+>- Cumulative distribution function of the F distribution `pf`
 
 ```{r}
 pf(f_stat, K, n-K-1, lower.tail = FALSE)
@@ -1217,13 +1172,13 @@ pf(f_stat, K, n-K-1, lower.tail = FALSE)
 </div>
 
 
-## F-ratio  {.smaller}
+## F ratio
 
 $$
 \text{F} = \underbrace{\frac{\text{RSS}_0 - \text{RSS}_1}{\text{RSS}_1}}_\text{effect size} \cdot \underbrace{\frac{\text{df}_1}{\text{df}_0 -\text{df}_1}}_\text{sample size} = \frac{(\text{RSS}_0 - \text{RSS}_1)/(\text{df}_0 - \text{df}_1)}{\text{RSS}_1/\text{df}_1}
 $$
 
-where Df$_1$ is $n - K_1 + 1$, where $K_1$ is the number of coefficients (predictors) in $\mathcal{M}_1$.
+where Df$_1$ is $n - K_1 + 1$, $K_1$ is the number of predictors in $\mathcal{M}_1$.
 
 <div style="float: left; width: 45%;">
 
@@ -1231,7 +1186,7 @@ where Df$_1$ is $n - K_1 + 1$, where $K_1$ is the number of coefficients (predic
 # Dfs
 df_0 <- model_0$df.residual
 df_1 <- model_1$df.residual
-df_0 - df_1; df_1
+c(df_0 - df_1, df_1)
 ```
 
 ```{r}
@@ -1248,12 +1203,15 @@ rss_1 <- sum(residuals(model_1)^2)
 (rss_0 - rss_1)/(df_0 - df_1)
 ```
 
+
 ```{r echo = F, eval = F}
 rss_1 / df_1
 ```
 
+
 ```{r}
 ((rss_0 - rss_1)/(df_0 - df_1))/(rss_1/df_1)
+
 ```
 
 Complete exercise `exercises/modelcomparison.R`
@@ -1330,7 +1288,7 @@ p3 + annotate("label", x = 8, y = .8, label = "Work through script\n exercise/f_
 
 
 
-## F distribution for varying Df
+## F distribution 
 
 
 <div style="float: left; width: 45%;">
@@ -1392,8 +1350,8 @@ $$
 
 where $\hat{\mathcal{L}}$ is the likelihood of the model using the MLEs.
 
-- *Lower* deviance indicates better model fit
-- Equivalent to RSS for generalised linear models.
+>- *Lower* deviance indicates better model fit
+>- Equivalent to RSS for generalised linear models.
 
 ```{r}
 deviance(model_1)
@@ -1406,15 +1364,13 @@ rss_1
 
 
 
-## Akaike and Bayesian Information Criterion {.smaller}
+## Akaike and Bayesian Information Criterion 
 
 <div style="float: left; width: 55%;">
 
-- Estimators of prediction error.
-- Relative quality of statistical models for given data set.
-- Similar to $R^2$, log likelihood will always increase when adding predictors, even if the true value of the coefficient is zero.
-- Prevents overfitting by penalising models with more parameters.
-- Trade-off model fit (measured by $\hat{\mathcal{L}}$) and the number of parameters in the model.
+>- Estimators of prediction error: relative quality of statistical models for data.
+>- Similar to $R^2$, log likelihood will always increase when adding predictors, even if the true value of the coefficient is zero.
+>- Prevent overfitting by penalising models with more parameters: trade-off model fit (measured by $\hat{\mathcal{L}}$) and the number of parameters ($K$) in the model.
 
 
 $$
@@ -1422,15 +1378,40 @@ $$
 \text{BIC} = \text{log}(n) \cdot K - 2\cdot \text{log}(\hat{\mathcal{L}})\\
 $$
 
-where $K$ is the number of model parameters.
+
+</div>
+<div style="float: right; width: 43%;">
+
+- AIC chooses models with better predictive ability; it tends to favour bigger models as the sample size increases.
+- BIC is an approximation to Bayesian model comparison by Bayes factors. 
+- In many situations collecting more data will uncover more complexity in the process generating the data, in which case AIC may be more suitable. 
+
+</div>
+
+
+
+## Akaike and Bayesian Information Criterion 
+
+<div style="float: left; width: 55%;">
+
+>- Estimators of prediction error: relative quality of statistical models for data.
+>- Similar to $R^2$, log likelihood will always increase when adding predictors, even if the true value of the coefficient is zero.
+>- Prevent overfitting by penalising models with more parameters: trade-off model fit (measured by $\hat{\mathcal{L}}$) and the number of parameters ($K$) in the model.
+
+
+$$
+\text{AIC} = 2 \cdot K - 2 \cdot \text{log}(\hat{\mathcal{L}})\\
+\text{BIC} = \text{log}(n) \cdot K - 2\cdot \text{log}(\hat{\mathcal{L}})\\
+$$
+
 
 </div>
 <div style="float: right; width: 35%;">
 
 ```{r}
 ll <- as.vector(logLik(model_1))
-K <- 3 # beta_0, beta_1, sigma^2
-(2 * K) - 2 * ll
+K <- 3 # beta_0, beta_sex, sigma^2
+(2 * K) - 2 * ll # AIC
 ```
 
 ```{r}
@@ -1439,7 +1420,7 @@ AIC(model_1)
 
 ```{r}
 n <- nrow(blomkvist) 
-log(n) * K - 2 * ll
+log(n) * K - 2 * ll # BIC
 ```
 
 ```{r}
@@ -1449,22 +1430,11 @@ BIC(model_1)
 </div>
 
 
-```{r eval = F, echo=F}
-The AIC is designed to choose models with
-better predictive ability, thus it tends to favour bigger models as the sample size increases.
-BIC is an approximation to Bayesian model comparison by Bayes factors, and prefers models
-with higher posterior probability under an implicit weak prior (with an amount of information
-equivalent to one observation, see Kass and Wasserman 1995
- If there is a “true” model, the
-BIC will tend to select it as the sample size increases. In many situations there may not be a
-true model, and collecting more data will uncover more complexity in the process generating
-the data, in which case AIC may be more suitable. 
-```
 
 
-## Comparing multiple nested models {.smaller}
+## Comparing multiple nested models 
 
-What about the varying-intercepts and the varying-intercepts and varying-slopes model?
+... including the varying-intercepts (`model_2`) and the varying-intercepts and varying-slopes model (`model_3`).
 
 <div style="float: left; width: 52%;">
 
@@ -1476,14 +1446,15 @@ model_2 <- lm(log_rt ~ sex + age, data = blomkvist)
 model_3 <- lm(log_rt ~ sex * age, data = blomkvist)
 ```
 
-</div>
-
-<div style="float: right; width: 43%;">
-
 ```{r eval = F}
 # Compare models
 anova(model_0, model_1, model_2, model_3)
 ```
+
+</div>
+
+<div style="float: right; width: 43%;">
+
 
 ```{r echo = F}
 # Compare models
@@ -1492,7 +1463,7 @@ print(anova(model_0, model_1, model_2, model_3), signif.stars=F)
 </div>
 
 
-## Model evaluation made easy {.smaller}
+## Model evaluation made easy 
 
 
 ```{r eval = F}
@@ -1529,19 +1500,18 @@ Check `exercises/comparing_multiple_nested_models.R`
 
 ## Watch out
 
-- Rejecting the null hypothesis in favour of an alternative model does not mean this model is the best (i.e. it is better than the baseline model).
-- Failing to reject the null hypothesis in favour of an alternative model does not mean that the null model is correct or that an additional coefficient is not theoretically relevant.
+>- Rejecting the null hypothesis in favour of an alternative model does not mean this model is the best (i.e. it is better than the baseline model).
+>- Failing to reject the null hypothesis in favour of an alternative model does not mean that the null model is correct or that an additional coefficient is not theoretically relevant.
 
 
 
 ## The end
 
-- Comparing models with different predictors: nested models.
-- Evaluation is based one likelihood of data under the model.
-- Penalising more complex models by considering number of parameters.
-- Other comparison techniques for models that are not nested within each other.
-- Cross-validation to prevent overfitting (e.g. "LOO": Leave-one-out CV, k-fold CV, Monte Carlo CV).
-- Models with different probability models (e.g. Poisson vs negative binomial).
+>- Comparing models with nested sets of predictors.
+>- Evaluation is based on likelihood of data under the model.
+>- Penalising more complex models by considering number of parameters.
+>- Other comparison techniques for models that are not nested within each other: e.g. different probability models (e.g. Poisson vs negative binomial).
+>- Cross-validation (e.g. "LOO": Leave-one-out CV, k-fold CV, Monte Carlo CV).
 
 
 

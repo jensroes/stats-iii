@@ -20,6 +20,19 @@
   color: red;
 }
 
+body {
+  background-image: url('../gfx/bg4.jpg');
+  background-size: cover; /* Adjust the image size as needed */
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* Keeps the image fixed while scrolling */
+}
+
+/* Apply background image to the first slide */
+slides > slide:nth-child(1) {
+  background-image: url('../gfx/ntu1.jpg');
+  background-size: cover;
+  background-position: center;
+}
 
 
 /* line 618, ../scss/default.scss */

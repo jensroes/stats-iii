@@ -27,6 +27,26 @@ theme_set(theme_bw(base_size = 18) +
 ```
 
 
+## Overview
+
+> By the end of these workshops and your own studies, you should be able to
+
+- Formally describe a statistical model
+- Implement statistical models (continuous, categorical predictors)
+- Interpret model coefficients represent and quantities of null hypothesis testing such as confidence interval, *t*-value, *p*-value
+- Conceptual understand what maximum likelihood estimation
+- Predict hypothetical outcomes given a statistical model
+
+Using a combination of theoretical descriptions, practical exercises, implementations, and simulations.
+
+
+## Update your workshop repository
+
+>- Go to [github.com/jensroes/stats-iii](https://github.com/jensroes/stats-iii)
+>- Download the repository
+>- Extract the `linear-models` folder
+
+
 ## Regression models
 
 <div style="float: left; width: 50%;">
