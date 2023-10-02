@@ -53,7 +53,7 @@ coefs
 # Number of observation:
 n <- nrow(---)
 
-# Number of parameters (without beta_0 and sigma)
+# Number of parameters (without intercept (beta_0) and sigma)
 K <- ---
 
 # Fill in the t value you want to calculate the p value for.
