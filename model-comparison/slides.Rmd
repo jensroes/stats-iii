@@ -41,13 +41,12 @@ blomkvist <- read_csv("../data/blomkvist.csv") %>%
 
 ## Overview
 
-> By the end of these workshops and your own studies, you should be able to
+> By the end of these workshops and your own reading, you should be able to
 
-- Understand the concept of parsimony
-- Describe the meaning of and calculate likelihood
-- Using unexplained variance to assess model fit
-- Describe the limitations of $R^2$ as model fit statistic
-- Use likelihood ratio test (*F*-test) and information criteria to compare nested models
+>- Describe the meaning of and calculate likelihood
+>- Using unexplained variance to assess model fit
+>- Describe the limitations of $R^2$ as model fit statistic
+>- Use likelihood ratio test (*F*-test) and information criteria to compare nested models
 
 
 ## Why do we need model comparion? 
@@ -62,10 +61,10 @@ blomkvist <- read_csv("../data/blomkvist.csv") %>%
 
 <div style="float: right; width: 55%;">
 
-- Models are statistical representations of a hypothesis.
-- We want to compare the usefulness of alternative models.
-- Can my model accurately predict future outcomes?
-- Parsimony: As complex as necessary, as simple as possible.
+>- Models are statistical representations of a hypothesis.
+>- We want to compare the usefulness of alternative models.
+>- Can my model accurately predict future outcomes?
+>- Parsimony: As complex as necessary, as simple as possible.
 </div>
 
 ## Ockham's razor: the principle of parsimony 
@@ -86,9 +85,8 @@ include_graphics("../gfx/ockham.jpg")
 
 </div>
 
-
-- Precedence to simplicity: of two competing theories, the simpler explanation of an entity is to be preferred. 
-- We don't assume more complex theories, if there is not sufficient evidence.
+>- Precedence to simplicity: of two competing theories, the simpler explanation of an entity is to be preferred. 
+>- We don't assume more complex theories, if there is not sufficient evidence.
 
 
 
@@ -120,15 +118,13 @@ $$
 y_i \sim \mathcal{N}(\mu_i, \sigma^2), \mu_i = \beta_0 + \beta_1 \cdot x_i
 $$
 
-
-- A model of the *statistical population* could also be described as the true generative model.
-- In our analysis, we aim to find a good, or good enough, model of the population.
+>- A model of the *statistical population* could also be described as the true generative model.
+>- In our analysis, we aim to find a good, or good enough, model of the population.
 
 
 ## Model evaluation via likelihood
 
-- Tests if the data are compatible with the model?
-- Calculate the probability of the data according to the model.
+- Tests if the data are compatible with the model: calculate the probability of the data according to the model.
 - If the probability of observing the data is higher in model $\mathcal{M}_0$ than in another $\mathcal{M}_1$, which model is more compatible with the data?
 - The probability of the data according to the model is the model's *likelihood*.
 
@@ -176,7 +172,7 @@ $$
 $$
 
 > Logarithm is turning product $\prod$ into sum $\sum$.
-
+> Cause `log(.5) + log(.2)` is the same as `log(.5 * .2)`.
 
 ## Likelihood
 
@@ -219,6 +215,7 @@ $$
 \mu_i&= \beta_0 + \beta_\text{sex} \cdot \text{sex}_i,
 \end{aligned}
 $$
+
 > We are modelling log rt as normally distributed as a function of `sex`, and with an equal variance $\sigma^2$.
 
 
@@ -257,6 +254,8 @@ logLik(model_1)
 ```
 
 > Work through exercise script: `exercises/log_likelihood_2.R`
+
+
 
 
 ## Compare log likelihoods 
@@ -306,6 +305,16 @@ $$
 
 </div>
 </div>
+
+
+## Calculating $R^2$
+
+is the ratio of RSS (residual sum of squares; based on residuals) and TSS (total sum of squares) for which we need to work out the ESS (explained sum of squares):
+
+$$
+\underbrace{\sum_{i=1}^n(y_i-\bar{y})^2}_\text{TSS} = \underbrace{\sum_{i=1}^n(\hat\mu_i-\bar{y})^2}_\text{ESS} + \underbrace{\sum_{i=1}^n(y_i-\hat\mu_i)^2}_\text{RSS}
+$$
+
 
 
 ## Residuals
@@ -368,8 +377,8 @@ ggplot(data = sim, aes(x = x, y = predict(fake_model))) +
 
 <div style="float: left; width: 100%;">
 
-- Which model is better and why?
-- How can we reduce the residual error?
+>- Which model is better and why?
+>- How can we reduce the residual error?
 
 </div>
 
@@ -484,14 +493,15 @@ plot <- plot + geom_segment(
 </div>
 
 <div style="float: right; width: 45%;">
-- Residuals are the unexplained (residual) variance: error in the modelling results.
-- Distance between observed ($y$) and predicted rt ($\hat{\mu}$)
+
+>- Residuals are the unexplained (residual) variance: error in the modelling results.
+>- Distance between observed ($y$) and predicted rt ($\hat{\mu}$)
 
 $$
 \epsilon = y - \hat{\mu}
 $$
 
-- The closer the residuals are to 0, the lower the prediction error.
+>- The closer the residuals are to 0, the lower the prediction error.
 
 </div>
 
@@ -523,9 +533,11 @@ Work through exercise script: `exercises/residuals.R`
 
 
 
+
+
 ## Residual sum of squares 
 
-The sum of squared residuals in normal models when using the maximum likelihood estimators is
+The sum of squared residuals when using the maximum likelihood estimators is
 
 $$
 \begin{aligned}
@@ -534,7 +546,7 @@ $$
 \end{aligned}
 $$
 
-is a measure of how much variance in the data is not explained by the model; or the model's lack of fit.
+RSS is a measure of how much variance in the data is not explained by the model; or the model's lack of fit.
 
 
 ## Residual sum of squares
@@ -578,16 +590,22 @@ y_plot + resid_plot + resid_sqrt_plot
 ## Residual sum of squares and log likelihood 
 
 
-> Log likelihood is calculated on the basis of RSS and the number of observations $n$ using the following relationship:
+> Knowing the RSS allows you to calculae the log-likelihood.
 
 $$
 \text{log}(\mathcal{L})=-\frac{n}{2}\left( \text{log}(2\pi)-\text{log}(n) + \text{log(RSS)}+1 \right)
 $$
+
+> Log likelihood is calculated on the basis of RSS and the number of observations $n$.
+
+
 <div style="float: left; width: 55%;">
+
 ```{r}
 n <- nrow(blomkvist)
 -(n/2) * (log(2*pi) - log(n) + log(rss) + 1)
 ```
+
 </div>
 
 <div style="float: right; width: 40%;">
@@ -596,7 +614,6 @@ logLik(model)
 ```
 </div>
 
-> In other words, knowing the RSS allows you to calculae the log-likelihood.
 
 
 
@@ -683,43 +700,43 @@ summary(model)$r.sq
 
 
 
-## Root mean square error 
+<!-- ## Root mean square error  -->
 
-<div style="float: left; width: 45%;">
+<!-- <div style="float: left; width: 45%;"> -->
 
-$$
-\text{RMSE} = \sqrt{\frac{\text{RSS}}{n}}
-$$
+<!-- $$ -->
+<!-- \text{RMSE} = \sqrt{\frac{\text{RSS}}{n}} -->
+<!-- $$ -->
 
->- Alternative to RSS is the square root of the mean squared residuals.
->- Doesn't highlight explained but unexplained variance.
->- Larger the sample, larger RSS.
->- Average distance between model fit and data, while taking into account sample size.
+<!-- >- Alternative to RSS is the square root of the mean squared residuals. -->
+<!-- >- Doesn't highlight explained but unexplained variance. -->
+<!-- >- Larger the sample, larger RSS. -->
+<!-- >- Average distance between model fit and data, while taking into account sample size. -->
 
 
-</div>
+<!-- </div> -->
 
-<div style="float: right; width: 45%;">
+<!-- <div style="float: right; width: 45%;"> -->
 
-```{r}
-n <- nrow(blomkvist)
-rss <- sum(residuals(model)^2)
-sqrt(rss/n)
-```
+<!-- ```{r} -->
+<!-- n <- nrow(blomkvist) -->
+<!-- rss <- sum(residuals(model)^2) -->
+<!-- sqrt(rss/n) -->
+<!-- ``` -->
 
-```{r}
-sqrt(mean(residuals(model)^2))
-```
+<!-- ```{r} -->
+<!-- sqrt(mean(residuals(model)^2)) -->
+<!-- ``` -->
 
-```{r}
-sd(residuals(model))
-```
+<!-- ```{r} -->
+<!-- sd(residuals(model)) -->
+<!-- ``` -->
 
-```{r}
-sigma(model)
-```
+<!-- ```{r} -->
+<!-- sigma(model) -->
+<!-- ``` -->
 
-</div>
+<!-- </div> -->
 
 
 <!-- ## Mean absolute error  -->
@@ -1008,21 +1025,76 @@ $$
 > $\text{ for } i \in 1\dots n$
 
 
->- Adding the predictor $\text{sex}$ in $\mathcal{M}_1$ does not contribute to the variance in the data explained by model $\mathcal{M}_0$.
+>- In other words, the null hypothesis is that adding the predictor $\text{sex}$ in $\mathcal{M}_1$ does not explain any variance in the data that model $\mathcal{M}_0$ was already accounting for.
 
 
 ## Model comparison 
 
+>- Nested normal linear models can be compared using F test.
 >- Under the null hypothesis that these two models are identical, and so the coefficients for all predictors are simultaneously zero, we have 
-
 
 $$
 \underbrace{\frac{(\text{RSS}_0-\text{RSS}_1)/K}{\text{RSS}_1/(n - K - 1)}}_\text{F-statistic} \sim F(K, n-K-1)
 $$
 
-- with the *F*-statistic being distributed with $K$ and $N-K-1$ degrees of freedom.
-- We can compare two models $\mathcal{M}_1$ and $\mathcal{M}_0$ with $K_1$ and $K_0$ predictors, respectively, and where $K_0 < K_1$ and all the $K_0$ predictors in $\mathcal{M}_0$ are also presented in $\mathcal{M}_1$, i.e. $\mathcal{M}_0$ is *nested* in $\mathcal{M}_1$.
-- Nested normal linear models can be compared using F test.
+- We can compare two models $\mathcal{M}_1$ and $\mathcal{M}_0$ (with $K_1$ and $K_0$ predictors, respectively) where $\mathcal{M}_0$ is *nested* in $\mathcal{M}_1$:
+  - $K_0 < K_1$ 
+  - all the $K_0$ predictors in $\mathcal{M}_0$ are also presented in $\mathcal{M}_1$
+
+## F distribution 
+
+
+<div style="float: left; width: 45%;">
+```{r}
+df1 <- seq(1, 21, 3)
+df2 <- 300  
+F_grid <- seq(0, 5, .1) 
+```
+
+```{r echo = F, out.width="100%"}
+# Increase df1 as for more complex model
+data_df1 <- map_dfr(df1, ~pf(q = F_grid, df1 = .x, df2 = df2, lower.tail = F) %>% tibble(F_grid = F_grid, p = .) %>%  
+    mutate(df1 = .x)) 
+
+ggplot(data = data_df1, aes(x = F_grid, y = p, colour = factor(df1))) +
+  geom_line() +
+  labs(x = "Theoretical F value",
+       y = "p value",
+       colour = bquote("df"[1])) +
+  scale_colour_viridis_d() +
+  geom_hline(yintercept = 0.05, linetype = "dotted")
+
+```
+
+</div>
+
+<div style="float: right; width: 45%;">
+
+```{r}
+df1 <- 5
+df2 <- seq(3, 300, 30)
+F_grid <- seq(0, 5, .1) 
+```
+
+```{r echo = F, out.width="100%"}
+# Increase df1 as for more complex model
+data_df2 <- map_dfr(df2, ~pf(q = F_grid, df1 = df1, df2 = .x, lower.tail = F) %>% tibble(F_grid = F_grid, p = .) %>%  
+    mutate(df2 = .x)) 
+
+ggplot(data = data_df2, aes(x = F_grid, y = p, colour = factor(df2))) +
+  geom_line() +
+  labs(x = "Theoretical F value",
+       y = "p value",
+       colour = bquote("df"[2])) +
+  scale_colour_viridis_d() +
+  geom_hline(yintercept = 0.05, linetype = "dotted")
+
+```
+
+</div>
+
+
+
 
 <!-- ## Nested models  -->
 
@@ -1077,7 +1149,7 @@ print(anova(model_0, model_1), signif.stars=F)
 <div style="float: right; width: 50%;">
 
 >- `RSS` are TSS and RSS of `model_1`.
->- TSS of `model_0`: in model with no predictors, variance of outcome and residuals are identical. 
+>- TSS of `model_0`: in model with no predictors, TSS and RSS are identical.
 >- ESS is `Sum of Sq` / difference of `RSS`s:
 
 ```{r}
@@ -1288,58 +1360,6 @@ p3 + annotate("label", x = 8, y = .8, label = "Work through script\n exercise/f_
 
 
 
-## F distribution 
-
-
-<div style="float: left; width: 45%;">
-```{r}
-df1 <- seq(1, 21, 3)
-df2 <- 300  
-F_grid <- seq(0, 5, .1) 
-```
-
-```{r echo = F, out.width="100%"}
-# Increase df1 as for more complex model
-data_df1 <- map_dfr(df1, ~pf(q = F_grid, df1 = .x, df2 = df2, lower.tail = F) %>% tibble(F_grid = F_grid, p = .) %>%  
-    mutate(df1 = .x)) 
-
-ggplot(data = data_df1, aes(x = F_grid, y = p, colour = factor(df1))) +
-  geom_line() +
-  labs(x = "Theoretical F value",
-       y = "p value",
-       colour = bquote("df"[1])) +
-  scale_colour_viridis_d() +
-  geom_hline(yintercept = 0.05, linetype = "dotted")
-
-```
-
-</div>
-
-<div style="float: right; width: 45%;">
-
-```{r}
-df1 <- 5
-df2 <- seq(3, 300, 30)
-F_grid <- seq(0, 5, .1) 
-```
-
-```{r echo = F, out.width="100%"}
-# Increase df1 as for more complex model
-data_df2 <- map_dfr(df2, ~pf(q = F_grid, df1 = df1, df2 = .x, lower.tail = F) %>% tibble(F_grid = F_grid, p = .) %>%  
-    mutate(df2 = .x)) 
-
-ggplot(data = data_df2, aes(x = F_grid, y = p, colour = factor(df2))) +
-  geom_line() +
-  labs(x = "Theoretical F value",
-       y = "p value",
-       colour = bquote("df"[2])) +
-  scale_colour_viridis_d() +
-  geom_hline(yintercept = 0.05, linetype = "dotted")
-
-```
-
-</div>
-
 
 
 ## Deviance information criterion (DIC)
@@ -1380,32 +1400,7 @@ $$
 
 
 </div>
-<div style="float: right; width: 43%;">
 
-- AIC chooses models with better predictive ability; it tends to favour bigger models as the sample size increases.
-- BIC is an approximation to Bayesian model comparison by Bayes factors. 
-- In many situations collecting more data will uncover more complexity in the process generating the data, in which case AIC may be more suitable. 
-
-</div>
-
-
-
-## Akaike and Bayesian Information Criterion 
-
-<div style="float: left; width: 55%;">
-
->- Estimators of prediction error: relative quality of statistical models for data.
->- Similar to $R^2$, log likelihood will always increase when adding predictors, even if the true value of the coefficient is zero.
->- Prevent overfitting by penalising models with more parameters: trade-off model fit (measured by $\hat{\mathcal{L}}$) and the number of parameters ($K$) in the model.
-
-
-$$
-\text{AIC} = 2 \cdot K - 2 \cdot \text{log}(\hat{\mathcal{L}})\\
-\text{BIC} = \text{log}(n) \cdot K - 2\cdot \text{log}(\hat{\mathcal{L}})\\
-$$
-
-
-</div>
 <div style="float: right; width: 35%;">
 
 ```{r}
@@ -1429,6 +1424,34 @@ BIC(model_1)
 
 </div>
 
+
+
+
+## Akaike and Bayesian Information Criterion 
+
+<div style="float: left; width: 55%;">
+
+>- Estimators of prediction error: relative quality of statistical models for data.
+>- Similar to $R^2$, log likelihood will always increase when adding predictors, even if the true value of the coefficient is zero.
+>- Prevent overfitting by penalising models with more parameters: trade-off model fit (measured by $\hat{\mathcal{L}}$) and the number of parameters ($K$) in the model.
+
+
+$$
+\text{AIC} = 2 \cdot K - 2 \cdot \text{log}(\hat{\mathcal{L}})\\
+\text{BIC} = \text{log}(n) \cdot K - 2\cdot \text{log}(\hat{\mathcal{L}})\\
+$$
+
+
+</div>
+
+
+<div style="float: right; width: 43%;">
+
+- AIC chooses models with better predictive ability; it tends to favour bigger models as the sample size increases.
+- BIC is an approximation to Bayesian model comparison by Bayes factors. 
+- In many situations collecting more data will uncover more complexity in the process generating the data, in which case AIC may be more suitable. 
+
+</div>
 
 
 

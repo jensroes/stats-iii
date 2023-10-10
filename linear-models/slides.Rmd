@@ -897,15 +897,15 @@ $$
 \hat\sigma = \sqrt{\frac{1}{n-K-1} \cdot \sum_{i=1}^n\mid y_i-\hat\mu_i\mid^2}
 $$
 
+>- $\sum_{i=1}^n\mid y_i-\hat\mu_i\mid^2$ is the RSS ($y_i$: observed data; $\hat\mu_i$: model prediction).
 >- $K$ is the number of predictors
 >- $n$ is the number of observations
->- $\sum_{i=1}^n\mid y_i-\hat\mu_i\mid^2$ is the sum of the squared differences of the observed $y_i$ and predicted data $\hat\mu_i$
 >- Complete script `exercises/calculating_sigma.R`
 
 
 
 
-## Hypothesis testing and confidence intervals
+## Hypothesis testing: *t*-values
 
 > If $\beta_k$ is the **hypothesized** true value of the coefficient, and $\hat\beta_k$ is the estimated coefficient, then
 
@@ -915,7 +915,7 @@ $$
 
 > which tells us that if the true value of the coefficient was some hypothesized value $\beta_k$, then we expect the *t*-statistic to have a certain range of values with high probability.
 
-## Hypothesis testing and confidence intervals
+## Hypothesis testing: *t*-values
 
 > We will test a hypothesis about the coefficient for sex in the model above.
 
@@ -961,7 +961,7 @@ K <- 2
 pt(abs(t), df = n - K - 1, lower.tail = FALSE) * 2
 ```
 
-## Hypothesis testing and confidence intervals 
+## Hypothesis testing: *t*-values
 
 
 > **Null hypothesis significance testing**: we hypothesize the true value of the coefficient is exactly 0.0, then our *t*-statistic is
@@ -1084,7 +1084,7 @@ p2 + geom_hline(yintercept = p_value, colour = "red", linetype = "dashed") +
 
 <div style="float: left; width: 45%;">
 
->- The set of all hypotheses that we do not rule out at the $\alpha < 0.05$ level of significance is known as the 95% confidence interval.
+>- The set of all hypotheses (hypothetical values) that we do not rule out at the $\alpha < 0.05$ level of significance is known as the 95% confidence interval.
 >- The formula for the confidence interval on coefficient $k$ is
 
 $$
@@ -1381,7 +1381,7 @@ $$
 \mu_i =  \left\{ 
 \begin{array}{ll}
 \beta_0 + \beta_\text{age} \cdot \text{age}_{i}, \text{ if sex}_i = 0 \texttt{ [female]}\\
-\beta_0 + \beta_\text{sex} \cdot \text{age}_{i} + \beta_\text{age} \cdot \text{age}_{i}, \text{ if sex}_i = 1\texttt{ [male]}
+\beta_0 + \beta_\text{sex} \cdot \text{sex}_{i} + \beta_\text{age} \cdot \text{age}_{i}, \text{ if sex}_i = 1\texttt{ [male]}
 \end{array}
 \right.
 $$
@@ -1716,7 +1716,7 @@ betas <- as.vector(coef(model_smoker))
 ```
 
 
-> The predicted mean of the weight distribution for `no`
+> The predicted mean of the rt distribution for `no`
 
 $$
 \hat\beta_0 + \hat\beta_1 \cdot 1 + \hat\beta_2 \cdot 0 

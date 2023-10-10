@@ -6,7 +6,7 @@ theme_set(theme_bw())
 
 # Read in data
 blomkvist <- read_csv('data/blomkvist.csv') %>% 
-  select(id, rt = rt_hand_d) %>% 
+  select(id, ---, rt = rt_hand_d) %>% # you need the variable `sex`
   mutate(log_rt = log(rt)) %>% 
   drop_na()
 

@@ -34,7 +34,7 @@ x <- seq(5.5, 7.5, .05)
 prob_x <- dnorm(x, mean = ---, sd = ---)
 
 # Look at the distribution of x and their probability density:
-ggplot(data = NULL, aes(x = x, y = ---)) +
+ggplot(data = NULL, aes(x = x, y = )) +
   geom_line() +
   labs(x = "log rt", y = "likelihood")
 

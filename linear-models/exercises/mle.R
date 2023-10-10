@@ -1,3 +1,6 @@
+# Load package
+library(tidyverse) # only needed for the ggplot plot below.
+
 # Number of simulated data
 n <- 10
 
@@ -24,7 +27,7 @@ ggplot(data = NULL, aes(x = mu_grid, y = rss)) +
   labs(x = bquote("Proposed value for"~mu),
        y = "RSS")
 
-# Which value of my is minimizing RSS?
+# Which value of mu according to RSS (which mu value minimises RSS)?
 
 # Look for the smallest rss value
 idx <- which.min(rss)
@@ -34,4 +37,4 @@ mu_grid[idx]
 
 # Task: change mu above to 250 and observe what happens to the 
 # visualisation above.
-
+# Also feel free to change other values to check how this changes the plot.
