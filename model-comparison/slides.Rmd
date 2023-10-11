@@ -317,140 +317,140 @@ $$
 
 
 
-## Residuals
+<!-- ## Residuals -->
 
-<div style="float: left; width: 45%;">
+<!-- <div style="float: left; width: 45%;"> -->
 
-```{r echo = F, out.width="100%"}
-set.seed(123)
-n <- 20
-beta_0 <- 50
-beta_1 <- 6
-sigma <- 3
-sim <- tibble(id = 1:6) %>%
-    mutate(x = 0:5,
-           e = rnorm(n(), mean = 0, sd = sigma)) %>%
-    mutate(y = beta_0 + beta_1 * x + e) %>%
-  select(id, x, y) 
+<!-- ```{r echo = F, out.width="100%"} -->
+<!-- set.seed(123) -->
+<!-- n <- 20 -->
+<!-- beta_0 <- 50 -->
+<!-- beta_1 <- 6 -->
+<!-- sigma <- 3 -->
+<!-- sim <- tibble(id = 1:6) %>% -->
+<!--     mutate(x = 0:5, -->
+<!--            e = rnorm(n(), mean = 0, sd = sigma)) %>% -->
+<!--     mutate(y = beta_0 + beta_1 * x + e) %>% -->
+<!--   select(id, x, y)  -->
 
-fake_model <- lm(y ~ x, data = sim)
+<!-- fake_model <- lm(y ~ x, data = sim) -->
 
-ggplot(data =sim, aes(x = x, y = predict(fake_model))) +
-  geom_point(aes(y = y), size = 4) +
-  geom_line(colour = "red") +
-  labs(subtitle = bquote(beta[0] == .(beta_0)*","~beta[1] == .(beta_1)*","~sigma^2 == .(sigma))) +
-  theme(axis.title = element_blank(),
-        axis.text = element_blank(),
-        axis.ticks = element_blank())
-```
+<!-- ggplot(data =sim, aes(x = x, y = predict(fake_model))) + -->
+<!--   geom_point(aes(y = y), size = 4) + -->
+<!--   geom_line(colour = "red") + -->
+<!--   labs(subtitle = bquote(beta[0] == .(beta_0)*","~beta[1] == .(beta_1)*","~sigma^2 == .(sigma))) + -->
+<!--   theme(axis.title = element_blank(), -->
+<!--         axis.text = element_blank(), -->
+<!--         axis.ticks = element_blank()) -->
+<!-- ``` -->
 
-</div>
-
-
-
-<div style="float: right; width: 45%;">
-
-```{r echo = F, out.width="100%"}
-set.seed(123)
-n <- 20
-beta_0 <- 50
-beta_1 <- 6
-sigma <- 20
-sim <- tibble(id = 1:6) %>%
-    mutate(x = 0:5,
-           e = rnorm(n(), mean = 0, sd = sigma)) %>%
-    mutate(y = beta_0 + beta_1 * x + e) %>%
-  select(id, x, y) 
-
-fake_model <- lm(y ~ x, data = sim)
-
-ggplot(data = sim, aes(x = x, y = predict(fake_model))) +
-  geom_point(aes(y = y), size = 4) +
-  geom_line(colour = "red") +
-  labs(subtitle = bquote(beta[0] == .(beta_0)*","~beta[1] == .(beta_1)*","~sigma^2 == .(sigma))) +
-  theme(axis.title = element_blank(),
-        axis.text = element_blank(),
-        axis.ticks = element_blank())
-```
-
-</div>
-
-<div style="float: left; width: 100%;">
-
->- Which model is better and why?
->- How can we reduce the residual error?
-
-</div>
-
-
-## Residuals
-
-<div style="float: left; width: 45%;">
-
-```{r echo = F, out.width="100%"}
-set.seed(123)
-n <- 20
-beta_0 <- 50
-beta_1 <- 6
-sigma <- 3
-sim <- tibble(id = 1:6) %>%
-    mutate(x = 0:5,
-           e = rnorm(n(), mean = 0, sd = sigma)) %>%
-    mutate(y = beta_0 + beta_1 * x + e) %>%
-  select(id, x, y) 
-
-fake_model <- lm(y ~ x, data = sim)
-
-ggplot(data =sim, aes(x = x, y = predict(fake_model))) +
-  geom_point(aes(y = y), size = 4) +
-  geom_line(colour = "red") +
-  labs(subtitle = bquote(beta[0] == .(beta_0)*","~beta[1] == .(beta_1)*","~sigma^2 == .(sigma))) +
-  geom_segment( aes(xend = x, yend = y),
-      size = 0.5, alpha = 0.5, lineend = "round") +
-  theme(axis.title = element_blank(),
-        axis.text = element_blank(),
-        axis.ticks = element_blank())
-```
-
-</div>
+<!-- </div> -->
 
 
 
-<div style="float: right; width: 45%;">
+<!-- <div style="float: right; width: 45%;"> -->
 
-```{r echo = F, out.width="100%"}
-set.seed(123)
-n <- 20
-beta_0 <- 50
-beta_1 <- 6
-sigma <- 20
-sim <- tibble(id = 1:6) %>%
-    mutate(x = 0:5,
-           e = rnorm(n(), mean = 0, sd = sigma)) %>%
-    mutate(y = beta_0 + beta_1 * x + e) %>%
-  select(id, x, y) 
+<!-- ```{r echo = F, out.width="100%"} -->
+<!-- set.seed(123) -->
+<!-- n <- 20 -->
+<!-- beta_0 <- 50 -->
+<!-- beta_1 <- 6 -->
+<!-- sigma <- 20 -->
+<!-- sim <- tibble(id = 1:6) %>% -->
+<!--     mutate(x = 0:5, -->
+<!--            e = rnorm(n(), mean = 0, sd = sigma)) %>% -->
+<!--     mutate(y = beta_0 + beta_1 * x + e) %>% -->
+<!--   select(id, x, y)  -->
 
-fake_model <- lm(y ~ x, data = sim)
+<!-- fake_model <- lm(y ~ x, data = sim) -->
 
-ggplot(data = sim, aes(x = x, y = predict(fake_model))) +
-  geom_point(aes(y = y), size = 4) +
-  geom_line(colour = "red") +
-  labs(subtitle = bquote(beta[0] == .(beta_0)*","~beta[1] == .(beta_1)*","~sigma^2 == .(sigma))) +
-  geom_segment( aes(xend = x, yend = y),
-      size = 0.5, alpha = 0.5, lineend = "round") +
-  theme(axis.title = element_blank(),
-        axis.text = element_blank(),
-        axis.ticks = element_blank())
-```
+<!-- ggplot(data = sim, aes(x = x, y = predict(fake_model))) + -->
+<!--   geom_point(aes(y = y), size = 4) + -->
+<!--   geom_line(colour = "red") + -->
+<!--   labs(subtitle = bquote(beta[0] == .(beta_0)*","~beta[1] == .(beta_1)*","~sigma^2 == .(sigma))) + -->
+<!--   theme(axis.title = element_blank(), -->
+<!--         axis.text = element_blank(), -->
+<!--         axis.ticks = element_blank()) -->
+<!-- ``` -->
 
-</div>
+<!-- </div> -->
 
-<div style="float: left; width: 100%;">
+<!-- <div style="float: left; width: 100%;"> -->
 
->- Which model is better and why?
->- How can we reduce the residual error?
+<!-- >- Which model is better and why? -->
+<!-- >- How can we reduce the residual error? -->
 
-</div>
+<!-- </div> -->
+
+
+<!-- ## Residuals -->
+
+<!-- <div style="float: left; width: 45%;"> -->
+
+<!-- ```{r echo = F, out.width="100%"} -->
+<!-- set.seed(123) -->
+<!-- n <- 20 -->
+<!-- beta_0 <- 50 -->
+<!-- beta_1 <- 6 -->
+<!-- sigma <- 3 -->
+<!-- sim <- tibble(id = 1:6) %>% -->
+<!--     mutate(x = 0:5, -->
+<!--            e = rnorm(n(), mean = 0, sd = sigma)) %>% -->
+<!--     mutate(y = beta_0 + beta_1 * x + e) %>% -->
+<!--   select(id, x, y)  -->
+
+<!-- fake_model <- lm(y ~ x, data = sim) -->
+
+<!-- ggplot(data =sim, aes(x = x, y = predict(fake_model))) + -->
+<!--   geom_point(aes(y = y), size = 4) + -->
+<!--   geom_line(colour = "red") + -->
+<!--   labs(subtitle = bquote(beta[0] == .(beta_0)*","~beta[1] == .(beta_1)*","~sigma^2 == .(sigma))) + -->
+<!--   geom_segment( aes(xend = x, yend = y), -->
+<!--       size = 0.5, alpha = 0.5, lineend = "round") + -->
+<!--   theme(axis.title = element_blank(), -->
+<!--         axis.text = element_blank(), -->
+<!--         axis.ticks = element_blank()) -->
+<!-- ``` -->
+
+<!-- </div> -->
+
+
+
+<!-- <div style="float: right; width: 45%;"> -->
+
+<!-- ```{r echo = F, out.width="100%"} -->
+<!-- set.seed(123) -->
+<!-- n <- 20 -->
+<!-- beta_0 <- 50 -->
+<!-- beta_1 <- 6 -->
+<!-- sigma <- 20 -->
+<!-- sim <- tibble(id = 1:6) %>% -->
+<!--     mutate(x = 0:5, -->
+<!--            e = rnorm(n(), mean = 0, sd = sigma)) %>% -->
+<!--     mutate(y = beta_0 + beta_1 * x + e) %>% -->
+<!--   select(id, x, y)  -->
+
+<!-- fake_model <- lm(y ~ x, data = sim) -->
+
+<!-- ggplot(data = sim, aes(x = x, y = predict(fake_model))) + -->
+<!--   geom_point(aes(y = y), size = 4) + -->
+<!--   geom_line(colour = "red") + -->
+<!--   labs(subtitle = bquote(beta[0] == .(beta_0)*","~beta[1] == .(beta_1)*","~sigma^2 == .(sigma))) + -->
+<!--   geom_segment( aes(xend = x, yend = y), -->
+<!--       size = 0.5, alpha = 0.5, lineend = "round") + -->
+<!--   theme(axis.title = element_blank(), -->
+<!--         axis.text = element_blank(), -->
+<!--         axis.ticks = element_blank()) -->
+<!-- ``` -->
+
+<!-- </div> -->
+
+<!-- <div style="float: left; width: 100%;"> -->
+
+<!-- >- Which model is better and why? -->
+<!-- >- How can we reduce the residual error? -->
+
+<!-- </div> -->
 
 
 ## Residuals
@@ -458,19 +458,43 @@ ggplot(data = sim, aes(x = x, y = predict(fake_model))) +
 
 <div style="float: left; width: 50%;">
 
+```{r out.width="100%", fig.height=7.25, echo = F}
 
-```{r}
-model <- lm(log_rt ~ age + sex, data = blomkvist)
-```
 
-```{r out.width="100%", fig.height=5.5, echo = F}
+model <- lm(log_rt ~ age, data = blomkvist)
 blomkvist$pred <- predict(model)
 blomkvist$resid <- residuals(model)
 
-plot <- ggplot(blomkvist, aes(x = age, y = pred, colour = sex) ) +
-  geom_line(size = 2) +
+plot_1 <- ggplot(blomkvist, aes(x = age, y = pred) ) +
+  geom_line(size = 1) +
   scale_colour_viridis_d(end = .6) +
-  geom_point(aes(x = age, y = log(rt), colour = sex), size = 2);plot
+  labs(y = bquote("Intercept\nmodel M"[1])) +
+  geom_point(aes(x = age, y = log(rt)), size = 1) +
+  theme(axis.title.x = element_blank())
+
+model <- lm(log_rt ~ age + sex, data = blomkvist)
+blomkvist$pred <- predict(model)
+blomkvist$resid <- residuals(model)
+
+plot_2 <- ggplot(blomkvist, aes(x = age, y = pred, colour = sex) ) +
+  geom_line(size = 1) +
+  scale_colour_viridis_d(end = .6) +
+  labs(y = bquote("VI model M"[2])) +
+  geom_point(aes(x = age, y = log(rt), colour = sex), size = 1) +
+  theme(axis.title.x = element_blank())
+
+model <- lm(log_rt ~ age * sex, data = blomkvist)
+blomkvist$pred <- predict(model)
+blomkvist$resid <- residuals(model)
+
+plot_3 <- ggplot(blomkvist, aes(x = age, y = pred, colour = sex) ) +
+  geom_line(size = 1) +
+  scale_colour_viridis_d(end = .6) +
+  labs(y = bquote("VI and VS\nmodel M"[3])) +
+  geom_point(aes(x = age, y = log(rt), colour = sex), size = 1)
+
+plot <- plot_1 / plot_2 / plot_3 +
+  plot_layout(guides = "collect");plot
 ```
 </div>
 
@@ -479,16 +503,22 @@ plot <- ggplot(blomkvist, aes(x = age, y = pred, colour = sex) ) +
 
 <div style="float: left; width: 50%;">
 
-```{r}
-model <- lm(log_rt ~ age + sex, data = blomkvist)
-```
+```{r out.width="100%", fig.height=7.25, echo = F}
 
-```{r out.width="100%", fig.height=5.5, echo = F}
-
-plot <- plot + geom_segment(
+plot_1 <- plot_1 + geom_segment(
       aes(xend = age, yend = log(rt)),
-      size = 0.5, alpha = 0.5, lineend = "round"
-      );plot
+      size = 0.5, alpha = 0.5, lineend = "round")
+
+plot_2 <- plot_2 + geom_segment(
+      aes(xend = age, yend = log(rt)),
+      size = 0.5, alpha = 0.5, lineend = "round")
+
+plot_3 <- plot_3 + geom_segment(
+      aes(xend = age, yend = log(rt)),
+      size = 0.5, alpha = 0.5, lineend = "round")
+
+plot <- plot_1 / plot_2 / plot_3 +
+  plot_layout(guides = "collect");plot
 ```
 </div>
 
@@ -508,9 +538,9 @@ $$
 
 ## Residuals
 
-<div style="float: left; width: 45%;">
+<div style="float: left; width: 50%;">
 
-```{r out.width="100%", fig.height=6.5, echo = F}
+```{r out.width="100%", fig.height=7.25, echo = F}
 plot
 ```
 </div>
@@ -587,32 +617,32 @@ y_plot + resid_plot + resid_sqrt_plot
 
 
 
-## Residual sum of squares and log likelihood 
+<!-- ## Residual sum of squares and log likelihood  -->
 
 
-> Knowing the RSS allows you to calculae the log-likelihood.
+<!-- > Knowing the RSS allows you to calculae the log-likelihood. -->
 
-$$
-\text{log}(\mathcal{L})=-\frac{n}{2}\left( \text{log}(2\pi)-\text{log}(n) + \text{log(RSS)}+1 \right)
-$$
+<!-- $$ -->
+<!-- \text{log}(\mathcal{L})=-\frac{n}{2}\left( \text{log}(2\pi)-\text{log}(n) + \text{log(RSS)}+1 \right) -->
+<!-- $$ -->
 
-> Log likelihood is calculated on the basis of RSS and the number of observations $n$.
+<!-- > Log likelihood is calculated on the basis of RSS and the number of observations $n$. -->
 
 
-<div style="float: left; width: 55%;">
+<!-- <div style="float: left; width: 55%;"> -->
 
-```{r}
-n <- nrow(blomkvist)
--(n/2) * (log(2*pi) - log(n) + log(rss) + 1)
-```
+<!-- ```{r} -->
+<!-- n <- nrow(blomkvist) -->
+<!-- -(n/2) * (log(2*pi) - log(n) + log(rss) + 1) -->
+<!-- ``` -->
 
-</div>
+<!-- </div> -->
 
-<div style="float: right; width: 40%;">
-```{r}
-logLik(model)
-```
-</div>
+<!-- <div style="float: right; width: 40%;"> -->
+<!-- ```{r} -->
+<!-- logLik(model) -->
+<!-- ``` -->
+<!-- </div> -->
 
 
 
@@ -622,9 +652,22 @@ logLik(model)
 
 <div style="float: left; width: 50%;">
 
+ESS is sum of squared differences of predicted data and sample mean.
+
+$$
+\text{ESS} = \sum_{i=1}^n(\hat\mu_i-\bar{y})^2
+$$
+
+
 Predicted mean value $\hat\mu_i$ for each observation $i$:
 
-$\hat\mu_i = \hat\beta_0 + \hat\beta_1 \cdot x_{i}$
+$$
+\hat\mu_i = \hat\beta_0 + \hat\beta_1 \cdot x_{i}$
+$$
+
+</div>
+
+<div style="float: right; width: 45%;">
 
 ```{r}
 (mu_hat <- predict(model))[1:10]
@@ -636,15 +679,6 @@ $\bar{y}$ is the mean of the sample.
 (y_bar <- mean(blomkvist$log_rt))
 ```
 
-</div>
-
-<div style="float: right; width: 45%;">
-
-ESS is sum of squared differences of predicted data and sample mean.
-
-$$
-\text{ESS} = \sum_{i=1}^n(\hat\mu_i-\bar{y})^2
-$$
 
 ```{r}
 # ESS: explained sum of squares
@@ -1148,6 +1182,37 @@ print(anova(model_0, model_1), signif.stars=F)
 
 <div style="float: right; width: 50%;">
 
+
+</div>
+
+
+## Model comparison 
+
+> The null hypothesis that $R^2=0$ can be obtained using `anova` to compare `model_1` against `model_0`.  
+
+<div style="float: left; width: 47%;">
+
+```{r}
+# Specify models
+model_0 <- lm(log_rt ~ 1, data = blomkvist)
+model_1 <- lm(log_rt ~ sex, data = blomkvist)
+```
+
+```{r eval = F}
+# Compare models
+anova(model_0, model_1)
+```
+
+```{r echo = F}
+# Compare models
+print(anova(model_0, model_1), signif.stars=F)
+```
+
+
+</div>
+
+<div style="float: right; width: 50%;">
+
 >- `RSS` are TSS and RSS of `model_1`.
 >- TSS of `model_0`: in model with no predictors, TSS and RSS are identical.
 >- ESS is `Sum of Sq` / difference of `RSS`s:
@@ -1194,6 +1259,7 @@ print(anova(model_0, model_1), signif.stars=F)
 
 ```{r}
 K <- 1
+n <- nrow(blomkvist)
 c(K, n - K - 1)
 ```
 
