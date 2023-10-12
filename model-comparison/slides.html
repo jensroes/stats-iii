@@ -455,7 +455,7 @@ sum(logp)</pre>
 
 </article></slide><slide class=""><hgroup><h2>Calculating \(R^2\)</h2></hgroup><article  id="calculating-r2">
 
-<p>is the ratio of RSS (residual sum of squares; based on residuals) and TSS (total sum of squares) for which we need to work out the ESS (explained sum of squares):</p>
+<p>is the ratio of ESS (explained sum of squares) and TSS (total sum of squares) for which we need to work out the RSS (residual sum of squares; based on residuals):</p>
 
 <p>\[
 \underbrace{\sum_{i=1}^n(y_i-\bar{y})^2}_\text{TSS} = \underbrace{\sum_{i=1}^n(\hat\mu_i-\bar{y})^2}_\text{ESS} + \underbrace{\sum_{i=1}^n(y_i-\hat\mu_i)^2}_\text{RSS}
@@ -781,7 +781,7 @@ sum(logp)</pre>
 <p>Predicted mean value \(\hat\mu_i\) for each observation \(i\):</p>
 
 <p>\[
-\hat\mu_i = \hat\beta_0 + \hat\beta_1 \cdot x_{i}$
+\hat\mu_i = \hat\beta_0 + \hat\beta_1 \cdot x_{i}
 \]</p></div>
 
 <div style="float: right; width: 45%;">
@@ -1368,17 +1368,17 @@ log(n) * K - 2 * ll # BIC</pre>
 
 </article></slide><slide class=""><hgroup><h2>Comparing multiple nested models</h2></hgroup><article  id="comparing-multiple-nested-models">
 
-<p>… including the varying-intercepts (<code>model_2</code>) and the varying-intercepts and varying-slopes model (<code>model_3</code>).</p>
+<p>… including the varying-intercepts (<code>model_3</code>) and the varying-intercepts and varying-slopes model (<code>model_4</code>).</p>
 
 <div style="float: left; width: 52%;">
 <pre class = 'prettyprint lang-r'># Specify models
-model_0 &lt;- lm(log_rt ~ 1, data = blomkvist)
-model_1 &lt;- lm(log_rt ~ sex, data = blomkvist)
-model_2 &lt;- lm(log_rt ~ sex + age, data = blomkvist)
-model_3 &lt;- lm(log_rt ~ sex * age, data = blomkvist)</pre>
+model_1 &lt;- lm(log_rt ~ 1, data = blomkvist)
+model_2 &lt;- lm(log_rt ~ sex, data = blomkvist)
+model_3 &lt;- lm(log_rt ~ sex + age, data = blomkvist)
+model_4 &lt;- lm(log_rt ~ sex * age, data = blomkvist)</pre>
 
 <pre class = 'prettyprint lang-r'># Compare models
-anova(model_0, model_1, model_2, model_3)</pre></div>
+anova(model_1, model_2, model_3, model_4)</pre></div>
 
 <div style="float: right; width: 43%;">
 <pre >Analysis of Variance Table
@@ -1396,7 +1396,7 @@ Model 4: log_rt ~ sex * age
 </article></slide><slide class=""><hgroup><h2>Model evaluation made easy</h2></hgroup><article  id="model-evaluation-made-easy">
 
 <pre class = 'prettyprint lang-r'># Drop highest level predictor 
-drop1(model_3, scope = ~ sex * age, test = &#39;F&#39;)</pre>
+drop1(model_4, scope = ~ sex * age, test = &#39;F&#39;)</pre>
 
 <pre >Single term deletions
 
@@ -1412,7 +1412,7 @@ sex:age  1      0.05  9.25 -887    1.37   0.24</pre>
 library(broom)
 #library(broom.mixed) # for multilevel models</pre>
 
-<pre class = 'prettyprint lang-r'>tidy(model_3, conf.int = TRUE)</pre>
+<pre class = 'prettyprint lang-r'>tidy(model_4, conf.int = TRUE)</pre>
 
 <pre ># A tibble: 4 × 7
   term        estimate std.error statistic   p.value conf.low conf.high
@@ -1422,7 +1422,7 @@ library(broom)
 3 age          0.00898  0.000720    12.5   2.57e- 28  0.00756  0.0104  
 4 sexmale:age -0.00134  0.00115     -1.17  2.43e-  1 -0.00360  0.000919</pre>
 
-<pre class = 'prettyprint lang-r'>glance(model_3) %&gt;% glimpse()</pre>
+<pre class = 'prettyprint lang-r'>glance(model_4) %&gt;% glimpse()</pre>
 
 <pre >Rows: 1
 Columns: 12
@@ -1439,7 +1439,7 @@ $ deviance      &lt;dbl&gt; 9.2
 $ df.residual   &lt;int&gt; 262
 $ nobs          &lt;int&gt; 266</pre>
 
-<pre class = 'prettyprint lang-r'>augment(model_3)</pre>
+<pre class = 'prettyprint lang-r'>augment(model_4)</pre>
 
 <pre ># A tibble: 266 × 9
   log_rt sex      age .fitted  .resid    .hat .sigma  .cooksd .std.resid

@@ -28,9 +28,6 @@ y_bar <- mean(---)
 # 3. mu_hat: the MLE of the model for every observation:
 mu_hat <- predict(---)
 
-# We will also need the number of observations that were modelled.
-n <- length(---)
-
 # The explained sum of squares is based on the difference between predicted data and sample mean.
 # i.e. how much the model explains relative to the same average as a simple model of the data.
 (ess <- sum( (--- - ---)^2 ))

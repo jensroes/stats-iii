@@ -309,7 +309,7 @@ $$
 
 ## Calculating $R^2$
 
-is the ratio of RSS (residual sum of squares; based on residuals) and TSS (total sum of squares) for which we need to work out the ESS (explained sum of squares):
+is the ratio of ESS (explained sum of squares) and TSS (total sum of squares) for which we need to work out the RSS (residual sum of squares; based on residuals):
 
 $$
 \underbrace{\sum_{i=1}^n(y_i-\bar{y})^2}_\text{TSS} = \underbrace{\sum_{i=1}^n(\hat\mu_i-\bar{y})^2}_\text{ESS} + \underbrace{\sum_{i=1}^n(y_i-\hat\mu_i)^2}_\text{RSS}
@@ -662,7 +662,7 @@ $$
 Predicted mean value $\hat\mu_i$ for each observation $i$:
 
 $$
-\hat\mu_i = \hat\beta_0 + \hat\beta_1 \cdot x_{i}$
+\hat\mu_i = \hat\beta_0 + \hat\beta_1 \cdot x_{i}
 $$
 
 </div>
@@ -1523,21 +1523,21 @@ $$
 
 ## Comparing multiple nested models 
 
-... including the varying-intercepts (`model_2`) and the varying-intercepts and varying-slopes model (`model_3`).
+... including the varying-intercepts (`model_3`) and the varying-intercepts and varying-slopes model (`model_4`).
 
 <div style="float: left; width: 52%;">
 
 ```{r}
 # Specify models
-model_0 <- lm(log_rt ~ 1, data = blomkvist)
-model_1 <- lm(log_rt ~ sex, data = blomkvist)
-model_2 <- lm(log_rt ~ sex + age, data = blomkvist)
-model_3 <- lm(log_rt ~ sex * age, data = blomkvist)
+model_1 <- lm(log_rt ~ 1, data = blomkvist)
+model_2 <- lm(log_rt ~ sex, data = blomkvist)
+model_3 <- lm(log_rt ~ sex + age, data = blomkvist)
+model_4 <- lm(log_rt ~ sex * age, data = blomkvist)
 ```
 
 ```{r eval = F}
 # Compare models
-anova(model_0, model_1, model_2, model_3)
+anova(model_1, model_2, model_3, model_4)
 ```
 
 </div>
@@ -1547,7 +1547,7 @@ anova(model_0, model_1, model_2, model_3)
 
 ```{r echo = F}
 # Compare models
-print(anova(model_0, model_1, model_2, model_3), signif.stars=F)
+print(anova(model_1, model_2, model_3, model_4), signif.stars=F)
 ```
 </div>
 
@@ -1557,12 +1557,12 @@ print(anova(model_0, model_1, model_2, model_3), signif.stars=F)
 
 ```{r eval = F}
 # Drop highest level predictor 
-drop1(model_3, scope = ~ sex * age, test = 'F')
+drop1(model_4, scope = ~ sex * age, test = 'F')
 ```
 
 ```{r echo = F}
 # Compare models
-print(drop1(model_3, scope = ~ sex * age, test = 'F'), signif.stars=F)
+print(drop1(model_4, scope = ~ sex * age, test = 'F'), signif.stars=F)
 ```
 
 ```{r}
@@ -1573,15 +1573,15 @@ library(broom)
 
 
 ```{r}
-tidy(model_3, conf.int = TRUE)
+tidy(model_4, conf.int = TRUE)
 ```
 
 ```{r}
-glance(model_3) %>% glimpse()
+glance(model_4) %>% glimpse()
 ```
 
 ```{r}
-augment(model_3)
+augment(model_4)
 ```
 
 Check `exercises/comparing_multiple_nested_models.R`

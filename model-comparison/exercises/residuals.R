@@ -20,7 +20,7 @@ bk_augmented <- mutate(blomkvist,
        predicted = predict(---),
        resid_1 = log_rt - ---,
        resid_2 = residuals(---)) %>% 
-  select(log_rt, pred, resid_1, resid_2)  
+  select(log_rt, predicted, resid_1, resid_2)  
 
 # Check out the augmented data
 glimpse(---)
@@ -31,7 +31,3 @@ glimpse(---)
 ggplot(bk_augmented, aes(x = ---)) +
   geom_histogram()
   
-
-# Btw, do get the information for model evaluation in one go, do:
-library(broom)
-augment(model)

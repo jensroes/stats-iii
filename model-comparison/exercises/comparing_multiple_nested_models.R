@@ -10,10 +10,10 @@ blomkvist <- read_csv("data/blomkvist.csv") %>%
   mutate(log_rt = log(---)) # transform rt to log rt
 
 # Specify models ----------------------------------------------------------
-model_0 <- lm(log_rt ~ ---, data = blomkvist) # <- intercept only model
-model_1 <- lm(log_rt ~ ---, data = blomkvist) # <- sex as predictor
-model_2 <- lm(log_rt ~ --- + ---, data = blomkvist) # <- varying intercepts model with sex and age as predictors
-model_3 <- lm(log_rt ~ --- + --- + --- : ---, data = blomkvist) # <- varying intercepts and varying slopes model akin to model_2
+model_1 <- lm(log_rt ~ ---, data = blomkvist) # <- intercept only model
+model_2 <- lm(log_rt ~ ---, data = blomkvist) # <- sex as predictor
+model_3 <- lm(log_rt ~ --- + ---, data = blomkvist) # <- varying intercepts model with sex and age as predictors
+model_4 <- lm(log_rt ~ --- + --- + --- : ---, data = blomkvist) # <- varying intercepts and varying slopes model akin to model_2
 
 
 # Evaluate models ---------------------------------------------------------
@@ -24,7 +24,7 @@ anova(---, model_1, ---, ---) # <- compare all models
 glance(---)
 
 # Get all model fit statistics for all models
-map_dfr(list(model_0, ---, ---, ---), glance)
+map_dfr(list(model_1, ---, ---, ---), glance)
 # the map function is applying `glance` to each model
 
 # Get coefficients of best fitting model
@@ -41,7 +41,7 @@ augment(---)
 # You just need to run the code. No need to manipulate anything.
 # Task: Look at the plot and answer the questions on the bottom.
 # As above, apply `glance` to all models
-(all_modelfits <- map_dfr(list(model_0, model_1, model_2, model_3), glance))
+(all_modelfits <- map_dfr(list(model_1, model_2, model_3, model_4), glance))
 
 # Transform the data frame with model fit resutls
 all_modelfits <- all_modelfits %>% 
@@ -50,7 +50,7 @@ all_modelfits <- all_modelfits %>%
   pivot_longer(-model) %>% # transform to long data frame
   mutate(across(name, factor, # <- order the fit stats thematically for plotting
                 levels = c("r.squared", "adj.r.squared", "logLik",
-                            "sigma", "deviance", "AIC", "BIC"), ordered = TRUE))
+                           "deviance", "AIC", "BIC"), ordered = TRUE))
   
 # Plot the model fit statistics
 ggplot(all_modelfits, aes(x = model, y = value, group = 1)) +
