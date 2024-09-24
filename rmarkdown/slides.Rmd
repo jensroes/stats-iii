@@ -1,5 +1,5 @@
 ---
-title: 'Reproducible data analysis using RMarkdown documentation'
+title: 'Reproducible data analysis using RMarkdown'
 author: '<span style="font-size: 40px; font-face: bold">Jens Roeser</span>'
 output: 
   ioslides_presentation:
@@ -22,30 +22,30 @@ library(kableExtra)
 ```
 
 
-## Aims for today
+## Aims for the rest of today
 
 >- Sorting out your RStudio working environment.
 >- Getting you ready to write reproducible reports in RMarkdown.
 
-## How do you trust someone's results?
+## How can you trust someone's results?
 
 - Results are communicated through reports such as peer reviewed scientific articles.
-- Results should be reproducible! -- Are they?
+- Reported results should be reproducible! -- Are they?
 - Data and code should be made available to others -- Is this enough though?
-- It is difficult to relate code to figures, tables, numbers etc. especially where results were copy-pasted from the stats software.
+- It is difficult to relate code to figures, tables, numbers etc. especially where numbers were copy-pasted from software.
 - Also manual processing of data and generation of reports is error prone.
 
-## Rules for reproducible data analysis!
+<!-- ## Rules for reproducible data analysis! -->
 
-- Never change your data manually; document everything in code.
-  - Documentation / reproducibility
-  - Retrospective amendments made easy
-- Organized working environment
-  - `.Rproj` with one directory per project with sub-directories for scripts, data, plots, etc
-  - Short scripts: minimal code with one clear purpose.
-- Comment your code (`# Ceci n'est pas un comment!`)
-- Share code and data with your readers: [github.com](https://github.com/jensroes) or [osf.io](https://osf.io/sp87n/)
-- Use RMarkdown for full reproducibility of your results.
+<!-- - Never change your data manually; document everything in code. -->
+<!--   - Documentation / reproducibility -->
+<!--   - Retrospective amendments made easy -->
+<!-- - Organized working environment -->
+<!--   - `.Rproj` with one directory per project with sub-directories for scripts, data, plots, etc. -->
+<!--   - Short scripts: minimal code with one clear purpose. -->
+<!-- - Comment your code (`# Ceci n'est pas un comment!`) -->
+<!-- - Share code and data with your readers: [github.com](https://github.com/jensroes) or [osf.io](https://osf.io/sp87n/) -->
+<!-- - Use RMarkdown for full reproducibility of your results. -->
 
 
 ## Why do we need reproducible analyses? 
@@ -71,10 +71,10 @@ include_graphics("../gfx/rc.jpg")
 
 <div style="float: left; width: 55%;">
 
-- Data, code, report need be one unit.
-- Based on the concept of *literate programming* [@knuth1984literate]: text and code are linked in one single file to generate manual or computer program.
-- This principle can be used to creating reproducible reports, sometimes known as *dynamic documents* [@xie2017dynamic].
-- RMarkdown is the best way of doing this using R (in combination with *knitr*, *pandoc*, $\LaTeX$).
+>- Data, code, report need be one unit.
+>- Based on the concept of *literate programming* [@knuth1984literate]: text and code are linked in one single file to generate manual or computer program.
+>- This principle can be used to creating reproducible reports, sometimes known as *dynamic documents* [@xie2017dynamic].
+>- RMarkdown is the best way of doing this using R.
 
 </div>
 
@@ -127,42 +127,37 @@ include_graphics("../gfx/markdown.png")
 <div style="float: right; width: 50%;">
 
 
-What is RMarkdown?
+> What is RMarkdown?
 
 - Text file format, a script like an R script.
 - Open, edit, run in RStudio like scripts.
 - RMarkdown are a mixture of *markdown* code and normal R code (and your data).
 - R code in RMarkdown documents occurs in R *chunks*, i.e. blocks of code, or *inline* R code inside of markdown code
-
-What is Markdown?
-
-- Minimal markup language.
-- Normal text and minimal syntax that instructs how text should be formatted.
+- Markdown: minimal syntax that instructs how text should be formatted.
 - Rendering into `.pdf`, `.html`, `.docx`, `.doc`
-- Supported by **Knitr** and **Pandoc**
 
 </div>
 
 
 
 
-## Key concepts and tools
+<!-- ## Key concepts and tools -->
 
-<div style="float: left; width: 40%;">
+<!-- <div style="float: left; width: 40%;"> -->
 
-```{r fig.align='left', out.width="90%", echo = F, eval = T}
-include_graphics("../gfx/latex.png")
-```
+<!-- ```{r fig.align='left', out.width="90%", echo = F, eval = T} -->
+<!-- include_graphics("../gfx/latex.png") -->
+<!-- ``` -->
 
-</div>
+<!-- </div> -->
 
-<div style="float: right; width: 60%;">
+<!-- <div style="float: right; width: 60%;"> -->
 
->- Document preparation system for creating high quality technical and scientific documents.
->- Widely used in statistics, computer science, physics
->- $\LaTeX$ documents are written in a `.tex` source code file and rendered to pdf
+<!-- >- Document preparation system for creating high quality technical and scientific documents. -->
+<!-- >- Widely used in statistics, computer science, physics -->
+<!-- >- $\LaTeX$ documents are written in a `.tex` source code file and rendered to pdf -->
 
-</div>
+<!-- </div> -->
 
 
 ## Download repository
@@ -170,21 +165,19 @@ include_graphics("../gfx/latex.png")
 - Go to [github.com/jensroes/stats-iii](https://github.com/jensroes/stats-iii)
 - Click on: `Code` \> `Download ZIP` \> unzip directory on your machine.
 - Open project by double clicking on `stats-iii.Rproj`
-- Note that this is an R-project file with sub-directories:
-  - `data/`: my scripts will read in data from here
   - `xxx/slides.Rmd`: slides in RMarkdown format
   - `xxx/exercises`: R scripts that we will work with
+  - `data/`: my scripts will read in data from here
 
 
 
 
 ## Installation 
 
-<div style="float: left; width: 40%;">
+<div style="float: left; width: 35%;">
 
->- RStudio comes with necessary R packages `rmarkdown` (and `pandoc`), `knitr` 
->- To create pdf outputs, $\LaTeX$ must be installed which gives you access to a wide range of $\LaTeX$ tools.
->- However we only require the package `tinytex`
+>- RStudio comes with necessary R package `rmarkdown`
+>- To create pdf outputs, we require the package `tinytex`
 
 </div>
 
@@ -239,43 +232,9 @@ rmarkdown::render('test.Rmd', output_format = 'pdf_document')
 - Click on `File` > `New File` > `R Markdown`
 - Document (PDF, WORD, HTML)
 - `output: pdf_document`: use pdfs for writing manuscripts   
-- Also available `output: word_document`, `output: html_document`
-- Notice the YAML header between `'---'`s 
-- YAML (Y*AML* A*in’t* *a* M*arkup* L*anguage*) is a minimal markup language.
-
-## The setup chunk: global options used by `knitr`
-
->- Note ````{r setup, echo=FALSE}`
->- `setup` is a label of this chunk (optional; useful for navigation and cross-referencing of figures and tables; must be unique).
->- Chunk configuration option `echo = FALSE`: don't display chunk in output; `echo = TRUE`: display chunk.
->- Add this code to the setup chunk:
-
-```{r eval = F}
-knitr::opts_chunk$set(message = FALSE, # don't return messages
-                      warning = FALSE, # don't return warnings
-                      comment = NA, # don't comment output
-                      echo = TRUE, # display chunk (is default)
-                      eval = TRUE, # evaluate chunk (is default)
-                      out.width = '45%',  # figure width
-                      fig.align='center') # figure alignment
-```
+- Name your RMarkdown: `fa-linear-regression.Rmd`
 
 
-
-
-## Section headers
-
-```
-# This is a section header
-
-## This is a subsection header
-
-# This is another section header
-
-## This is another subsection header
-
-### This is a subsubsection header
-```
 
 
 ## Load data
@@ -302,15 +261,41 @@ blomkvist <- read_csv("../data/blomkvist.csv") %>%
 ```
 
 
-## R chunk outputs
 
->- Create a new *R chunk*: try `CTRL+ALT+I` or `CMD+ALT+I` (i.e. the letter "i")
->- Label the chunk `analysis`.
->- Fit the following model:
 
-```{r}
-(model <- lm(rt ~ sex, data = blomkvist))
+## The setup chunk: global options 
+
+>- Note ````{r setup, echo=FALSE}`
+>- `setup` is a label of this chunk (optional; useful for cross-referencing of figures and tables).
+>- Chunk configuration option `echo = FALSE`: don't display chunk in output; `echo = TRUE`: display chunk.
+
+
+```{r eval = F}
+knitr::opts_chunk$set(message = FALSE, # don't return messages
+                      warning = FALSE, # don't return warnings
+                      comment = NA, # don't comment output
+                      echo = TRUE, # display chunk (is default)
+                      eval = TRUE, # evaluate chunk (is default)
+                      out.width = '45%',  # figure width
+                      fig.align='center') # figure alignment
 ```
+
+
+
+## Section headers
+
+```
+# This is a section header
+
+## This is a subsection header
+
+# This is another section header
+
+## This is another subsection header
+
+### This is a subsubsection header
+```
+
 
 
 ## Figures
@@ -358,8 +343,8 @@ header-includes:
 - \usepackage{booktabs}
 ```
 
->- Gives you access to a wide range of $\LaTeX$ type setting options.
->- For now, we just need `booktabs` to improve type setting.
+>- We just need `booktabs` to improve type setting.
+
 
 ## Formatted tables
 
@@ -380,6 +365,7 @@ library(kableExtra)
 smoker_age %>% 
   kable(format = 'latex',
         booktabs = TRUE,
+        digits = 2,
         align = 'c', # centre value in each column
         caption = 'Descriptives of age by smoker.') %>% 
   kable_styling(position = 'center') # centre position of table
@@ -411,17 +397,6 @@ biblio-style: apalike
 - Cite @blomkvist2017reference using `@blomkvist2017reference` or `[@blomkvist2017reference]`.
 - At the end of your document create a section "`# References`"
 
-
-## $\LaTeX$ mathematical typesetting 
-
-- Strings are parsed using $\LaTeX$ and typeset accordingly when used between `'$'` symbols for inline mode.
-- For example `$\beta$` renders $\beta$.
-- Subscripts: `$\beta_0$` is $\beta_0$ and using `'{}'` for more than one symbol as in `$\beta_{01}$` which is $\beta_{01}$
-- How would you write $\beta_{0_1}$?
-- Superscripts: `'^'` as in `$\sigma^2$` which is $\sigma^2$.
-- How would you write $\sigma^{2^2}$?
-- How about $\sigma_e^2$?
-- For a list of $\LaTeX$ symbols [see page 19 in lecture notes](https://now.ntu.ac.uk/d2l/le/content/961441/viewContent/12100893/View).
 
 
 <!-- ## $\LaTeX$ mathematical typesetting  -->
@@ -529,6 +504,16 @@ format.pval(p, eps = 0.01)
 ```
 
 
+## Mathematical typesetting 
+
+- Strings are parsed using $\LaTeX$ and typeset accordingly when used between `'$'` symbols for inline mode.
+- For example `$\beta$` renders $\beta$.
+- Subscripts: `$\beta_0$` is $\beta_0$ and using `'{}'` for more than one symbol as in `$\beta_{01}$` which is $\beta_{01}$
+- How would you write $\beta_{0_1}$?
+- Superscripts: `'^'` as in `$\sigma^2$` which is $\sigma^2$.
+- How would you write $\sigma^{2^2}$?
+- How about $\sigma_e^2$?
+
 
 ## Some arithmetic operations and fractions {.smaller}
 
@@ -540,60 +525,6 @@ format.pval(p, eps = 0.01)
 >- `$\pm$` renders to $\pm$
 
 </div>
-
-<div style="float: right; width: 30%;">
-
->- Sums
-
-```
-$$
-\sum x_i
-$$
-```
-
-```
-$$
-\sum_{i=1}^n x_i
-$$
-```
-
->- Products
-
-```
-$$
-\prod_{i=1}^n x_i
-$$
-```
-
->- Integrals
-
-```
-$$
-\int_{0}^1 f(x) dx
-$$
-```
-
-</div>
-
-## Some arithmetic operations and fractions 
-
->- Roots for single digit `$\sqrt 2$` returns $\sqrt 2$
->- or for single digits and more `$\sqrt{24}$` returns $\sqrt{24}$
->- *n*-the root: `$\sqrt[3]{125}$` for the cubed root $\sqrt[3]{125}$
-
->- Formula for standard deviation:
-
-```
-$$
-  s = \sqrt{\frac{\sum^n_{i=1} (x_i - \bar{x})^2}{n-1}}
-$$
-```
-
-> Returns
-
-$$
-s = \sqrt{\frac{\sum^n_{i=1} (x_i - \bar{x})^2}{n-1}}
-$$
 
 
 ## For other formats ...
@@ -618,17 +549,22 @@ remotes::install_github("juba/rmdformats")
 - Online sharing on RPubs ("Publish")
 
 
-## APA manuscripts using `papaja`
+## APA7 manuscripts using `papaja`
 
 >- Example: <https://osf.io/vayhq/> published in @roeser2021modelling
 >- Installation: <https://github.com/crsh/papaja>
->- "APA article (6th edition)" template using `papaja`
->- APA 7 edition available too
 
-## The end
 
->- You will use RMarkdown for your class assignment (get started now).
->- Read the [lecture notes](https://now.ntu.ac.uk/d2l/le/content/961441/viewContent/12100893/View) on rmarkdown.
+## Task (homework)
+
+>- You will use RMarkdown for your assignment (get started now).
+>- Create a list of continuous response variables that can be found in Psychology.
+>- Find a suitable data set (should have a mix of continuous and categorical variables).
+>- Use the RMarkdown we started and replace data with your own, calculate descriptives, and a visualisation.
+
+## Recommended reading
+
+>- Read the [lecture notes](https://now.ntu.ac.uk/d2l/le/content/1038633/viewContent/13153120/View) on RMarkdown.
 >- For formatting tables using `kableExtra` check [here](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html)
 >- Check the [`rmarkdown` website](https://rmarkdown.rstudio.com/lesson-1.html).  
 >- And chapter 27 in ["R for Data Science"](https://r4ds.had.co.nz/r-markdown.html) [@wickham2016r].
