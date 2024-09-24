@@ -205,15 +205,15 @@ tinytex:::is_tinytex() # should return TRUE
 
 ## Installation
 
->- Test that `rmarkdown` will render pdf documents using $\LaTeX$ with the following code:
+>- Test that `rmarkdown` will render pdf documents:
 
 ```{r eval = F}
 writeLines('Hello $x^2$', 'test.Rmd')
 rmarkdown::render('test.Rmd', output_format = 'pdf_document')
 ```
 
-- `writeLines` creates an `.Rmd` file named `text.Rmd`.
-- `rmarkdown::render` renders `.Rmd` as pdf (via $\LaTeX$) named `test.pdf`.
+- `writeLines` creates an `.Rmd` file named `test.Rmd`.
+- `rmarkdown::render` renders `.Rmd` as pdf named `test.pdf`.
 
 
 ## Minimal RMarkdown example 
@@ -233,7 +233,7 @@ rmarkdown::render('test.Rmd', output_format = 'pdf_document')
 - Document (PDF, WORD, HTML)
 - `output: pdf_document`: use pdfs for writing manuscripts   
 - Name your RMarkdown: `fa-linear-regression.Rmd`
-
+- Save in same directory as `.Rproj` file.
 
 
 
@@ -327,7 +327,7 @@ ggplot(blomkvist, aes(x = age, y = rt)) +
 ```
 
 
-## Additional YAML header options
+## Add header options
 
 <!-- ``` -->
 <!-- output: -->
@@ -541,10 +541,8 @@ remotes::install_github("juba/rmdformats")
 ```
 
 - Create from template:
-  - `File` > `New File` > `R Markdown`
-  - e.g. `readthedown` or `robobook` for documents
-  - `rmdshower::shower_presentations` for slides
-  - these slides are `ioslides_presentation`
+  - `File` > `New File` > `R Markdown` (e.g. `readthedown` or `robobook` for documents)
+  - `rmdshower::shower_presentations` and `ioslides_presentation` for slides
 - [Rmarkdown example](https://rpubs.com/jensroes/765467)
 - Online sharing on RPubs ("Publish")
 

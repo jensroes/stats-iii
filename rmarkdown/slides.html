@@ -3303,11 +3303,11 @@ font-size: 18px;
 <li>Getting you ready to write reproducible reports in RMarkdown.</li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>How do you trust someone’s results?</h2></hgroup><article  id="how-do-you-trust-someones-results">
+</article></slide><slide class=""><hgroup><h2>How can you trust someone’s results?</h2></hgroup><article  id="how-can-you-trust-someones-results">
 
 <ul class = 'build'>
 <li>Results are communicated through reports such as peer reviewed scientific articles.</li>
-<li>Results should be reproducible! – Are they?</li>
+<li>Reported results should be reproducible! – Are they?</li>
 <li>Data and code should be made available to others – Is this enough though?</li>
 <li>It is difficult to relate code to figures, tables, numbers etc. especially where numbers were copy-pasted from software.</li>
 <li>Also manual processing of data and generation of reports is error prone.</li>
@@ -3455,15 +3455,15 @@ tinytex:::is_tinytex() # should return TRUE</pre></div>
 </article></slide><slide class=""><hgroup><h2>Installation</h2></hgroup><article  id="installation-1">
 
 <ul>
-<li>Test that <code>rmarkdown</code> will render pdf documents using \(\LaTeX\) with the following code:</li>
+<li>Test that <code>rmarkdown</code> will render pdf documents:</li>
 </ul>
 
 <pre class = 'prettyprint lang-r'>writeLines(&#39;Hello $x^2$&#39;, &#39;test.Rmd&#39;)
 rmarkdown::render(&#39;test.Rmd&#39;, output_format = &#39;pdf_document&#39;)</pre>
 
 <ul class = 'build'>
-<li><code>writeLines</code> creates an <code>.Rmd</code> file named <code>text.Rmd</code>.</li>
-<li><code>rmarkdown::render</code> renders <code>.Rmd</code> as pdf (via \(\LaTeX\)) named <code>test.pdf</code>.</li>
+<li><code>writeLines</code> creates an <code>.Rmd</code> file named <code>test.Rmd</code>.</li>
+<li><code>rmarkdown::render</code> renders <code>.Rmd</code> as pdf named <code>test.pdf</code>.</li>
 </ul>
 
 </article></slide><slide class=""><hgroup><h2>Minimal RMarkdown example</h2></hgroup><article  id="minimal-rmarkdown-example">
@@ -3485,6 +3485,7 @@ rmarkdown::render(&#39;test.Rmd&#39;, output_format = &#39;pdf_document&#39;)</p
 <li>Document (PDF, WORD, HTML)</li>
 <li><code>output: pdf_document</code>: use pdfs for writing manuscripts<br/></li>
 <li>Name your RMarkdown: <code>fa-linear-regression.Rmd</code></li>
+<li>Save in same directory as <code>.Rproj</code> file.</li>
 </ul>
 
 </article></slide><slide class=""><hgroup><h2>Load data</h2></hgroup><article  id="load-data">
@@ -3560,7 +3561,7 @@ scatterplot(x = age, y = rt, data = blomkvist)</pre>
 
 <pre >&quot;A scatterplot of age and reaction time can be found in Figure \ref{fig:myscatterplot}.&quot;</pre>
 
-</article></slide><slide class=""><hgroup><h2>Additional YAML header options</h2></hgroup><article  id="additional-yaml-header-options">
+</article></slide><slide class=""><hgroup><h2>Add header options</h2></hgroup><article  id="add-header-options">
 
 <!-- ``` -->
 
@@ -3795,10 +3796,8 @@ remotes::install_github(&quot;juba/rmdformats&quot;)</pre>
 <li>Create from template:
 
 <ul class = 'build'>
-<li><code>File</code> &gt; <code>New File</code> &gt; <code>R Markdown</code></li>
-<li>e.g. <code>readthedown</code> or <code>robobook</code> for documents</li>
-<li><code>rmdshower::shower_presentations</code> for slides</li>
-<li>these slides are <code>ioslides_presentation</code></li>
+<li><code>File</code> &gt; <code>New File</code> &gt; <code>R Markdown</code> (e.g. <code>readthedown</code> or <code>robobook</code> for documents)</li>
+<li><code>rmdshower::shower_presentations</code> and <code>ioslides_presentation</code> for slides</li>
 </ul></li>
 <li><a href='https://rpubs.com/jensroes/765467' title=''>Rmarkdown example</a></li>
 <li>Online sharing on RPubs (&ldquo;Publish&rdquo;)</li>
